@@ -2,10 +2,11 @@ const express = require('express')                                          // i
 
 const app = express()                                                       // memanggil fungsi express yg mereturn object express
 
-app.use(express.urlencoded({extended: false}))                              // app.use = mengakses method use didalam object express untuk mendaftarkan middleware express.urlencoded
+app.use(express.urlencoded({extended: false}))                              // mengakses method use didalam object express untuk mendaftarkan middleware express.urlencoded
 
 
-app.use('/', require('./src/routers'))
+// split kode 
+app.use('/', require('./src/routers'))                                      // mengimport module index.js yg ada di dalam folder routers yg merupakan entry point di dalam folder tersebut
 
 
 app.get('/', (req, res) => {                                                // client mengirim permintaan pengambilan data, lalu server mengirim data yang diminta menggunakan method didalam object respond
