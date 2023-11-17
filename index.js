@@ -1,8 +1,17 @@
+require('dotenv').config({                                                  //  file .env berisi variable global yang nilainya bisa berubah-rubah. jadi saat data berubah tidak perlu merubah kode, hanya perlu merubah nilai di variable env
+  path: './.env'                                                            //  di sebut variable lingkungan karena bersifat lokal pada "lingkungan" tertentu di mana aplikasi sedang berjalan
+})                                                                          //  'dotenv' untuk membaca variabel lingkungan dari file .env . yg memilliki fungsi config() untuk mengonfigurasi (mengakses nilai di variable yg ada di file env dan menggunakan nilai-nilai tersebut dalam aplikasi)
+
+
 const express = require('express')                                          // import module express. express adalah sebuah fungsi yg mereturn sebuah object
+const cors = require('cors')                                                // import module cors. untuk mengatasi pembatasan keamanan browser terkait permintaan lintas domain. karean berjalan di antara permintaan http dan respond sehingga disebut sebagai middleware
+const morgan = require('morgan')                                            // untuk logging. mencatat informasi terkait permintaan dan respons HTTP, seperti waktu, metode, status, dan informasi lainnya yang berguna untuk pemantauan dan pemecahan masalah
 
 const app = express()                                                       // memanggil fungsi express yg mereturn object express
 
 app.use(express.urlencoded({extended: false}))                              // mengakses method use didalam object express untuk mendaftarkan middleware express.urlencoded
+app.use(morgan('dev'))                                                      // menambahkan middleware ke rantai penanganan permintaan. setiap kali ada permintaan HTTP, morgan akan mencatat informasi log. 'dev' adalah salah satu format log yang disediakan oleh morgan yg mencakup informasi penting seperti metode HTTP, status, waktu respons, dan alamat IP klien.
+app.use(cors({}))                                                           // menambahkan middleware ke rantai penanganan permintaan. setiap kali ada permintaan HTTP, cors akan di jalankan
 
 
 // split kode 
@@ -29,6 +38,6 @@ app.get('/', (req, res) => {                                                // c
 */
 
 
-app.listen(8888, () => {                                            // mengakses method "listen" di dalam object express
-    console.log(`App listening on port 8888`)
+app.listen(process.env.PORT, () => {                                            // mengakses method "listen" di dalam object express
+    console.log(`App listening on port ${process.env.PORT}`)                    // mengakses nilai variabel PORT di variable lingkungan (.env)
 })
