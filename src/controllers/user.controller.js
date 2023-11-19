@@ -1,46 +1,22 @@
 const userModel = require('../models/user.model')
+const { errorHandler, errorWithCode, listAllData } = require('../moduls/handling')
 
 
-exports.getAllUsers = async (req, res) => {                                            
-    try {
-        const listUsers = await userModel.findAll()
-        return res.json({                                                              
-            success: true,
-            messages: 'List all users',
-            results: listUsers                                                    
-        })
-    } catch (error) {
-        console.log(error)
-        return res.status(404).json({                                                              
-            success: false,
-            messages: `data not found`                                                    
-        })
-    }
+exports.getAllUsers = async (req, res) => {       
+    return results = await listAllData(userModel, "users", res)
 }
 
 
-exports.getDetailUser = async (req, res) => {        
-    const id = parseInt(req.params.id)                                     
+exports.getDetailUser = async (req, res) => {                                        
     try {
-        const listUsers = await userModel.findOne(id)
-        if(!listUsers){
-            return res.status(404).json({                                                          
-                success: false,
-                messages: `user with id ${id} not found!`                                                
-            })
-        }
-
+        const listUsers = await userModel.findOne(req.body)
         return res.json({                                                              
             success: true,
             messages: 'detail user',
             results: listUsers                                                  
         })
-
     } catch (error) {
-        return res.status(500).json({                                                              
-            success: false,
-            messages: `Internal server error`                                                     
-        })
+        errorHandler(error, res)
     }
 }
 
@@ -55,17 +31,7 @@ exports.createUser = async (req, res) => {
         })
         
     } catch (error) {
-        console.log(error)
-        if(error.code === "23502"){
-            return res.status(400).json({                                                              
-                success: false,
-                messages: `${error.column} cannot be empty`                                                 
-            })
-        }
-        return res.status(500).json({                                                              
-            success: false,
-            messages: `Internal server error`                                                 
-        })
+        return errorWithCode(error, res, 'phone number already registered')
     }
 }
 
@@ -79,11 +45,7 @@ exports.updateUser = async (req, res) => {
             results: listUsers                                                   
         })
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({                                                              
-            success: true,
-            messages: 'Internal server error',                                                  
-        })
+        errorHandler(error, res)
     }
 }
 
@@ -97,10 +59,6 @@ exports.deleteUser = async (req, res) => {
             results: listUsers                                                   
         })
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({                                                              
-            success: true,
-            messages: 'Internal server error',                                                  
-        })
+        errorHandler(error, res)
     }
 }
