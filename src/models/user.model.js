@@ -3,11 +3,16 @@ const { isExist, findBy, isStringExist, updateColumn } = require('../moduls/hand
 
 
 exports.findAll = async (searchKey='', sortBy, order, page=1) => {
-    const sortByColumn = ["id", "full_name", "email", "created_at"]
-    sortBy = sortByColumn.includes(sortBy)? sortBy : "id"
-
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
+
+    const sortByColumn = ["id", "full_name", "email", "created_at"]
+    const sortByArray = []
+    sortBy.split(' ').map(item => {
+       if(sortByColumn.includes(item)){
+        sortByArray.push(item + ` ${order}`)
+       }
+    })
 
     const limit = 10
     const offset = (page - 1) * limit
@@ -15,7 +20,7 @@ exports.findAll = async (searchKey='', sortBy, order, page=1) => {
     const sql = `
     SELECT "id", "full_name", "email", "address", "picture", "phone_number", "created_at"
     FROM "users" WHERE "full_name" ilike $1
-    ORDER BY ${sortBy} ${order}
+    ORDER BY ${sortByArray.join(', ')}
     LIMIT ${limit} OFFSET ${offset}
     `
     const values = [`%${searchKey}%`]
@@ -24,16 +29,17 @@ exports.findAll = async (searchKey='', sortBy, order, page=1) => {
 }
 
 
-exports.findOne = async (data) => {                                                                             // mencari satu data berdasarkan column dengan constraint unique
-    if(data.id){
-        return result = await findBy("users", "id", data.id)
-    }else if(data.email){
-        return result = await findBy("users", "email", data.email)
-    }else if(data.phone_number){
-        return result = await findBy("users", "phone_number", data.phone_number)
-    }else{
-        throw new Error (`cannot find specific data`)
+exports.findOne = async (id) => {  
+    const sql = `
+    SELECT "id", "full_name", "email", "address", "picture", "phone_number", "created_at"
+    FROM "users" WHERE "id" = $1
+    `
+    const  values = [id]
+    const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`data with id ${id} not found `)
     }
+    return rows[0]
 }
 
 

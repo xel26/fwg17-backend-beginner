@@ -1,15 +1,25 @@
 const productModel = require('../models/product.model')
-const {listAllData, errorHandler} = require('../moduls/handling')
+const {errorHandler} = require('../moduls/handling')
 
 
 exports.getAllProducts = async (req, res) => {   
-    return results = await listAllData(productModel, "products", res)
+    const {searchKey, sortBy, order, page} = req.query
+    try {
+        const listProducts = await productModel.findAll(searchKey, sortBy, order, page)
+        return res.json({
+            success: true,
+            message: 'List all products',
+            results: listProducts
+        })
+    } catch (error) {
+        errorHandler(error, res)
+    }
 }
 
 
 exports.getDetailProduct = async (req, res) => {                                         
     try {
-        const listProducts = await productModel.findOne(req.body)
+        const listProducts = await productModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
             messages: 'detail product',
@@ -35,6 +45,7 @@ exports.createProduct = async (req, res) => {
         return errorHandler(error, res, `The product's name already exists`)
     }
 }
+
 
 
 exports.updateProduct = async (req, res) => {

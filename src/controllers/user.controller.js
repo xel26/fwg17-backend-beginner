@@ -12,18 +12,14 @@ exports.getAllUsers = async (req, res) => {
             results: listData                                                    
         })
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({                                                              
-            success: false,
-            messages: `Internal server error`                                                    
-        })
+        errorHandler(error, res)
     }
 }
 
 
 exports.getDetailUser = async (req, res) => {                                        
     try {
-        const listUsers = await userModel.findOne(req.body)
+        const listUsers = await userModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
             messages: 'detail user',
