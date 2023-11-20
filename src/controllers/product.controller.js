@@ -1,5 +1,5 @@
 const productModel = require('../models/product.model')
-const {listAllData, errorWithCode, errorHandler} = require('../moduls/handling')
+const {listAllData, errorHandler} = require('../moduls/handling')
 
 
 exports.getAllProducts = async (req, res) => {   
@@ -32,7 +32,7 @@ exports.createProduct = async (req, res) => {
         })
         
     } catch (error) {
-        return errorWithCode(error, res, `The product's name already exists`)
+        return errorHandler(error, res, `The product's name already exists`)
     }
 }
 

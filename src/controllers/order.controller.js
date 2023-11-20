@@ -1,5 +1,5 @@
 const orderModel = require('../models/order.model')
-const { errorHandler, errorWithCode, listAllData } = require('../moduls/handling')
+const { errorHandler, listAllData } = require('../moduls/handling')
 
 
 exports.getAllOrders = async (req, res) => {       
@@ -31,7 +31,7 @@ exports.createOrder = async (req, res) => {
         })
         
     } catch (error) {
-        return errorWithCode(error, res, 'order number already exist')
+        return errorHandler(error, res, 'order number already exist')
     }
 }
 

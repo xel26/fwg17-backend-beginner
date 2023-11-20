@@ -1,5 +1,5 @@
 const prModel = require('../models/productRatings.model')
-const { errorHandler, errorWithCode, listAllData } = require('../moduls/handling')
+const { errorHandler, listAllData } = require('../moduls/handling')
 
 
 exports.getAllProductRatings = async (req, res) => {       
@@ -31,7 +31,7 @@ exports.createProductRating = async (req, res) => {
         })
         
     } catch (error) {
-        return errorWithCode(error, res, '')
+        return errorHandler(error, res, '')
     }
 }
 

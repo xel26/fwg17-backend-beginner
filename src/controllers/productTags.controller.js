@@ -1,5 +1,5 @@
 const ptModel = require('../models/productTags.model')
-const { errorHandler, errorWithCode, listAllData } = require('../moduls/handling')
+const { errorHandler, listAllData } = require('../moduls/handling')
 
 
 exports.getAllProductTags = async (req, res) => {       
@@ -31,7 +31,7 @@ exports.createProductTags = async (req, res) => {
         })
         
     } catch (error) {
-        return errorWithCode(error, res, '')
+        return errorHandler(error, res, '')
     }
 }
 

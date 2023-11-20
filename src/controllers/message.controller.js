@@ -1,5 +1,5 @@
 const messageModel = require('../models/message.model')
-const { errorHandler, errorWithCode, listAllData } = require('../moduls/handling')
+const { errorHandler, listAllData } = require('../moduls/handling')
 
 
 exports.getAllMessages = async (req, res) => {       
@@ -31,7 +31,7 @@ exports.createMessage = async (req, res) => {
         })
         
     } catch (error) {
-        return errorWithCode(error, res, '')
+        return errorHandler(error, res, '')
     }
 }
 

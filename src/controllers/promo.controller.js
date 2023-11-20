@@ -1,5 +1,5 @@
 const promoModel = require('../models/promo.model')
-const { errorHandler, errorWithCode, listAllData } = require('../moduls/handling')
+const { errorHandler, listAllData } = require('../moduls/handling')
 
 
 exports.getAllPromo = async (req, res) => {       
@@ -31,7 +31,7 @@ exports.createPromo = async (req, res) => {
         })
         
     } catch (error) {
-        return errorWithCode(error, res, 'name or code already exist')
+        return errorHandler(error, res, 'name or code already exist')
     }
 }
 

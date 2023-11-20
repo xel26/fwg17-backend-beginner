@@ -1,5 +1,5 @@
 const variantModel = require('../models/variant.model')
-const { errorHandler, errorWithCode, listAllData } = require('../moduls/handling')
+const { errorHandler, listAllData } = require('../moduls/handling')
 
 
 exports.getAllVariant = async (req, res) => {       
@@ -31,7 +31,7 @@ exports.createVariant = async (req, res) => {
         })
         
     } catch (error) {
-        return errorWithCode(error, res, `the variant's name already exist`)
+        return errorHandler(error, res, `the variant's name already exist`)
     }
 }
 

@@ -69,45 +69,49 @@ exports.isStringExist = async (table, uniqueColumn, searchKey) => {
         if(uniqueColumn === "name"){
             throw new Error(`${table} with ${uniqueColumn} ${rows[0].name} already exist`)
         }else if(uniqueColumn === "email"){
-            throw new Error(`${uniqueColumn} ${rows[0].email} already registered`)
+            throw new Error(`${uniqueColumn} ${rows[0].email} already exist`)
         }
     }
 }
 
 
 
-exports.errorHandler = (error, res) => {
-    console.log(error)
-    if(!error.code){                                                                    // jika error tanpa kode, artinya error tersebut berasal dari error custom yg saya lempar (throw new Error('messag')) sehingga kode ini di gunakan untuk mengakses pesan error custom yg saya buat
-        return res.status(404).json({                                                              
-            success: false,
-            messages: error.message,                                                  
-        })
-    }
+exports.updateColumn = async (id, body, table, ) => {
     
-    return res.status(500).json({                                                              
-        success: false,
-        messages: `Internal server error`,                                                  
+    const column = Object.keys(body)
+    const values = [id, ...Object.values(body)]
+    const set = column.map((item, index) => {
+        return `"${item}" = $${index + 2}`
     })
+
+    const sql = `UPDATE ${table} SET ${set.join(', ')}, "updated_at" = now() WHERE "id" = $1 RETURNING *`
+    console.log(sql)
+    const {rows} = await db.query(sql, values)
+    return rows[0]
 }
 
 
-exports.errorWithCode = (error, res, messageError) => {
+exports.errorHandler = (error, res) => {
     console.log(error)
     if(error.code === "23502"){                                                             // kode error not null constraint
         return res.status(400).json({                                                              
             success: false,
-            messages: `${error.column.replaceAll('_', ' ')} cannot be empty`                                                 
+            message: `${error.column.replaceAll('_', ' ')} cannot be empty`                                                 
         })
     }else if(error.code === "23505"){                                                       // kode error unique constraint
         return res.status(400).json({                                                              
             success: false,
-            messages: messageError                                    
+            message:`${error.detail.split(' ')[1].replaceAll(/[()=]/g, ' ').trim()} already exist`                               
+        })
+    }else if(error.code === "42703"){                                                       // kode error column does not exist
+        return res.status(400).json({
+            success: false,
+            message: `column ${error.message.split(' ')[1].replaceAll('"', '')} does not exist`
         })
     }else if(!error.code){
         return res.status(400).json({                                                              
             success: false,
-            messages: error.message                                               
+            message: error.message                                                          // message error berasal dari error custom =>  throw new Error('message')                                               
         })
     }
 

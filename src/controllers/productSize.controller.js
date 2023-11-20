@@ -1,5 +1,5 @@
 const psModel = require('../models/productSize.model')
-const { errorHandler, errorWithCode, listAllData } = require('../moduls/handling')
+const { errorHandler, listAllData } = require('../moduls/handling')
 
 
 exports.getAllProductSize = async (req, res) => {       
@@ -31,7 +31,7 @@ exports.createProductSize = async (req, res) => {
         })
         
     } catch (error) {
-        return errorWithCode(error, res, `the size name already exist`)
+        return errorHandler(error, res, `the size name already exist`)
     }
 }
 

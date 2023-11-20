@@ -1,10 +1,24 @@
 const db = require('../lib/db.lib')
-const { isExist, findBy, isStringExist } = require('../moduls/handling')
+const { isExist, findBy, isStringExist, updateColumn } = require('../moduls/handling')
 
 
-exports.findAll = async () => {
-    const sql = `SELECT * FROM "users" ORDER BY "id"`
-    const values = []
+exports.findAll = async (searchKey='', sortBy, order, page=1) => {
+    const sortByColumn = ["id", "full_name", "email", "created_at"]
+    sortBy = sortByColumn.includes(sortBy)? sortBy : "id"
+
+    const orderType = ["ASC", "DESC"]
+    order = orderType.includes(order)? order : "ASC"
+
+    const limit = 10
+    const offset = (page - 1) * limit
+
+    const sql = `
+    SELECT "id", "full_name", "email", "address", "picture", "phone_number", "created_at"
+    FROM "users" WHERE "full_name" ilike $1
+    ORDER BY ${sortBy} ${order}
+    LIMIT ${limit} OFFSET ${offset}
+    `
+    const values = [`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
     return rows
 }
@@ -42,15 +56,20 @@ exports.insert = async (data) => {
 }
 
 
-exports.update = async (id, data) => {
+exports.update = async (id, body) => {
     const queryId = await isExist("users", id)                                                                     // melakukan query terlebih dahulu sebelum update, untuk mengecek apakah data yg ingin di update ada di database
     if(queryId){
         throw new Error(queryId)
     }
-    const sql = `UPDATE "users" SET "full_name" = $2 WHERE "id" = $1 RETURNING *`
-    const values = [id, data.full_name]
-    const {rows} = await db.query(sql, values)
-    return rows[0]
+
+    if(body.email){
+        const queryString = await isStringExist("users", "email", body.email)                                        // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja. 
+        if(queryString){
+            throw new Error(isStringExist)
+        }
+    }
+
+    return update = await updateColumn(id, body, "users")
 }
 
 

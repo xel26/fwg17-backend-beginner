@@ -1,5 +1,5 @@
 const categoriesModel = require('../models/categories.model')
-const { errorHandler, errorWithCode, listAllData } = require('../moduls/handling')
+const { errorHandler, listAllData } = require('../moduls/handling')
 
 
 exports.getAllCategories = async (req, res) => {       
@@ -31,7 +31,7 @@ exports.createCategory = async (req, res) => {
         })
         
     } catch (error) {
-        return errorWithCode(error, res, `the category's name already exist`)
+        return errorHandler(error, res, `the category's name already exist`)
     }
 }
 

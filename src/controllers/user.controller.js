@@ -1,9 +1,23 @@
 const userModel = require('../models/user.model')
-const { errorHandler, errorWithCode, listAllData } = require('../moduls/handling')
+const { errorHandler } = require('../moduls/handling')
 
 
-exports.getAllUsers = async (req, res) => {       
-    return results = await listAllData(userModel, "users", res)
+exports.getAllUsers = async (req, res) => { 
+    const {searchKey, sortBy, order, page} = req.query      
+    try {
+        const listData = await userModel.findAll(searchKey, sortBy, order, page)
+        return res.json({                                                              
+            success: true,
+            messages: `List all users`,
+            results: listData                                                    
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({                                                              
+            success: false,
+            messages: `Internal server error`                                                    
+        })
+    }
 }
 
 
@@ -31,13 +45,17 @@ exports.createUser = async (req, res) => {
         })
         
     } catch (error) {
-        return errorWithCode(error, res, 'phone number already registered')
+        return errorHandler(error, res)
     }
 }
 
 
 exports.updateUser = async (req, res) => {
     try {
+        if(req.body.role){
+            throw new Error(`access denied cannot change role user`)
+        }
+    
         const listUsers = await userModel.update(parseInt(req.params.id), req.body) 
         return res.json({                                                              
             success: true,

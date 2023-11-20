@@ -1,5 +1,5 @@
 const tagsModel = require('../models/tags.model')
-const { errorHandler, errorWithCode, listAllData } = require('../moduls/handling')
+const { errorHandler, listAllData } = require('../moduls/handling')
 
 
 exports.getAllTags = async (req, res) => {       
@@ -31,7 +31,7 @@ exports.createTag = async (req, res) => {
         })
         
     } catch (error) {
-        return errorWithCode(error, res, `the tag's name already exist`)
+        return errorHandler(error, res, `the tag's name already exist`)
     }
 }
 

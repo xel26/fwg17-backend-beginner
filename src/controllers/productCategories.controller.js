@@ -1,5 +1,5 @@
 const pcModel = require('../models/ProductCategories.model')
-const { errorHandler, errorWithCode, listAllData } = require('../moduls/handling')
+const { errorHandler, listAllData } = require('../moduls/handling')
 
 
 exports.getAllProductCategories = async (req, res) => {       
@@ -31,7 +31,7 @@ exports.createProductCategories = async (req, res) => {
         })
         
     } catch (error) {
-        return errorWithCode(error, res, '')
+        return errorHandler(error, res, '')
     }
 }
 
