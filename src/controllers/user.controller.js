@@ -5,11 +5,11 @@ const { errorHandler } = require('../moduls/handling')
 exports.getAllUsers = async (req, res) => { 
     const {searchKey, sortBy, order, page} = req.query      
     try {
-        const listData = await userModel.findAll(searchKey, sortBy, order, page)
+        const listUsers = await userModel.findAll(searchKey, sortBy, order, page)
         return res.json({                                                              
             success: true,
             messages: `List all users`,
-            results: listData                                                    
+            results: listUsers                                                    
         })
     } catch (error) {
         errorHandler(error, res)
@@ -19,11 +19,11 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getDetailUser = async (req, res) => {                                        
     try {
-        const listUsers = await userModel.findOne(req.params.id)
+        const user = await userModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
             messages: 'detail user',
-            result: listUsers                                                  
+            result: user                                                  
         })
     } catch (error) {
         errorHandler(error, res)
@@ -33,11 +33,11 @@ exports.getDetailUser = async (req, res) => {
 
 exports.createUser = async (req, res) => {
     try {
-        const listUsers = await userModel.insert(req.body) 
+        const user = await userModel.insert(req.body) 
         return res.json({                                                              
             success: true,
             messages: 'create user successfully',
-            result: listUsers                                                   
+            result: user                                                   
         })
         
     } catch (error) {
@@ -52,11 +52,11 @@ exports.updateUser = async (req, res) => {
             throw new Error(`access denied cannot change role user`)
         }
     
-        const listUsers = await userModel.update(parseInt(req.params.id), req.body) 
+        const user = await userModel.update(parseInt(req.params.id), req.body) 
         return res.json({                                                              
             success: true,
             messages: 'update user successfully',
-            result: listUsers                                                   
+            result: user                                                   
         })
     } catch (error) {
         errorHandler(error, res)

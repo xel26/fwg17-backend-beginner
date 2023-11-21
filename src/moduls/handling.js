@@ -5,7 +5,6 @@
 const db = require('../lib/db.lib')
 
 
-
 exports.listAllData = async (model, table, res) => {
     try {
         const listData = await model.findAll()
@@ -83,6 +82,10 @@ exports.updateColumn = async (id, body, table, ) => {
     const set = column.map((item, index) => {
         return `"${item}" = $${index + 2}`
     })
+
+    if(set.length < 1){
+        return `No data has been modified`
+    }
 
     const sql = `UPDATE ${table} SET ${set.join(', ')}, "updatedAt" = now() WHERE "id" = $1 RETURNING *`
     const {rows} = await db.query(sql, values)

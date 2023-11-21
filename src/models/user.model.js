@@ -15,7 +15,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
 
         sortBy.forEach(item => {
            if(sortByColumn.includes(item)){
-            columnSort.push(`"${item}"` + ` ${order}`)
+            columnSort.push(`"${item}" ${order}`)
            }
         })
     
@@ -52,7 +52,7 @@ exports.findOne = async (id) => {
     const  values = [id]
     const {rows} = await db.query(sql, values)
     if(!rows.length){
-        throw new Error(`data with id ${id} not found `)
+        throw new Error(`user with id ${id} not found `)
     }
     return rows[0]
 }
@@ -62,7 +62,7 @@ exports.insert = async (body) => {
     let role = ''
     if(body.email === "superAdmin@example.com" && body.password === "@superPass"){
         role = "admin"
-    }else if(body.email.includes('emailForStaff') && body.password === "secretPassForStaff"){
+    }else if(body.email.includes('staffCodeCompany') && body.password === "secretPassForStaff"){
         role = "staff"
     }else{
         role = "customer"
@@ -93,13 +93,14 @@ exports.update = async (id, body) => {
     }
 
     if(body.email){
-        const queryString = await isStringExist("users", "email", body.email)                                        // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja. 
+        const queryString =  await isStringExist("users", "email", body.email)                                       // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja.
         if(queryString){
-            throw new Error(isStringExist)
+            throw new Error (queryString)
         }
+        
     }
 
-    return update = await updateColumn(id, body, "users")
+    return await updateColumn(id, body, "users")
 }
 
 

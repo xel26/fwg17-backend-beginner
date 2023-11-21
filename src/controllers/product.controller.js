@@ -19,11 +19,11 @@ exports.getAllProducts = async (req, res) => {
 
 exports.getDetailProduct = async (req, res) => {                                         
     try {
-        const listProducts = await productModel.findOne(req.params.id)
+        const product = await productModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
             messages: 'detail product',
-            results: listProducts                                                  
+            result: product                                                  
         })
 
     } catch (error) {
@@ -34,15 +34,15 @@ exports.getDetailProduct = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
     try {
-        const listProducts = await productModel.insert(req.body) 
+        const product = await productModel.insert(req.body) 
         return res.json({                                                              
             success: true,
             messages: 'create product successfully',
-            results: listProducts                                                   
+            results: product                                                   
         })
         
     } catch (error) {
-        return errorHandler(error, res, `The product's name already exists`)
+        errorHandler(error, res)
     }
 }
 
@@ -50,11 +50,11 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     try {
-        const listProducts = await productModel.update(parseInt(req.params.id), req.body) 
+        const product = await productModel.update(parseInt(req.params.id), req.body) 
         return res.json({                                                              
             success: true,
             messages: 'update product successfully',
-            results: listProducts                                                   
+            results: product                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -64,11 +64,11 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
     try {
-        const listProducts = await productModel.delete(parseInt(req.params.id)) 
+        const product = await productModel.delete(parseInt(req.params.id)) 
         return res.json({                                                              
             success: true,
             messages: 'delete product successfully',
-            results: listProducts                                                   
+            results: product                                                   
         })
     } catch (error) {
         errorHandler(error, res)
