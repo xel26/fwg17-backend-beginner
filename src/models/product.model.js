@@ -14,7 +14,7 @@ exports.findAll = async (searchKey='', sortBy, order, page=1) => {
        }
     })
 
-    const limit = 25
+    const limit = 100
     const offset = (page - 1) * limit
 
     const sql = `

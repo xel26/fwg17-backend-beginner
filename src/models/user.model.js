@@ -1,28 +1,47 @@
 const db = require('../lib/db.lib')
-const { isExist, findBy, isStringExist, updateColumn } = require('../moduls/handling')
+const { isExist, isStringExist, updateColumn } = require('../moduls/handling')
 
 
-exports.findAll = async (searchKey='', sortBy, order, page=1) => {
+exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
 
-    const sortByColumn = ["id", "full_name", "email", "created_at"]
-    const sortByArray = []
-    sortBy.split(' ').map(item => {
-       if(sortByColumn.includes(item)){
-        sortByArray.push(item + ` ${order}`)
-       }
-    })
+    if(typeof sortBy === "object"){
+        const sortByColumn = ['id', 'fullName', 'email', 'createdAt']
+        let sortByArray = []
 
-    const limit = 10
+        sortBy.forEach(item => {
+           if(sortByColumn.includes(item)){
+            sortByArray.push(item + ` ${order}`)
+           }
+        })
+
+        const limit = 5
+        const offset = (page - 1) * limit
+    
+        const sql = `
+        SELECT "id", "fullName", "email", "address", "picture", "phoneNumber", "createdAt"
+        FROM "users" WHERE "fullName" ILIKE $1
+        ORDER BY ${sortByArray.join(', ')}
+        LIMIT ${limit} OFFSET ${offset}
+        `
+        console.log(sql)
+        const values = [`%${searchKey}%`]
+        const {rows} = await db.query(sql, values)
+        return rows
+    }
+
+    const limit = 5
     const offset = (page - 1) * limit
 
     const sql = `
-    SELECT "id", "full_name", "email", "address", "picture", "phone_number", "created_at"
-    FROM "users" WHERE "full_name" ilike $1
-    ORDER BY ${sortByArray.join(', ')}
+    SELECT "id", "fullName", "email", "address", "picture", "phoneNumber", "createdAt"
+    FROM "users" WHERE "fullName" ilike $1
+    ORDER BY ${sortBy} ${order}
     LIMIT ${limit} OFFSET ${offset}
     `
+    console.log(sortBy)
+    console.log(sql)
     const values = [`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
     return rows
@@ -31,7 +50,7 @@ exports.findAll = async (searchKey='', sortBy, order, page=1) => {
 
 exports.findOne = async (id) => {  
     const sql = `
-    SELECT "id", "full_name", "email", "address", "picture", "phone_number", "created_at"
+    SELECT "id", "fullName", "email", "address", "picture", "phoneNumber", "createdAt"
     FROM "users" WHERE "id" = $1
     `
     const  values = [id]
@@ -51,12 +70,12 @@ exports.insert = async (data) => {
 
     const sql = `
     INSERT INTO "users"
-    ("full_name", "email", "password", "address", "picture", "phone_number", "role")
+    ("fullName", "email", "password", "address", "picture", "phoneNumber", "role")
     VALUES
     ($1, $2, $3, $4, $5, $6, $7)
     RETURNING *
     `
-    const values = [data.full_name, data.email, data.password, data.address, data.picture, data.phone_number, data.role]
+    const values = [data.fullName, data.email, data.password, data.address, data.picture, data.phoneNumber, data.role]
     const {rows} = await db.query(sql, values)
     return rows[0]
 }

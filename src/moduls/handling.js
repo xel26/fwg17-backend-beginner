@@ -106,7 +106,8 @@ exports.errorHandler = (error, res) => {
     }else if(error.code === "42703"){                                                       // kode error column does not exist
         return res.status(400).json({
             success: false,
-            message: `column ${error.message.split(' ')[1].replaceAll('"', '')} does not exist`
+            message: error.message.replaceAll('"', '')
+            // `column ${error.message.split(' ')[1].replaceAll('"', '')} does not exist`
         })
     }else if(!error.code){
         return res.status(400).json({                                                              
