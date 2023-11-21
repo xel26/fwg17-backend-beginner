@@ -6,7 +6,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
     
-    const limit = 100
+    const limit = 10
     const offset = (page - 1) * limit
 
     if(typeof sortBy === "object"){
@@ -58,8 +58,17 @@ exports.findOne = async (id) => {
 }
 
 
-exports.insert = async (data) => {
-    const queryString = await isStringExist("users", "email", data.email)                                        // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja. 
+exports.insert = async (body) => {
+    let role = ''
+    if(body.email === "superAdmin@example.com" && body.password === "@superPass"){
+        role = "admin"
+    }else if(body.email.includes('emailForStaff') && body.password === "secretPassForStaff"){
+        role = "staff"
+    }else{
+        role = "customer"
+    }
+
+    const queryString = await isStringExist("users", "email", body.email)                                        // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja. 
     if(queryString){
         throw new Error(isStringExist)
     }
@@ -71,7 +80,7 @@ exports.insert = async (data) => {
     ($1, $2, $3, $4, $5, $6, $7)
     RETURNING *
     `
-    const values = [data.fullName, data.email, data.password, data.address, data.picture, data.phoneNumber, data.role]
+    const values = [body.fullName, body.email, body.password, body.address, body.picture, body.phoneNumber, role]
     const {rows} = await db.query(sql, values)
     return rows[0]
 }

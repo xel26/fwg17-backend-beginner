@@ -23,7 +23,7 @@ exports.getDetailUser = async (req, res) => {
         return res.json({                                                              
             success: true,
             messages: 'detail user',
-            results: listUsers                                                  
+            result: listUsers                                                  
         })
     } catch (error) {
         errorHandler(error, res)
@@ -37,11 +37,11 @@ exports.createUser = async (req, res) => {
         return res.json({                                                              
             success: true,
             messages: 'create user successfully',
-            results: listUsers                                                   
+            result: listUsers                                                   
         })
         
     } catch (error) {
-        return errorHandler(error, res)
+        errorHandler(error, res)
     }
 }
 
@@ -56,7 +56,7 @@ exports.updateUser = async (req, res) => {
         return res.json({                                                              
             success: true,
             messages: 'update user successfully',
-            results: listUsers                                                   
+            result: listUsers                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -66,11 +66,11 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
     try {
-        const listUsers = await userModel.delete(parseInt(req.params.id)) 
+        const user = await userModel.delete(parseInt(req.params.id)) 
         return res.json({                                                              
             success: true,
             messages: 'delete user successfully',
-            results: listUsers                                                   
+            result: user                                                   
         })
     } catch (error) {
         errorHandler(error, res)
