@@ -1,54 +1,87 @@
 const db = require('../lib/db.lib')
-const { isExist, findBy, isStringExist } = require('../moduls/handling')
+const { isExist, isStringExist, updateColumn } = require('../moduls/handling')
 
 
-exports.findAll = async () => {
-    const sql = `SELECT * FROM "categories" ORDER BY "id"`
-    const values = []
+exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
+    const orderType = ["ASC", "DESC"]
+    order = orderType.includes(order)? order : "ASC"
+    
+    const limit = 10
+    const offset = (page - 1) * limit
+
+    if(typeof sortBy === "object"){
+        const sortByColumn = ['id', 'name', 'createdAt']
+        let columnSort = []
+
+        sortBy.forEach(item => {
+           if(sortByColumn.includes(item)){
+            columnSort.push(`"${item}" ${order}`)
+           }
+        })
+
+        const sql = `
+        SELECT "id", "name", "createdAt"
+        FROM "categories" WHERE "name" ILIKE $1
+        ORDER BY ${columnSort.join(', ')}
+        LIMIT ${limit} OFFSET ${offset}
+        `
+        const values = [`%${searchKey}%`]
+        const {rows} = await db.query(sql, values)
+        return rows
+    }
+
+    const sql = `
+    SELECT "id", "name", "createdAt"
+    FROM "categories" WHERE "name" ILIKE $1
+    ORDER BY "${sortBy}" ${order}
+    LIMIT ${limit} OFFSET ${offset}
+    `
+    console.log(sql)
+    const values = [`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
     return rows
 }
 
 
-exports.findOne = async (data) => {
-    if(data.id){
-        return result = await findBy("categories", "id", data.id)
-    }else if(data.name){
-        return result = await findBy("categories", "name", data.name)
-    }else{
-        throw new Error (`cannot find specific data`)
+exports.findOne = async (id) => {
+    const sql = `
+    SELECT "id", "name", "createdAt"
+    FROM "categories" WHERE "id" = $1
+    `
+    const  values = [id]
+    const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`categories with id ${id} not found `)
     }
+    return rows[0]
 }
 
 
-exports.insert = async (data) => {
-    const queryString = await isStringExist("categories", "name", data.name)
+exports.insert = async (body) => {
+    const queryString = await isStringExist("categories", "name", body.name)
     if(queryString){
-        throw new Error(isStringExist)
+        throw new Error(queryString)
     }
 
-    const sql = `
-    INSERT INTO "categories"
-    (name)
-    VALUES
-    ($1)
-    RETURNING *
-    `
-    const values = [data.name]
+    const sql = `INSERT INTO "categories"("name") VALUES ($1) RETURNING *`
+    const values = [body.name]
     const {rows} = await db.query(sql, values)
     return rows[0]
 }
 
 
-exports.update = async (id, data) => {
+exports.update = async (id, body) => {
     const queryId = await isExist("categories", id)
     if(queryId){
         throw new Error(queryId)
     }
-    const sql = `UPDATE "categories" SET "name" = $2 WHERE "id" = $1 RETURNING *`
-    const values = [id, data.name]
-    const {rows} = await db.query(sql, values)
-    return rows[0]
+
+    const queryString =  await isStringExist("categories", "name", body.name)                                       // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja.
+    if(queryString){
+        throw new Error (queryString)
+    }
+
+    return await updateColumn(id, body, "categories")
 }
 
 

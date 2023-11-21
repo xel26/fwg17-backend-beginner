@@ -6,6 +6,12 @@ exports.getAllUsers = async (req, res) => {
     const {searchKey, sortBy, order, page} = req.query      
     try {
         const listUsers = await userModel.findAll(searchKey, sortBy, order, page)
+        if(!listUsers.length){
+            return res.status(404).json({
+                success: false,
+                messages: `no data found`
+            })
+        }
         return res.json({                                                              
             success: true,
             messages: `List all users`,
@@ -19,7 +25,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getDetailUser = async (req, res) => {                                        
     try {
-        const user = await userModel.findOne(req.params.id)
+        const user = await userModel.findOne(parseInt(req.params.id))
         return res.json({                                                              
             success: true,
             messages: 'detail user',
@@ -49,7 +55,10 @@ exports.createUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         if(req.body.role){
-            throw new Error(`access denied cannot change role user`)
+            return res.status(403).json({
+                success: false,
+                messages: 'Forbidden access denied cannot change role user'
+            })
         }
     
         const user = await userModel.update(parseInt(req.params.id), req.body) 

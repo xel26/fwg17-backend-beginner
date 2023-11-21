@@ -1,19 +1,34 @@
 const categoriesModel = require('../models/categories.model')
-const { errorHandler, listAllData } = require('../moduls/handling')
+const { errorHandler } = require('../moduls/handling')
 
 
 exports.getAllCategories = async (req, res) => {       
-    return results = await listAllData(categoriesModel, "categories", res)
-}
+    const {searchKey, sortBy, order, page} = req.query      
+    try {
+        const listCategories = await categoriesModel.findAll(searchKey, sortBy, order, page)
+        if(!listCategories.length){
+            return res.status(404).json({
+                success: false,
+                messages: `no data found`
+            })
+        }
+        return res.json({                                                              
+            success: true,
+            messages: `List all categories`,
+            results: listCategories                                                    
+        })
+    } catch (error) {
+        errorHandler(error, res)
+    }}
 
 
 exports.getDetailCategory = async (req, res) => {                                        
     try {
-        const listCategory = await categoriesModel.findOne(req.body)
+        const category = await categoriesModel.findOne(parseInt(req.params.id))
         return res.json({                                                              
             success: true,
             messages: 'detail category',
-            results: listCategory                                                  
+            results: category                                                  
         })
     } catch (error) {
         errorHandler(error, res)
@@ -23,26 +38,26 @@ exports.getDetailCategory = async (req, res) => {
 
 exports.createCategory = async (req, res) => {
     try {
-        const listCategory = await categoriesModel.insert(req.body) 
+        const category = await categoriesModel.insert(req.body) 
         return res.json({                                                              
             success: true,
             messages: 'create category successfully',
-            results: listCategory                                                   
+            results: category                                                   
         })
         
     } catch (error) {
-        return errorHandler(error, res, `the category's name already exist`)
+        errorHandler(error, res)
     }
 }
 
 
 exports.updateCategory = async (req, res) => {
     try {
-        const listCategory = await categoriesModel.update(parseInt(req.params.id), req.body) 
+        const category = await categoriesModel.update(parseInt(req.params.id), req.body) 
         return res.json({                                                              
             success: true,
             messages: 'update category successfully',
-            results: listCategory                                                   
+            results: category                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -52,11 +67,11 @@ exports.updateCategory = async (req, res) => {
 
 exports.deleteCategory = async (req, res) => {
     try {
-        const listCategory = await categoriesModel.delete(parseInt(req.params.id)) 
+        const category = await categoriesModel.delete(parseInt(req.params.id)) 
         return res.json({                                                              
             success: true,
             messages: 'delete category successfully',
-            results: listCategory                                                   
+            results: category                                                   
         })
     } catch (error) {
         errorHandler(error, res)

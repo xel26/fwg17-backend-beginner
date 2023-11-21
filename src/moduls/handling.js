@@ -83,7 +83,7 @@ exports.updateColumn = async (id, body, table, ) => {
         return `"${item}" = $${index + 2}`
     })
 
-    if(set.length < 1){
+    if(!set.length){
         return `No data has been modified`
     }
 
@@ -109,7 +109,16 @@ exports.errorHandler = (error, res) => {
         return res.status(400).json({
             success: false,
             message: error.message.replaceAll('"', '')
-            // `column ${error.message.split(' ')[1].replaceAll('"', '')} does not exist`
+        })
+    }else if(error.code === "22P02"){                                                       // kode error salah input type data
+        return res.status(406).json({
+            success: false,
+            message: error.message.replaceAll('"', '')
+        })
+    }else if(error.code === "23503"){                                                      // kode error foreign key / keterkaitan table
+        return res.status(409).json({
+            success: false,
+            message: error.detail.replaceAll(/[()="]/g, ' ')
         })
     }else if(!error.code){
         return res.status(400).json({                                                              

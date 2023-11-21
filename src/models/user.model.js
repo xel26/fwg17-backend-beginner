@@ -70,7 +70,7 @@ exports.insert = async (body) => {
 
     const queryString = await isStringExist("users", "email", body.email)                                        // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja. 
     if(queryString){
-        throw new Error(isStringExist)
+        throw new Error(queryString)
     }
 
     const sql = `
