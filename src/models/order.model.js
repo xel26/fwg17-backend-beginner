@@ -1,50 +1,92 @@
 const db = require('../lib/db.lib')
-const { isExist, findBy } = require('../moduls/handling')
+const { isExist, updateColumn } = require('../moduls/handling')
 
 
 
-exports.findAll = async () => {
-    const sql = `SELECT * FROM "orders" ORDER BY "id"`
-    const values = []
+exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
+    const orderType = ["ASC", "DESC"]
+    order = orderType.includes(order)? order : "ASC"
+    
+    const limit = 20
+    const offset = (page - 1) * limit
+
+    if(typeof sortBy === "object"){
+        const sortByColumn = ['id', 'userId', 'createdAt','grandTotal', 'fullName']
+        let columnSort = []
+    
+        sortBy.forEach(item => {
+           if(sortByColumn.includes(item)){
+            columnSort.push(`"${item}" ${order}`)
+           }
+        })
+    
+        const sql = `
+        SELECT "id", "userId", "orderNumber","status", "taxAmount", "total", "promoId", "priceCut", "grandTotal", "deliveryAddress", "fullName", "email", "createdAt"
+        FROM "orders" WHERE "fullName" ILIKE $1
+        ORDER BY ${columnSort.join(', ')}
+        LIMIT ${limit} OFFSET ${offset}
+        `
+        const values = [`%${searchKey}%`]
+        const {rows} = await db.query(sql, values)
+        return rows
+    }
+
+    const sql = `
+    SELECT "id", "userId","orderNumber","status", "taxAmount", "total", "promoId", "priceCut", "grandTotal", "deliveryAddress", "fullName", "email", "createdAt"
+    FROM "orders" WHERE "fullName" ILIKE $1
+    ORDER BY "${sortBy}" ${order}
+    LIMIT ${limit} OFFSET ${offset}
+    `
+    const values = [`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
     return rows
 }
 
 
-exports.findOne = async (data) => {
-    if(data.id){
-        return result = await findBy("orders", "id", data.id)
-    }else if(data.order_number){
-        return result = await findBy("orders", "order_number", data.order_number)
-    }else{
-        throw new Error (`cannot find specific data`)
+exports.findOne = async (id) => {
+    const sql = `
+    SELECT "id", "userId", "orderNumber", "promoId", "total", "taxAmount", "status", "deliveryAddress", "fullName", "email", "priceCut", "grandTotal", "createdAt"
+    FROM "orders" WHERE "id" = $1
+    `
+    const  values = [id]
+    const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`order with id ${id} not found `)
     }
+    return rows[0]
 }
 
 
-exports.insert = async (data) => {
+exports.insert = async (body) => {
+    const queryId = await isExist("users", parseInt(body.userId))                                                                     // melakukan query terlebih dahulu sebelum update, untuk mengecek apakah data yg ingin di update ada di database
+    if(queryId){
+        throw new Error(queryId)
+    }
+
     const sql = `
     INSERT INTO "orders"
-    ("user_id", "order_number", "promo_id", "delivery_address", "full_name", "email")
+    ("userId", "orderNumber", "deliveryAddress", "fullName", "email")
     VALUES
-    ($1, $2, $3, $4, $5, $6)
+    (
+    $1, $2, $3, 
+    (select "address" from "users" where "id" = $1),
+    (select "fullName" from "users" where "id" = $1),
+    (select "email" from "users" where "id" = $1)
+    )
     RETURNING *
     `
-    const values = [data.user_id, data.order_number, data.promo_id, data.delivery_address, data.full_name, data.email]
+    const values = [body.userId, body.orderNumber]
     const {rows} = await db.query(sql, values)
     return rows[0]
 }
 
 
-exports.update = async (id, data) => {
+exports.update = async (id, body) => {
     const queryId = await isExist("orders", id)
     if(queryId){
         throw new Error(queryId)
     }
-    const sql = `UPDATE "orders" SET "status" = $2 WHERE "id" = $1 RETURNING *`
-    const values = [id, data.status]
-    const {rows} = await db.query(sql, values)
-    return rows[0]
+    return await updateColumn(id, body, "orders")
 }
 
 

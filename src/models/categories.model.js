@@ -51,7 +51,7 @@ exports.findOne = async (id) => {
     const  values = [id]
     const {rows} = await db.query(sql, values)
     if(!rows.length){
-        throw new Error(`categories with id ${id} not found `)
+        throw new Error(`category with id ${id} not found `)
     }
     return rows[0]
 }

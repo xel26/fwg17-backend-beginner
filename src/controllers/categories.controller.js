@@ -28,7 +28,7 @@ exports.getDetailCategory = async (req, res) => {
         return res.json({                                                              
             success: true,
             messages: 'detail category',
-            results: category                                                  
+            result: category                                                  
         })
     } catch (error) {
         errorHandler(error, res)
@@ -42,7 +42,7 @@ exports.createCategory = async (req, res) => {
         return res.json({                                                              
             success: true,
             messages: 'create category successfully',
-            results: category                                                   
+            result: category                                                   
         })
         
     } catch (error) {
@@ -53,11 +53,17 @@ exports.createCategory = async (req, res) => {
 
 exports.updateCategory = async (req, res) => {
     try {
-        const category = await categoriesModel.update(parseInt(req.params.id), req.body) 
+        const category = await categoriesModel.update(parseInt(req.params.id), req.body)
+        if(category === "No data has been modified"){
+            return res.status(200).json({                                                              
+                success: true,
+                messages: category                                                 
+            })
+        }
         return res.json({                                                              
             success: true,
             messages: 'update category successfully',
-            results: category                                                   
+            result: category                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -71,7 +77,7 @@ exports.deleteCategory = async (req, res) => {
         return res.json({                                                              
             success: true,
             messages: 'delete category successfully',
-            results: category                                                   
+            result: category                                                   
         })
     } catch (error) {
         errorHandler(error, res)

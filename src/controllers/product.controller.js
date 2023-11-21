@@ -44,7 +44,7 @@ exports.createProduct = async (req, res) => {
         return res.json({                                                              
             success: true,
             messages: 'create product successfully',
-            results: product                                                   
+            result: product                                                   
         })
         
     } catch (error) {
@@ -56,11 +56,17 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     try {
-        const product = await productModel.update(parseInt(req.params.id), req.body) 
+        const product = await productModel.update(parseInt(req.params.id), req.body)
+        if(product === "No data has been modified"){
+            return res.status(200).json({                                                              
+                success: true,
+                messages: product                                                 
+            })
+        }
         return res.json({                                                              
             success: true,
             messages: 'update product successfully',
-            results: product                                                   
+            result: product                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -74,7 +80,7 @@ exports.deleteProduct = async (req, res) => {
         return res.json({                                                              
             success: true,
             messages: 'delete product successfully',
-            results: product                                                   
+            result: product                                                   
         })
     } catch (error) {
         errorHandler(error, res)
