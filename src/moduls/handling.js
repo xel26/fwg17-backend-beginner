@@ -84,8 +84,7 @@ exports.updateColumn = async (id, body, table, ) => {
         return `"${item}" = $${index + 2}`
     })
 
-    const sql = `UPDATE ${table} SET ${set.join(', ')}, "updated_at" = now() WHERE "id" = $1 RETURNING *`
-    console.log(sql)
+    const sql = `UPDATE ${table} SET ${set.join(', ')}, "updatedAt" = now() WHERE "id" = $1 RETURNING *`
     const {rows} = await db.query(sql, values)
     return rows[0]
 }
@@ -101,7 +100,7 @@ exports.errorHandler = (error, res) => {
     }else if(error.code === "23505"){                                                       // kode error unique constraint
         return res.status(400).json({                                                              
             success: false,
-            message:`${error.detail.split(' ')[1].replaceAll(/[()=]/g, ' ').trim()} already exist`                               
+            message:`${error.detail.split(' ')[1].replaceAll(/[()="]/g, ' ').trim()} already exist`                               
         })
     }else if(error.code === "42703"){                                                       // kode error column does not exist
         return res.status(400).json({

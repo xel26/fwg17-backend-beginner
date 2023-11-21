@@ -5,39 +5,35 @@ const { isExist, isStringExist, updateColumn } = require('../moduls/handling')
 exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
+    
+    const limit = 100
+    const offset = (page - 1) * limit
 
     if(typeof sortBy === "object"){
         const sortByColumn = ['id', 'fullName', 'email', 'createdAt']
-        let sortByArray = []
+        let columnSort = []
 
         sortBy.forEach(item => {
            if(sortByColumn.includes(item)){
-            sortByArray.push(item + ` ${order}`)
+            columnSort.push(`"${item}"` + ` ${order}`)
            }
         })
-
-        const limit = 5
-        const offset = (page - 1) * limit
     
         const sql = `
         SELECT "id", "fullName", "email", "address", "picture", "phoneNumber", "createdAt"
         FROM "users" WHERE "fullName" ILIKE $1
-        ORDER BY ${sortByArray.join(', ')}
+        ORDER BY ${columnSort.join(', ')}
         LIMIT ${limit} OFFSET ${offset}
         `
-        console.log(sql)
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
         return rows
     }
 
-    const limit = 5
-    const offset = (page - 1) * limit
-
     const sql = `
     SELECT "id", "fullName", "email", "address", "picture", "phoneNumber", "createdAt"
     FROM "users" WHERE "fullName" ilike $1
-    ORDER BY ${sortBy} ${order}
+    ORDER BY "${sortBy}" ${order}
     LIMIT ${limit} OFFSET ${offset}
     `
     console.log(sortBy)
