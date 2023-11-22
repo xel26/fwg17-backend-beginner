@@ -1,6 +1,6 @@
 const promoRouter = require('express').Router()
 
-const promoController = require('../controllers/promo.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const promoController = require('../../controllers/admin/promo.controller')                // import module user.controller yg berbentuk object yg berisi logika program
 
 promoRouter.get('/', promoController.getAllPromo)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
 promoRouter.get('/:id', promoController.getDetailPromo)                         // client mengirim permintaan pengambilan data, ~

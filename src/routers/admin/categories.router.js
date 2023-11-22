@@ -1,6 +1,6 @@
 const categoriesRouter = require('express').Router()
 
-const categoriesController = require('../controllers/categories.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const categoriesController = require('../../controllers/admin/categories.controller')                // import module user.controller yg berbentuk object yg berisi logika program
 
 categoriesRouter.get('/', categoriesController.getAllCategories)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
 categoriesRouter.get('/:id', categoriesController.getDetailCategory)                         // client mengirim permintaan pengambilan data, ~

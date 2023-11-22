@@ -1,5 +1,5 @@
-const promoModel = require('../models/promo.model')
-const { errorHandler, listAllData } = require('../moduls/handling')
+const promoModel = require('../../models/promo.model')
+const { errorHandler, listAllData } = require('../../moduls/handling')
 
 
 exports.getAllPromo = async (req, res) => {       

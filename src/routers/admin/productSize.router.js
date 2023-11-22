@@ -1,6 +1,6 @@
 const psRouter = require('express').Router()
 
-const psController = require('../controllers/productSize.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const psController = require('../../controllers/admin/productSize.controller')                // import module user.controller yg berbentuk object yg berisi logika program
 
 psRouter.get('/', psController.getAllProductSize)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
 psRouter.get('/:id', psController.getDetailProductSize)                         // client mengirim permintaan pengambilan data, ~

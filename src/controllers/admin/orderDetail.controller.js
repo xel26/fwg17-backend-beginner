@@ -1,5 +1,5 @@
-const orderDetailModel = require('../models/orderDetailModel.model')
-const { errorHandler, listAllData } = require('../moduls/handling')
+const orderDetailModel = require('../../models/orderDetailModel.model')
+const { errorHandler, listAllData } = require('../../moduls/handling')
 
 
 exports.getAllOrderDetail = async (req, res) => {       

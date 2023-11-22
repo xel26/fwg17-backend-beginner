@@ -1,5 +1,5 @@
-const tagsModel = require('../models/tags.model')
-const { errorHandler, listAllData } = require('../moduls/handling')
+const tagsModel = require('../../models/tags.model')
+const { errorHandler, listAllData } = require('../../moduls/handling')
 
 
 exports.getAllTags = async (req, res) => {       

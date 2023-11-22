@@ -1,5 +1,5 @@
-const psModel = require('../models/productSize.model')
-const { errorHandler, listAllData } = require('../moduls/handling')
+const psModel = require('../../models/productSize.model')
+const { errorHandler, listAllData } = require('../../moduls/handling')
 
 
 exports.getAllProductSize = async (req, res) => {       

@@ -1,5 +1,5 @@
-const productModel = require('../models/product.model')
-const {errorHandler} = require('../moduls/handling')
+const productModel = require('../../models/product.model')
+const {errorHandler} = require('../../moduls/handling')
 
 
 exports.getAllProducts = async (req, res) => {   
@@ -9,7 +9,7 @@ exports.getAllProducts = async (req, res) => {
         if(!listProducts.length){
             return res.status(404).json({
                 success: false,
-                messages: `no data found`
+                message: `no data found`
             })
         }
         return res.json({
@@ -28,7 +28,7 @@ exports.getDetailProduct = async (req, res) => {
         const product = await productModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
-            messages: 'detail product',
+            message: 'detail product',
             result: product                                                  
         })
 
@@ -43,7 +43,7 @@ exports.createProduct = async (req, res) => {
         const product = await productModel.insert(req.body) 
         return res.json({                                                              
             success: true,
-            messages: 'create product successfully',
+            message: 'create product successfully',
             result: product                                                   
         })
         
@@ -60,12 +60,12 @@ exports.updateProduct = async (req, res) => {
         if(product === "No data has been modified"){
             return res.status(200).json({                                                              
                 success: true,
-                messages: product                                                 
+                message: product                                                 
             })
         }
         return res.json({                                                              
             success: true,
-            messages: 'update product successfully',
+            message: 'update product successfully',
             result: product                                                   
         })
     } catch (error) {
@@ -79,7 +79,7 @@ exports.deleteProduct = async (req, res) => {
         const product = await productModel.delete(parseInt(req.params.id)) 
         return res.json({                                                              
             success: true,
-            messages: 'delete product successfully',
+            message: 'delete product successfully',
             result: product                                                   
         })
     } catch (error) {

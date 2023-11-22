@@ -1,5 +1,5 @@
-const pcModel = require('../models/ProductCategories.model')
-const { errorHandler, listAllData } = require('../moduls/handling')
+const pcModel = require('../../models/ProductCategories.model')
+const { errorHandler, listAllData } = require('../../moduls/handling')
 
 
 exports.getAllProductCategories = async (req, res) => {       

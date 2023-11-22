@@ -1,6 +1,6 @@
 const ptRouter = require('express').Router()
 
-const ptController = require('../controllers/productTags.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const ptController = require('../../controllers/admin/productTags.controller')                // import module user.controller yg berbentuk object yg berisi logika program
 
 ptRouter.get('/', ptController.getAllProductTags)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
 ptRouter.get('/:id', ptController.getDetailProductTags)                         // client mengirim permintaan pengambilan data, ~

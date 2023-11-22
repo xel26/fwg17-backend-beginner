@@ -1,5 +1,5 @@
-const ptModel = require('../models/productTags.model')
-const { errorHandler, listAllData } = require('../moduls/handling')
+const ptModel = require('../../models/productTags.model')
+const { errorHandler, listAllData } = require('../../moduls/handling')
 
 
 exports.getAllProductTags = async (req, res) => {       

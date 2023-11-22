@@ -1,5 +1,5 @@
-const userModel = require('../models/user.model')
-const { errorHandler } = require('../moduls/handling')
+const userModel = require('../../models/user.model')
+const { errorHandler } = require('../../moduls/handling')
 
 
 exports.getAllUsers = async (req, res) => { 
@@ -9,12 +9,12 @@ exports.getAllUsers = async (req, res) => {
         if(!listUsers.length){
             return res.status(404).json({
                 success: false,
-                messages: `no data found`
+                message: `no data found`
             })
         }
         return res.json({                                                              
             success: true,
-            messages: `List all users`,
+            message: `List all users`,
             results: listUsers                                                    
         })
     } catch (error) {
@@ -28,7 +28,7 @@ exports.getDetailUser = async (req, res) => {
         const user = await userModel.findOne(parseInt(req.params.id))
         return res.json({                                                              
             success: true,
-            messages: 'detail user',
+            message: 'detail user',
             result: user                                                  
         })
     } catch (error) {
@@ -42,7 +42,7 @@ exports.createUser = async (req, res) => {
         const user = await userModel.insert(req.body) 
         return res.json({                                                              
             success: true,
-            messages: 'create user successfully',
+            message: 'create user successfully',
             result: user                                                   
         })
         
@@ -57,7 +57,7 @@ exports.updateUser = async (req, res) => {
         if(req.body.role){
             return res.status(403).json({
                 success: false,
-                messages: 'Forbidden access denied cannot change role user'
+                message: 'Forbidden access denied cannot change role user'
             })
         }
     
@@ -65,12 +65,12 @@ exports.updateUser = async (req, res) => {
         if(user === "No data has been modified"){
             return res.status(200).json({                                                              
                 success: true,
-                messages: user                                                 
+                message: user                                                 
             })
         }
         return res.json({                                                              
             success: true,
-            messages: 'update user successfully',
+            message: 'update user successfully',
             result: user                                                   
         })
     } catch (error) {
@@ -84,7 +84,7 @@ exports.deleteUser = async (req, res) => {
         const user = await userModel.delete(parseInt(req.params.id)) 
         return res.json({                                                              
             success: true,
-            messages: 'delete user successfully',
+            message: 'delete user successfully',
             result: user                                                   
         })
     } catch (error) {

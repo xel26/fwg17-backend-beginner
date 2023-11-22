@@ -1,6 +1,6 @@
 const pcRouter = require('express').Router()
 
-const pcController = require('../controllers/productCategories.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const pcController = require('../../controllers/admin/productCategories.controller')                // import module user.controller yg berbentuk object yg berisi logika program
 
 pcRouter.get('/', pcController.getAllProductCategories)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
 pcRouter.get('/:id', pcController.getDetailProductCategories)                         // client mengirim permintaan pengambilan data, ~

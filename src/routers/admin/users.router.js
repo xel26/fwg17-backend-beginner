@@ -1,6 +1,6 @@
 const userRouter = require('express').Router()
 
-const userController = require('../controllers/user.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const userController = require('../../controllers/admin/user.controller')                // import module user.controller yg berbentuk object yg berisi logika program
 
 userRouter.get('/', userController.getAllUsers)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
 userRouter.get('/:id', userController.getDetailUser)                            // client mengirim permintaan pengambilan data, ~

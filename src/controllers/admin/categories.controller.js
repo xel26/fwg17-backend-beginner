@@ -1,5 +1,5 @@
-const categoriesModel = require('../models/categories.model')
-const { errorHandler } = require('../moduls/handling')
+const categoriesModel = require('../../models/categories.model')
+const { errorHandler } = require('../../moduls/handling')
 
 
 exports.getAllCategories = async (req, res) => {       

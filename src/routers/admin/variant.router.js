@@ -1,6 +1,6 @@
 const variantRouter = require('express').Router()
 
-const variantController = require('../controllers/variant.controller')                   // import module user.controller yg berbentuk object yg berisi logika program
+const variantController = require('../../controllers/admin/variant.controller')                   // import module user.controller yg berbentuk object yg berisi logika program
 
 variantRouter.get('/', variantController.getAllVariant)                                  // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
 variantRouter.get('/:id', variantController.getDetailVariant)                         // client mengirim permintaan pengambilan data, ~

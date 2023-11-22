@@ -76,8 +76,13 @@ exports.isStringExist = async (table, uniqueColumn, searchKey) => {
 
 
 exports.updateColumn = async (id, body, table, ) => {
+    // if(body.password){
+    //     await argon.hash(body.password)
+    //     console.log(body)
+    // }
     
     const column = Object.keys(body)
+    console.log(column)
     const values = [id, ...Object.values(body)]
     const set = column.map((item, index) => {
         return `"${item}" = $${index + 2}`

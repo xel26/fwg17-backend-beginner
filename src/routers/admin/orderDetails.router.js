@@ -1,6 +1,6 @@
 const orderDetail = require('express').Router()
 
-const orderDetailController = require('../controllers/orderDetail.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const orderDetailController = require('../../controllers/admin/orderDetail.controller')                // import module user.controller yg berbentuk object yg berisi logika program
 
 orderDetail.get('/', orderDetailController.getAllOrderDetail)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
 orderDetail.get('/:id', orderDetailController.getDetailOrderDetail)                         // client mengirim permintaan pengambilan data, ~

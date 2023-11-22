@@ -1,5 +1,5 @@
-const variantModel = require('../models/variant.model')
-const { errorHandler, listAllData } = require('../moduls/handling')
+const variantModel = require('../../models/variant.model')
+const { errorHandler, listAllData } = require('../../moduls/handling')
 
 
 exports.getAllVariant = async (req, res) => {       
