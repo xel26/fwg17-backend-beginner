@@ -21,7 +21,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
         })
     
         const sql = `
-        SELECT "id", "fullName", "email", "password", "role", "address", "picture", "phoneNumber", "createdAt"
+        SELECT *
         FROM "users" WHERE "fullName" ILIKE $1
         ORDER BY ${columnSort.join(', ')}
         LIMIT ${limit} OFFSET ${offset}
@@ -32,7 +32,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     }
 
     const sql = `
-    SELECT "id", "fullName", "email", "password", "role", "address", "picture", "phoneNumber", "createdAt"
+    SELECT *
     FROM "users" WHERE "fullName" ilike $1
     ORDER BY "${sortBy}" ${order}
     LIMIT ${limit} OFFSET ${offset}
@@ -47,7 +47,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
 
 exports.findOne = async (id) => {  
     const sql = `
-    SELECT "id", "fullName", "email","role", "address", "picture", "phoneNumber", "createdAt"
+    SELECT *
     FROM "users" WHERE "id" = $1
     `
     const  values = [id]
@@ -113,8 +113,7 @@ exports.update = async (id, body) => {
         const queryString =  await isStringExist("users", "email", body.email)                                       // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja.
         if(queryString){
             throw new Error (queryString)
-        }
-        
+        } 
     }
 
     return await updateColumn(id, body, "users")

@@ -1,19 +1,35 @@
 const variantModel = require('../../models/variant.model')
-const { errorHandler, listAllData } = require('../../moduls/handling')
+const { errorHandler } = require('../../moduls/handling')
 
 
 exports.getAllVariant = async (req, res) => {       
-    return results = await listAllData(variantModel, "variant", res)
+    const {searchKey, sortBy, order, page} = req.query      
+    try {
+        const listVariants = await variantModel.findAll(searchKey, sortBy, order, page)
+        if(!listVariants.length){
+            return res.status(404).json({
+                success: false,
+                message: `no data found`
+            })
+        }
+        return res.json({                                                              
+            success: true,
+            message: `List all users`,
+            results: listVariants                                                    
+        })
+    } catch (error) {
+        errorHandler(error, res)
+    }
 }
 
 
 exports.getDetailVariant = async (req, res) => {                                        
     try {
-        const listVariant = await variantModel.findOne(req.body)
+        const variant = await variantModel.findOne(parseInt(req.params.id))
         return res.json({                                                              
             success: true,
-            messages: 'detail variant',
-            results: listVariant                                                  
+            message: 'detail variant',
+            result: variant                                                  
         })
     } catch (error) {
         errorHandler(error, res)
@@ -23,26 +39,32 @@ exports.getDetailVariant = async (req, res) => {
 
 exports.createVariant = async (req, res) => {
     try {
-        const listVariant = await variantModel.insert(req.body) 
+        const variant = await variantModel.insert(req.body) 
         return res.json({                                                              
             success: true,
-            messages: 'create variant successfully',
-            results: listVariant                                                   
+            message: 'create variant successfully',
+            result: variant                                                   
         })
         
     } catch (error) {
-        return errorHandler(error, res, `the variant's name already exist`)
+        return errorHandler(error, res)
     }
 }
 
 
 exports.updateVariant = async (req, res) => {
     try {
-        const listVariant = await variantModel.update(parseInt(req.params.id), req.body) 
+        const variant = await variantModel.update(parseInt(req.params.id), req.body)
+        if(variant === "No data has been modified"){
+            return res.status(200).json({                                                              
+                success: true,
+                message: variant                                                 
+            })
+        }
         return res.json({                                                              
             success: true,
-            messages: 'update variant successfully',
-            results: listVariant                                                   
+            message: 'update variant successfully',
+            result: variant                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -52,11 +74,11 @@ exports.updateVariant = async (req, res) => {
 
 exports.deleteVariant = async (req, res) => {
     try {
-        const listVariant = await variantModel.delete(parseInt(req.params.id)) 
+        const variant = await variantModel.delete(parseInt(req.params.id)) 
         return res.json({                                                              
             success: true,
-            messages: 'delete variant successfully',
-            results: listVariant                                                   
+            message: 'delete variant successfully',
+            result: variant                                                   
         })
     } catch (error) {
         errorHandler(error, res)

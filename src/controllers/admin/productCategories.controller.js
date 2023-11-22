@@ -1,19 +1,35 @@
 const pcModel = require('../../models/ProductCategories.model')
-const { errorHandler, listAllData } = require('../../moduls/handling')
+const { errorHandler } = require('../../moduls/handling')
 
 
-exports.getAllProductCategories = async (req, res) => {       
-    return results = await listAllData(pcModel, "product_categories", res)
+exports.getAllProductCategories = async (req, res) => {
+    const {sortBy, order, page} = req.query      
+    try {
+        const listPC = await pcModel.findAll(sortBy, order, page)
+        if(!listPC.length){
+            return res.status(404).json({
+                success: false,
+                message: `no data found`
+            })
+        }
+        return res.json({                                                              
+            success: true,
+            message: `List all productCategories`,
+            result: listPC                                                    
+        })
+    } catch (error) {
+        errorHandler(error, res)
+    }
 }
 
 
 exports.getDetailProductCategories = async (req, res) => {                                        
     try {
-        const listPC = await pcModel.findOne(req.body)
+        const ProductCategories = await pcModel.findOne(parseInt(req.params.id))
         return res.json({                                                              
             success: true,
-            messages: 'detail product categories',
-            results: listPC                                                  
+            message: 'detail ProductCategories',
+            result: ProductCategories                                                  
         })
     } catch (error) {
         errorHandler(error, res)
@@ -26,8 +42,8 @@ exports.createProductCategories = async (req, res) => {
         const listPC = await pcModel.insert(req.body) 
         return res.json({                                                              
             success: true,
-            messages: 'create product categories successfully',
-            results: listPC                                                   
+            message: 'create productCategory successfully',
+            result: listPC                                                   
         })
         
     } catch (error) {
@@ -38,11 +54,11 @@ exports.createProductCategories = async (req, res) => {
 
 exports.updateProductCategories = async (req, res) => {
     try {
-        const listPC = await pcModel.update(parseInt(req.params.id), req.body) 
+        const ProductCategories = await pcModel.update(parseInt(req.params.id), req.body) 
         return res.json({                                                              
             success: true,
-            messages: 'update product categories successfully',
-            results: listPC                                                   
+            message: 'update productCategory successfully',
+            result: ProductCategories                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -52,11 +68,11 @@ exports.updateProductCategories = async (req, res) => {
 
 exports.deleteProductCategories = async (req, res) => {
     try {
-        const listPC = await pcModel.delete(parseInt(req.params.id)) 
+        const ProductCategories = await pcModel.delete(parseInt(req.params.id)) 
         return res.json({                                                              
             success: true,
-            messages: 'delete product categories successfully',
-            results: listPC                                                   
+            message: 'delete productCategory successfully',
+            result: ProductCategories                                                   
         })
     } catch (error) {
         errorHandler(error, res)

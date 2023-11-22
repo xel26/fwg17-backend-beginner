@@ -54,12 +54,12 @@ exports.createUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     try {
-        if(req.body.role){
-            return res.status(403).json({
-                success: false,
-                message: 'Forbidden access denied cannot change role user'
-            })
-        }
+        // if(req.body.role){
+        //     return res.status(403).json({
+        //         success: false,
+        //         message: 'Forbidden access denied cannot change role user'
+        //     })
+        // }
     
         const user = await userModel.update(parseInt(req.params.id), req.body)
         if(user === "No data has been modified"){

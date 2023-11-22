@@ -1,47 +1,79 @@
 const db = require('../lib/db.lib')
-const { isExist, findBy } = require('../moduls/handling')
+const { isExist } = require('../moduls/handling')
 
 
-exports.findAll = async () => {
-    const sql = `SELECT * FROM "message" ORDER BY "id"`
+exports.findAll = async (sortBy="id", order="ASC", page=1) => {
+    const orderType = ["ASC", "DESC"]
+    order = orderType.includes(order)? order : "ASC"
+    
+    const limit = 10
+    const offset = (page - 1) * limit
+
+    if(typeof sortBy === "object"){
+        const sortByColumn = ['id', 'createdAt', 'recipientId', 'senderId']
+        let columnSort = []
+
+        sortBy.forEach(item => {
+           if(sortByColumn.includes(item)){
+            columnSort.push(`"${item}" ${order}`)
+           }
+        })
+    
+        const sql = `
+        SELECT *
+        FROM "message"
+        ORDER BY ${columnSort.join(', ')}
+        LIMIT ${limit} OFFSET ${offset}
+        `
+        const values = []
+        const {rows} = await db.query(sql, values)
+        return rows
+    }
+
+    const sql = `
+    SELECT *
+    FROM "message"
+    ORDER BY "${sortBy}" ${order}
+    LIMIT ${limit} OFFSET ${offset}
+    `
+    console.log(sortBy)
+    console.log(sql)
     const values = []
     const {rows} = await db.query(sql, values)
     return rows
 }
 
 
-exports.findOne = async (data) => {                                                                             
-    if(data.id){
-        return result = await findBy("message", "id", data.id)
-    }else{
-        throw new Error (`cannot find specific data`)
+exports.findOne = async (id) => {                                                                             
+    const sql = `
+    SELECT *
+    FROM "message" WHERE "id" = $1
+    `
+    const  values = [id]
+    const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`message with id ${id} not found `)
     }
+    return rows[0]
 }
 
 
-exports.insert = async (data) => {
+exports.insert = async (body) => {
     const sql = `
-    INSERT INTO "message"
-    ("recipient_id", "sender_id", "text")
-    VALUES
-    ($1, $2, $3)
-    RETURNING *
-    `
-    const values = [data.recipient_id, data.sender_id, data.text]
+    INSERT INTO "message" ("recipientId", "senderId", "text")
+    VALUES ($1, $2, $3) RETURNING *`
+    const values = [body.recipientId, body.senderId, body.text]
     const {rows} = await db.query(sql, values)
     return rows[0]
 }
 
 
-exports.update = async (id, data) => {
+exports.update = async (id, body) => {
     const queryId = await isExist("message", id)
     if(queryId){
         throw new Error(queryId)
     }
-    const sql = `UPDATE "message" SET "text" = $2 WHERE "id" = $1 RETURNING *`
-    const values = [id, data.text]
-    const {rows} = await db.query(sql, values)
-    return rows[0]
+    return await updateColumn(id, body, "message")
 }
 
 

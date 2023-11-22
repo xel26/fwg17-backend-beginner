@@ -1,19 +1,35 @@
 const ptModel = require('../../models/productTags.model')
-const { errorHandler, listAllData } = require('../../moduls/handling')
+const { errorHandler } = require('../../moduls/handling')
 
 
 exports.getAllProductTags = async (req, res) => {       
-    return results = await listAllData(ptModel, "product_tags", res)
+    const {sortBy, order, page} = req.query      
+    try {
+        const listProductTags = await ptModel.findAll(sortBy, order, page)
+        if(!listProductTags.length){
+            return res.status(404).json({
+                success: false,
+                message: `no data found`
+            })
+        }
+        return res.json({                                                              
+            success: true,
+            message: `List all productTags`,
+            results: listProductTags                                                    
+        })
+    } catch (error) {
+        errorHandler(error, res)
+    }
 }
 
 
 exports.getDetailProductTags = async (req, res) => {                                        
     try {
-        const listPT = await ptModel.findOne(req.body)
+        const productTag = await ptModel.findOne(parseInt(req.params.id))
         return res.json({                                                              
             success: true,
-            messages: 'detail product tags',
-            results: listPT                                                  
+            message: 'detail product tags',
+            result: productTag                                                  
         })
     } catch (error) {
         errorHandler(error, res)
@@ -23,11 +39,11 @@ exports.getDetailProductTags = async (req, res) => {
 
 exports.createProductTags = async (req, res) => {
     try {
-        const listPT = await ptModel.insert(req.body) 
+        const productTag = await ptModel.insert(req.body) 
         return res.json({                                                              
             success: true,
-            messages: 'create product tags successfully',
-            results: listPT                                                   
+            message: 'create product tag successfully',
+            result: productTag                                                   
         })
         
     } catch (error) {
@@ -38,11 +54,17 @@ exports.createProductTags = async (req, res) => {
 
 exports.updateProductTags = async (req, res) => {
     try {
-        const listPT = await ptModel.update(parseInt(req.params.id), req.body) 
+        const productTag = await ptModel.update(parseInt(req.params.id), req.body)
+        if(productTag === "No data has been modified"){
+            return res.status(200).json({                                                              
+                success: true,
+                message: productTag                                                 
+            })
+        }
         return res.json({                                                              
             success: true,
-            messages: 'update product tags successfully',
-            results: listPT                                                   
+            messages: 'update product tag successfully',
+            results: productTag                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -52,11 +74,11 @@ exports.updateProductTags = async (req, res) => {
 
 exports.deleteProductTags = async (req, res) => {
     try {
-        const listPT = await ptModel.delete(parseInt(req.params.id)) 
+        const productTag = await ptModel.delete(parseInt(req.params.id)) 
         return res.json({                                                              
             success: true,
-            messages: 'delete product tags successfully',
-            results: listPT                                                   
+            messages: 'delete product tag successfully',
+            results: productTag                                                   
         })
     } catch (error) {
         errorHandler(error, res)

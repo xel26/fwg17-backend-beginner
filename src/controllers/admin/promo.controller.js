@@ -1,19 +1,35 @@
 const promoModel = require('../../models/promo.model')
-const { errorHandler, listAllData } = require('../../moduls/handling')
+const { errorHandler } = require('../../moduls/handling')
 
 
 exports.getAllPromo = async (req, res) => {       
-    return results = await listAllData(promoModel, "promo", res)
+    const {searchKey, sortBy, order, page} = req.query      
+    try {
+        const listPromo = await promoModel.findAll(searchKey, sortBy, order, page)
+        if(!listPromo.length){
+            return res.status(404).json({
+                success: false,
+                message: `no data found`
+            })
+        }
+        return res.json({                                                              
+            success: true,
+            message: `List all promo`,
+            results: listPromo                                                    
+        })
+    } catch (error) {
+        errorHandler(error, res)
+    }
 }
 
 
 exports.getDetailPromo = async (req, res) => {                                        
     try {
-        const listPromo = await promoModel.findOne(req.body)
+        const promo = await promoModel.findOne(parseInt(req.params.id))
         return res.json({                                                              
             success: true,
-            messages: 'detail promo',
-            results: listPromo                                                  
+            message: 'detail promo',
+            result: promo                                                  
         })
     } catch (error) {
         errorHandler(error, res)
@@ -23,11 +39,11 @@ exports.getDetailPromo = async (req, res) => {
 
 exports.createPromo = async (req, res) => {
     try {
-        const listPromo = await promoModel.insert(req.body) 
+        const promo = await promoModel.insert(req.body) 
         return res.json({                                                              
             success: true,
-            messages: 'create promo successfully',
-            results: listPromo                                                   
+            message: 'create promo successfully',
+            result: promo                                                   
         })
         
     } catch (error) {
@@ -38,11 +54,17 @@ exports.createPromo = async (req, res) => {
 
 exports.updatePromo = async (req, res) => {
     try {
-        const listPromo = await promoModel.update(parseInt(req.params.id), req.body) 
+        const promo = await promoModel.update(parseInt(req.params.id), req.body)
+        if(promo === "No data has been modified"){
+            return res.status(200).json({                                                              
+                success: true,
+                message: promo                                                 
+            })
+        }
         return res.json({                                                              
             success: true,
-            messages: 'update promo successfully',
-            results: listPromo                                                   
+            message: 'update promo successfully',
+            result: promo                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -52,11 +74,11 @@ exports.updatePromo = async (req, res) => {
 
 exports.deletePromo = async (req, res) => {
     try {
-        const listPromo = await promoModel.delete(parseInt(req.params.id)) 
+        const promo = await promoModel.delete(parseInt(req.params.id)) 
         return res.json({                                                              
             success: true,
-            messages: 'delete promo successfully',
-            results: listPromo                                                   
+            message: 'delete promo successfully',
+            result: promo                                                   
         })
     } catch (error) {
         errorHandler(error, res)

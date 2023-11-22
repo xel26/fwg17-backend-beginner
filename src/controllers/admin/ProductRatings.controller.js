@@ -1,19 +1,35 @@
 const prModel = require('../../models/productRatings.model')
-const { errorHandler, listAllData } = require('../../moduls/handling')
+const { errorHandler } = require('../../moduls/handling')
 
 
 exports.getAllProductRatings = async (req, res) => {       
-    return results = await listAllData(prModel, "product_ratings", res)
+    const {sortBy, order, page} = req.query      
+    try {
+        const listProductRatings = await prModel.findAll(sortBy, order, page)
+        if(!listProductRatings.length){
+            return res.status(404).json({
+                success: false,
+                message: `no data found`
+            })
+        }
+        return res.json({                                                              
+            success: true,
+            message: `List all productRatings`,
+            results: listProductRatings                                                    
+        })
+    } catch (error) {
+        errorHandler(error, res)
+    }
 }
 
 
 exports.getDetailProductRating = async (req, res) => {                                        
     try {
-        const listPR = await prModel.findOne(req.body)
+        const productRating = await prModel.findOne(parseInt(req.params.id))
         return res.json({                                                              
             success: true,
-            messages: 'detail product rating',
-            results: listPR                                                  
+            message: 'detail productRating',
+            result: productRating                                                 
         })
     } catch (error) {
         errorHandler(error, res)
@@ -23,26 +39,32 @@ exports.getDetailProductRating = async (req, res) => {
 
 exports.createProductRating = async (req, res) => {
     try {
-        const listPR = await prModel.insert(req.body) 
+        const productRating = await prModel.insert(req.body) 
         return res.json({                                                              
             success: true,
-            messages: 'create product ratin successfully',
-            results: listPR                                                   
+            message: 'create productRating successfully',
+            result: productRating                                                   
         })
         
     } catch (error) {
-        return errorHandler(error, res, '')
+        return errorHandler(error, res)
     }
 }
 
 
 exports.updateProductRating = async (req, res) => {
     try {
-        const listPR = await prModel.update(parseInt(req.params.id), req.body) 
+        const productRating = await prModel.update(parseInt(req.params.id), req.body)
+        if(productRating === "No data has been modified"){
+            return res.status(200).json({                                                              
+                success: true,
+                message: productRating                                         
+            })
+        }
         return res.json({                                                              
             success: true,
-            messages: 'update product ratings successfully',
-            results: listPR                                                   
+            message: 'update productRating successfully',
+            result: productRating                                                  
         })
     } catch (error) {
         errorHandler(error, res)
@@ -52,11 +74,11 @@ exports.updateProductRating = async (req, res) => {
 
 exports.deleteProductRating = async (req, res) => {
     try {
-        const listPR = await prModel.delete(parseInt(req.params.id)) 
+        const productRating = await prModel.delete(parseInt(req.params.id)) 
         return res.json({                                                              
             success: true,
-            messages: 'delete product ratings successfully',
-            results: listPR                                                   
+            message: 'delete productRating successfully',
+            result: productRating                                                  
         })
     } catch (error) {
         errorHandler(error, res)

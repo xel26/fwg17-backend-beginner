@@ -82,7 +82,6 @@ exports.updateColumn = async (id, body, table, ) => {
     // }
     
     const column = Object.keys(body)
-    console.log(column)
     const values = [id, ...Object.values(body)]
     const set = column.map((item, index) => {
         return `"${item}" = $${index + 2}`
