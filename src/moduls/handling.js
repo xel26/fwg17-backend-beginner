@@ -24,26 +24,26 @@ exports.listAllData = async (model, table, res) => {
 
 
 
-exports.findBy = async (table, uniqueColumn, searchKey) => {
-    if(isNaN(searchKey)){                                                                                                   // jika searchKey berupa string text
-        const sql = `SELECT * FROM ${table} where ${uniqueColumn}::varchar ILIKE $1`                                        // maka pencarian akan menggunakan ilike agar case-insensitive
-        let values = [searchKey]
-        const {rows} = await db.query(sql, values)
-        if(!rows.length){
-            throw new Error(`data with ${uniqueColumn.replace('_', ' ')} ${searchKey} not found `)                          // jika data tidak ditemukan maka akan melempar errro yg akan di tangkap oleh catch di file controller 
-        }
-        return rows[0]
-    }
+// exports.findBy = async (table, uniqueColumn, searchKey) => {
+//     if(isNaN(searchKey)){                                                                                                   // jika searchKey berupa string text
+//         const sql = `SELECT * FROM ${table} where ${uniqueColumn}::varchar ILIKE $1`                                        // maka pencarian akan menggunakan ilike agar case-insensitive
+//         let values = [searchKey]
+//         const {rows} = await db.query(sql, values)
+//         if(!rows.length){
+//             throw new Error(`data with ${uniqueColumn.replace('_', ' ')} ${searchKey} not found `)                          // jika data tidak ditemukan maka akan melempar errro yg akan di tangkap oleh catch di file controller 
+//         }
+//         return rows[0]
+//     }
 
-    const sql = `SELECT * FROM ${table} where ${uniqueColumn} = $1`
-    let values = []
-    values = [searchKey]
-    const {rows} = await db.query(sql, values)
-    if(!rows.length){
-        throw new Error(`data with ${uniqueColumn.replaceAll('_', ' ')} ${searchKey} not found `)
-    }
-    return rows[0]
-}
+//     const sql = `SELECT * FROM ${table} where ${uniqueColumn} = $1`
+//     let values = []
+//     values = [searchKey]
+//     const {rows} = await db.query(sql, values)
+//     if(!rows.length){
+//         throw new Error(`data with ${uniqueColumn.replaceAll('_', ' ')} ${searchKey} not found `)
+//     }
+//     return rows[0]
+// }
 
 
 exports.isExist = async (table, id) => {
@@ -125,6 +125,16 @@ exports.errorHandler = (error, res) => {
             success: false,
             message: error.detail.replaceAll(/[()="]/g, ' ')
         })
+    }else if(error.message.includes("not found")){                                         // pesan dan status error not found
+        return res.status(404).json({                                                              
+            success: false,
+            message: error.message                                                          // message error berasal dari error custom =>  throw new Error('message')                                               
+        })
+    }else if(error.message.includes("not registered") || error.message.includes("wrong password") || error.message.includes("invalid token")){             // error login dan otorisasi auth.middleware
+            return res.status(401).json({
+            success: false,
+            message: error.message
+            })
     }else if(!error.code){
         return res.status(400).json({                                                              
             success: false,

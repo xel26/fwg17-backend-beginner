@@ -37,7 +37,6 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     ORDER BY "${sortBy}" ${order}
     LIMIT ${limit} OFFSET ${offset}
     `
-    console.log(sortBy)
     console.log(sql)
     const values = [`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
@@ -62,42 +61,40 @@ exports.findOne = async (id) => {
 exports.findOneByEmail = async (email) => {  
     const sql = `
     SELECT "id", "fullName", "email", "password", "role", "address", "picture", "phoneNumber", "createdAt"
-    FROM "users" WHERE "email" = $1
+    FROM "users" WHERE "email" ILIKE $1
     `
     const  values = [email]
     const {rows} = await db.query(sql, values)
-    // if(!rows.length){
-    //     throw new Error(`user with email ${email} not found `)
-    // }
     return rows[0]
 }
 
 
 exports.insert = async (body) => {
-    // let role = ''
-    // if(body.email === "admin@example.com" && body.password === "@adminPass"){
-    //     role = "admin"
-    // }else if(body.email.includes('staffCodeCompany') && body.password === "secretPassForStaff"){
-    //     role = "staff"
-    // }else{
-    //     role = "customer"
-    // }
+    console.log(body.password)
+    let role = ''
+    if(body.email === "admin@example.com" && body.password === "@adminPass"){
+        role = "admin"
+    }else if(body.email.includes('staff') && body.password === "@staffPass"){
+        role = "staff"
+    }else{
+        role = "customer"
+    }
 
     const queryString = await isStringExist("users", "email", body.email)                                        // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja. 
     if(queryString){
         throw new Error(queryString)
     }
 
-    const hashed = await argon.hash(body.password)
+    body.password = await argon.hash(body.password)
 
     const sql = `
     INSERT INTO "users"
-    ("fullName", "email", "password", "role", "address", "picture", "phoneNumber")
+    ("fullName", "email", "password", "role")
     VALUES
-    ($1, $2, $3, $4, $5, $6, $7)
+    ($1, $2, $3, $4)
     RETURNING *
     `
-    const values = [body.fullName, body.email, hashed, body.address, body.picture, body.phoneNumber, body.role]
+    const values = [body.fullName, body.email, body.password, role]
     const {rows} = await db.query(sql, values)
     return rows[0]
 }
