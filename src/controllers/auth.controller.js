@@ -56,3 +56,29 @@ exports.register = async (req, res) => {                                        
         errorHandler(error, res)
     }
 }
+
+
+exports.forgotPassword = async (req, res) => {
+    try {
+        const rawToken = req.headers.authorization || ''                                               // user yg pernah login akan memiliki token                    
+        const prefix = "Bearer "                                                                       // token tersebut bisa di pakai untuk otentikasi user, bahwa user tersebut sudah terdaftar   
+        const token = rawToken.slice(prefix.length)                                                    // di dalam token terdapat payload yg merupakan informasi user(id, role) yg bisa di gunakan untuk parameter pencarian ke database, password user mana yg ingin di ubah
+
+        const payload = jwt.verify(token, process.env.APP_SECRET || 'secretKey')                       // verifikasi token, jika berhasil mengembalikan id dan role user lalu di simpan di variable payload
+
+        const id = payload.id                                                                          // mengakses user id
+        const newPassword = req.body.password                                                          // memasukan password baru
+
+        const hashedPassword = await argon.hash(newPassword)                                            // hash password
+        await userModel.forgotPassword(id, hashedPassword)                                              // melakukan update password ke database
+
+        return res.json({
+            success: true, 
+            message: `change password success`
+        })
+
+
+    } catch (error) {
+        errorHandler(error, res)
+    }
+}

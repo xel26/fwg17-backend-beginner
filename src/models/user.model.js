@@ -60,7 +60,7 @@ exports.findOne = async (id) => {
 
 exports.findOneByEmail = async (email) => {  
     const sql = `
-    SELECT "id", "fullName", "email", "password", "role", "address", "picture", "phoneNumber", "createdAt"
+    SELECT *
     FROM "users" WHERE "email" ILIKE $1
     `
     const  values = [email]
@@ -124,6 +124,14 @@ exports.delete = async (id) => {                                                
     }
     const sql = `DELETE FROM "users" WHERE "id" = $1 RETURNING *`
     const values = [id]
+    const {rows} = await db.query(sql, values)
+    return rows[0]
+}
+
+
+exports.forgotPassword = async (id, newPassword) => {
+    const sql = `UPDATE "users" SET "password" = $2 WHERE "id" = $1`
+    const values = [id, newPassword]
     const {rows} = await db.query(sql, values)
     return rows[0]
 }
