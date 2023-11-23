@@ -83,7 +83,6 @@ exports.updateColumn = async (id, body, table, ) => {
 
     const column = Object.keys(body)
     let values = [id, ...Object.values(body)]
-    console.log(values)
     const set = column.map((item, index) => {
         return `"${item}" = $${index + 2}`
     })
@@ -103,7 +102,7 @@ exports.errorHandler = (error, res) => {
     if(error.code === "23502"){                                                             // kode error not null constraint
         return res.status(400).json({                                                              
             success: false,
-            message: `${error.column.replaceAll('_', ' ')} cannot be empty`                                                 
+            message: `${error.column} cannot be empty`                                                 
         })
     }else if(error.code === "23505"){                                                       // kode error unique constraint
         return res.status(400).json({                                                              
@@ -123,9 +122,9 @@ exports.errorHandler = (error, res) => {
     }else if(error.code === "23503"){                                                      // kode error foreign key / keterkaitan table
         return res.status(409).json({
             success: false,
-            message: error.detail.replaceAll(/[()="]/g, ' ')
+            message: error.detail.replaceAll(/[()="]/g, ' ').replace('Key', 'data with')
         })
-    }else if(error.message.includes("not found")){                                         // pesan dan status error not found
+    }else if(error.message.includes("found")){                                         // pesan dan status error not found
         return res.status(404).json({                                                              
             success: false,
             message: error.message                                                          // message error berasal dari error custom =>  throw new Error('message')                                               

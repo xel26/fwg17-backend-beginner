@@ -6,12 +6,6 @@ exports.getAllUsers = async (req, res) => {
     const {searchKey, sortBy, order, page} = req.query      
     try {
         const listUsers = await userModel.findAll(searchKey, sortBy, order, page)
-        if(!listUsers.length){
-            return res.status(404).json({
-                success: false,
-                message: `no data found`
-            })
-        }
         return res.json({                                                              
             success: true,
             message: `List all users`,

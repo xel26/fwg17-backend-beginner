@@ -9,9 +9,61 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     const limit = 100
     const offset = (page - 1) * limit
 
+    if(sortBy === "categories"){
+        const sql = `
+        SELECT 
+        "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image",
+        "p"."discount", "p"."isRecommended", "p"."createdAt", "categories"."name" AS "category"
+        FROM "products" "p"
+        JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
+        JOIN "categories" on ("categories"."id" = "pc"."categoryId")
+        WHERE "p"."name" ILIKE $1
+        ORDER BY "${sortBy}"."name" ${order}
+        LIMIT ${limit} OFFSET ${offset}
+        `
+        console.log(sql)
+        const values =[`%${searchKey}%`]
+        const {rows} = await db.query(sql, values)
+        if(!rows.length){
+            throw new Error(`no data found`)
+        }
+        return rows
+    }
+
     if(typeof sortBy === "object"){
-        const sortByColumn = ["id", "name", "basePrice", "createdAt"]
+        const sortByColumn = ["id", "name", "basePrice", "createdAt", "categories"]
         const columnSort = []
+
+        if(sortBy.includes("categories")){
+            sortBy.map(item => {
+                if(sortByColumn.includes(item)){
+                    if(item === "categories"){
+                        columnSort.push(`"${item}"."name" ${order}`)
+                        return
+                    }
+                 columnSort.push(`"p"."${item}" ${order}`)
+                }
+             })
+             
+             const sql = `
+             SELECT 
+             "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image",
+             "p"."discount", "p"."isRecommended", "p"."createdAt", "categories"."name" AS "category"
+             FROM "products" "p"
+             JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
+             JOIN "categories" on ("categories"."id" = "pc"."categoryId")
+             WHERE "p"."name" ILIKE $1
+             ORDER BY ${columnSort.join(', ')}
+             LIMIT ${limit} OFFSET ${offset}
+             `
+             console.log(sql)
+             const values =[`%${searchKey}%`]
+             const {rows} = await db.query(sql, values)
+             if(!rows.length){
+                 throw new Error(`no data found`)
+             }
+             return rows
+        }
         
         sortBy.map(item => {
            if(sortByColumn.includes(item)){
@@ -20,24 +72,30 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
         })
         
         const sql = `
-        SELECT "id", "name", "description", "basePrice", "image", "createdAt" 
+        SELECT * 
         FROM "products" WHERE "name" ILIKE $1
         ORDER BY ${columnSort.join(', ')}
         LIMIT ${limit} OFFSET ${offset}
         `
         const values =[`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
+        if(!rows.length){
+            throw new Error(`no data found`)
+        }
         return rows
     }
 
     const sql = `
-    SELECT "id", "name", "description", "basePrice", "image", "createdAt" 
+    SELECT *
     FROM "products" WHERE "name" ILIKE $1
     ORDER BY "${sortBy}" ${order}
     LIMIT ${limit} OFFSET ${offset}
     `
     const values =[`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found`)
+    }
     return rows
 }
 
@@ -50,7 +108,7 @@ exports.findOne = async (id) => {
     let values = [id]
     const {rows} = await db.query(sql, values)
     if(!rows.length){
-        throw new Error(`product with id ${id} not found `)
+        throw new Error(`product with id ${id} not found`)
     }
     return rows[0]
 }
