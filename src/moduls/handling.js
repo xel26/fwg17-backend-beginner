@@ -3,6 +3,7 @@
 
 
 const db = require('../lib/db.lib')
+const argon = require('argon2')
 
 
 exports.listAllData = async (model, table, res) => {
@@ -76,13 +77,13 @@ exports.isStringExist = async (table, uniqueColumn, searchKey) => {
 
 
 exports.updateColumn = async (id, body, table, ) => {
-    // if(body.password){
-    //     await argon.hash(body.password)
-    //     console.log(body)
-    // }
-    
+    if(Object.hasOwn(body, 'password')){
+        body.password = await argon.hash(body.password)
+    }
+
     const column = Object.keys(body)
-    const values = [id, ...Object.values(body)]
+    let values = [id, ...Object.values(body)]
+    console.log(values)
     const set = column.map((item, index) => {
         return `"${item}" = $${index + 2}`
     })
