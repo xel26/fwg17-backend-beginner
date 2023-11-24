@@ -6,12 +6,6 @@ exports.getAllProductTags = async (req, res) => {
     const {sortBy, order, page} = req.query      
     try {
         const listProductTags = await ptModel.findAll(sortBy, order, page)
-        if(!listProductTags.length){
-            return res.status(404).json({
-                success: false,
-                message: `no data found`
-            })
-        }
         return res.json({                                                              
             success: true,
             message: `List all productTags`,
@@ -28,7 +22,7 @@ exports.getDetailProductTags = async (req, res) => {
         const productTag = await ptModel.findOne(parseInt(req.params.id))
         return res.json({                                                              
             success: true,
-            message: 'detail product tags',
+            message: 'detail product tag',
             result: productTag                                                  
         })
     } catch (error) {

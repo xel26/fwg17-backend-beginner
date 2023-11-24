@@ -7,7 +7,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
     
-    const limit = 20
+    const limit = 10
     const offset = (page - 1) * limit
 
     if(typeof sortBy === "object"){
@@ -21,31 +21,37 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
         })
     
         const sql = `
-        SELECT "id", "userId", "orderNumber","status", "taxAmount", "total", "promoId", "priceCut", "grandTotal", "deliveryAddress", "fullName", "email", "createdAt"
+        SELECT *
         FROM "orders" WHERE "fullName" ILIKE $1
         ORDER BY ${columnSort.join(', ')}
         LIMIT ${limit} OFFSET ${offset}
         `
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
+        if(!rows.length){
+            throw new Error(`no data found`)
+        }
         return rows
     }
 
     const sql = `
-    SELECT "id", "userId","orderNumber","status", "taxAmount", "total", "promoId", "priceCut", "grandTotal", "deliveryAddress", "fullName", "email", "createdAt"
+    SELECT *
     FROM "orders" WHERE "fullName" ILIKE $1
     ORDER BY "${sortBy}" ${order}
     LIMIT ${limit} OFFSET ${offset}
     `
     const values = [`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found`)
+    }
     return rows
 }
 
 
 exports.findOne = async (id) => {
     const sql = `
-    SELECT "id", "userId", "orderNumber", "promoId", "total", "taxAmount", "status", "deliveryAddress", "fullName", "email", "priceCut", "grandTotal", "createdAt"
+    SELECT *
     FROM "orders" WHERE "id" = $1
     `
     const  values = [id]
@@ -58,9 +64,11 @@ exports.findOne = async (id) => {
 
 
 exports.insert = async (body) => {
-    const queryId = await isExist("users", parseInt(body.userId))                                                                     // melakukan query terlebih dahulu sebelum update, untuk mengecek apakah data yg ingin di update ada di database
-    if(queryId){
-        throw new Error(queryId)
+    if(body.userId){
+        const queryId = await isExist("users", parseInt(body.userId))                                                                     // melakukan query terlebih dahulu sebelum update, untuk mengecek apakah data yg ingin di update ada di database
+        if(queryId){
+            throw new Error(queryId)
+        }
     }
 
     const sql = `
@@ -68,7 +76,7 @@ exports.insert = async (body) => {
     ("userId", "orderNumber", "deliveryAddress", "fullName", "email")
     VALUES
     (
-    $1, $2, $3, 
+    $1, $2, 
     (select "address" from "users" where "id" = $1),
     (select "fullName" from "users" where "id" = $1),
     (select "email" from "users" where "id" = $1)
@@ -82,19 +90,29 @@ exports.insert = async (body) => {
 
 
 exports.update = async (id, body) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+
     const queryId = await isExist("orders", id)
     if(queryId){
         throw new Error(queryId)
     }
+
     return await updateColumn(id, body, "orders")
 }
 
 
 exports.delete = async (id) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+
     const queryId = await isExist("orders", id)
     if(queryId){
         throw new Error(queryId)
     }
+
     const sql = `DELETE FROM "orders" WHERE "id" = $1 RETURNING *`
     const values = [id]
     const {rows} = await db.query(sql, values)

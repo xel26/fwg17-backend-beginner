@@ -70,6 +70,8 @@ exports.isStringExist = async (table, uniqueColumn, searchKey) => {
             throw new Error(`${table} with ${uniqueColumn} ${rows[0].name} already exist`)
         }else if(uniqueColumn === "email"){
             throw new Error(`${uniqueColumn} ${rows[0].email} already exist`)
+        }else if(uniqueColumn === "code"){
+            throw new Error(`${uniqueColumn} ${rows[0].code} already exist`)
         }
     }
 }

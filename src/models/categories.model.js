@@ -20,18 +20,21 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
         })
 
         const sql = `
-        SELECT "id", "name", "createdAt"
+        SELECT *
         FROM "categories" WHERE "name" ILIKE $1
         ORDER BY ${columnSort.join(', ')}
         LIMIT ${limit} OFFSET ${offset}
         `
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
+        if(!rows.length){
+            throw new Error(`no data found `)
+        }
         return rows
     }
 
     const sql = `
-    SELECT "id", "name", "createdAt"
+    SELECT *
     FROM "categories" WHERE "name" ILIKE $1
     ORDER BY "${sortBy}" ${order}
     LIMIT ${limit} OFFSET ${offset}
@@ -39,13 +42,16 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     console.log(sql)
     const values = [`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
     return rows
 }
 
 
 exports.findOne = async (id) => {
     const sql = `
-    SELECT "id", "name", "createdAt"
+    SELECT *
     FROM "categories" WHERE "id" = $1
     `
     const  values = [id]
@@ -71,6 +77,10 @@ exports.insert = async (body) => {
 
 
 exports.update = async (id, body) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+
     const queryId = await isExist("categories", id)
     if(queryId){
         throw new Error(queryId)
@@ -86,6 +96,10 @@ exports.update = async (id, body) => {
 
 
 exports.delete = async (id) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+    
     const queryId = await isExist("categories", id)
     if(queryId){
         throw new Error(queryId)

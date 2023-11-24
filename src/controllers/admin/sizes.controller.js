@@ -3,15 +3,9 @@ const { errorHandler } = require('../../moduls/handling')
 
 
 exports.getAllProductSize = async (req, res) => {       
-    const {searchKey, sortBy, order, page} = req.query      
+    const {sortBy, order, page} = req.query      
     try {
-        const listSizes = await psModel.findAll(searchKey, sortBy, order, page)
-        if(!listSizes.length){
-            return res.status(404).json({
-                success: false,
-                message: `no data found`
-            })
-        }
+        const listSizes = await psModel.findAll(sortBy, order, page)
         return res.json({                                                              
             success: true,
             message: `List all sizes`,
@@ -54,7 +48,13 @@ exports.createProductSize = async (req, res) => {
 
 exports.updateProductSize = async (req, res) => {
     try {
-        const size = await psModel.update(parseInt(req.params.id), req.body) 
+        const size = await psModel.update(parseInt(req.params.id), req.body)
+        if(size === "No data has been modified"){
+            return res.status(200).json({                                                              
+                success: true,
+                message: size                                                 
+            })
+        }
         return res.json({                                                              
             success: true,
             messages: 'update size successfully',

@@ -1,8 +1,8 @@
 const db = require('../lib/db.lib')
-const { isExist, findBy, isStringExist } = require('../moduls/handling')
+const { isExist, isStringExist, updateColumn } = require('../moduls/handling')
 
 
-exports.findAll = async () => {
+exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
     
@@ -27,6 +27,9 @@ exports.findAll = async () => {
         `
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
+        if(!rows.length){
+            throw new Error(`no data found `)
+        }
         return rows
     }
 
@@ -39,6 +42,9 @@ exports.findAll = async () => {
     console.log(sql)
     const values = [`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
     return rows
 }
 
@@ -46,7 +52,7 @@ exports.findAll = async () => {
 exports.findOne = async (id) => {
     const sql = `
     SELECT *
-    FROM "users" WHERE "id" = $1
+    FROM "promo" WHERE "id" = $1
     `
     const  values = [id]
     const {rows} = await db.query(sql, values)
@@ -58,9 +64,14 @@ exports.findOne = async (id) => {
 
 
 exports.insert = async (body) => {
-    const queryString = await isStringExist("promo", "name", body.email)                                        // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja. 
-    if(queryString){
-        throw new Error(queryString)
+    const queryName = await isStringExist("promo", "name", body.name)                                        // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja. 
+    if(queryName){
+        throw new Error(queryName)
+    }
+
+    const queryCode = await isStringExist("promo", "code", body.code)                                        // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja. 
+    if(queryCode){
+        throw new Error(queryCode)
     }
 
     const sql = `
@@ -77,6 +88,10 @@ exports.insert = async (body) => {
 
 
 exports.update = async (id, body) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+
     const queryId = await isExist("promo", id)
     if(queryId){
         throw new Error(queryId)
@@ -99,6 +114,10 @@ exports.update = async (id, body) => {
 
 
 exports.delete = async (id) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+
     const queryId = await isExist("promo", id)
     if(queryId){
         throw new Error(queryId)

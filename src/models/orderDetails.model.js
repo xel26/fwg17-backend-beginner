@@ -1,5 +1,5 @@
 const db = require('../lib/db.lib')
-const { isExist, findBy } = require('../moduls/handling')
+const { isExist, updateColumn } = require('../moduls/handling')
 
 
 exports.findAll = async (sortBy="id", order="ASC", page=1) => {
@@ -59,13 +59,13 @@ exports.findOne = async (id) => {                                               
 
 exports.insert = async (body) => {
     const sql = `
-    INSERT INTO "order_details"
-    ("productId", "sizeId", "variantId", "quantity", "orderId", "subtotal")
+    INSERT INTO "orderDetails"
+    ("productId", "sizeId", "variantId", "quantity", "orderId")
     VALUES
-    ($1, $2, $3, $4, $5, $6)
+    ($1, $2, $3, $4, $5)
     RETURNING *
     `
-    const values = [body.productId, body.sizeId, body.variantId, body.quantity, body.orderId, body.subtotal]
+    const values = [body.productId, body.sizeId, body.variantId, body.quantity, body.orderId]
     const {rows} = await db.query(sql, values)
     return rows[0]
 }

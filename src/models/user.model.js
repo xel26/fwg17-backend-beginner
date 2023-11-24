@@ -107,6 +107,10 @@ exports.insert = async (body) => {
 
 
 exports.update = async (id, body) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+    
     const queryId = await isExist("users", id)                                                                     // melakukan query terlebih dahulu sebelum update, untuk mengecek apakah data yg ingin di update ada di database
     if(queryId){
         throw new Error(queryId)

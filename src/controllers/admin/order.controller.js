@@ -6,12 +6,6 @@ exports.getAllOrders = async (req, res) => {
     const {searchKey, sortBy, order, page} = req.query      
     try {
         const listOrders = await orderModel.findAll(searchKey, sortBy, order, page)
-        if(!listOrders.length){
-            return res.status(404).json({
-                success: false,
-                messages: `no data found`
-            })
-        }
         return res.json({                                                              
             success: true,
             messages: `List all users`,

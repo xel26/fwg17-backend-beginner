@@ -1,8 +1,8 @@
 const db = require('../lib/db.lib')
-const { isExist, findBy, isStringExist } = require('../moduls/handling')
+const { isExist, isStringExist, updateColumn } = require('../moduls/handling')
 
 
-exports.findAll = async () => {
+exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
     
@@ -27,6 +27,9 @@ exports.findAll = async () => {
         `
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
+        if(!rows.length){
+            throw new Error(`no data found`)
+        }
         return rows
     }
 
@@ -40,6 +43,9 @@ exports.findAll = async () => {
     console.log(sql)
     const values = [`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found`)
+    }
     return rows
 }
 
@@ -65,7 +71,7 @@ exports.insert = async (data) => {
     }
 
     const sql = `
-    INSERT INTO "variant" ("name", "additionalPrice")
+    INSERT INTO "variant"("name", "additionalPrice")
     VALUES ($1, $2) RETURNING *`
     const values = [data.name, data.additionalPrice]
     const {rows} = await db.query(sql, values)
@@ -73,7 +79,11 @@ exports.insert = async (data) => {
 }
 
 
-exports.update = async (id, data) => {
+exports.update = async (id, body) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+
     const queryId = await isExist("variant", id)
     if(queryId){
         throw new Error(queryId)
@@ -91,6 +101,10 @@ exports.update = async (id, data) => {
 
 
 exports.delete = async (id) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+
     const queryId = await isExist("variant", id)
     if(queryId){
         throw new Error(queryId)

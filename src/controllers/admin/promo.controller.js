@@ -6,12 +6,6 @@ exports.getAllPromo = async (req, res) => {
     const {searchKey, sortBy, order, page} = req.query      
     try {
         const listPromo = await promoModel.findAll(searchKey, sortBy, order, page)
-        if(!listPromo.length){
-            return res.status(404).json({
-                success: false,
-                message: `no data found`
-            })
-        }
         return res.json({                                                              
             success: true,
             message: `List all promo`,
@@ -47,7 +41,7 @@ exports.createPromo = async (req, res) => {
         })
         
     } catch (error) {
-        return errorHandler(error, res, 'name or code already exist')
+        return errorHandler(error, res)
     }
 }
 

@@ -1,5 +1,5 @@
 const db = require('../lib/db.lib')
-const { isExist } = require('../moduls/handling')
+const { isExist, updateColumn } = require('../moduls/handling')
 
 
 exports.findAll = async (sortBy="id", order="ASC", page=1) => {
@@ -27,6 +27,9 @@ exports.findAll = async (sortBy="id", order="ASC", page=1) => {
         `
         const values = []
         const {rows} = await db.query(sql, values)
+        if(!rows.length){
+            throw new Error(`no data found `)
+        }
         return rows
     }
 
@@ -36,10 +39,11 @@ exports.findAll = async (sortBy="id", order="ASC", page=1) => {
     ORDER BY "${sortBy}" ${order}
     LIMIT ${limit} OFFSET ${offset}
     `
-    console.log(sortBy)
-    console.log(sql)
     const values = []
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
     return rows
 }
 
@@ -59,6 +63,16 @@ exports.findOne = async (id) => {
 
 
 exports.insert = async (body) => {
+    const queryRecipientId = await isExist("users", parseInt(body.recipientId))
+    if(queryRecipientId){
+        throw new Error(queryRecipientId)
+    }
+
+    const querySenderId = await isExist("users", parseInt(body.senderId))
+    if(querySenderId){
+        throw new Error(querySenderId)
+    }
+
     const sql = `
     INSERT INTO "message" ("recipientId", "senderId", "text")
     VALUES ($1, $2, $3) RETURNING *`
@@ -69,15 +83,24 @@ exports.insert = async (body) => {
 
 
 exports.update = async (id, body) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+
     const queryId = await isExist("message", id)
     if(queryId){
         throw new Error(queryId)
     }
+    
     return await updateColumn(id, body, "message")
 }
 
 
 exports.delete = async (id) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+
     const queryId = await isExist("message", id)
     if(queryId){
         throw new Error(queryId)

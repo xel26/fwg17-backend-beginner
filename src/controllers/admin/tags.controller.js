@@ -6,12 +6,6 @@ exports.getAllTags = async (req, res) => {
     const {searchKey, sortBy, order, page} = req.query      
     try {
         const listTags = await tagsModel.findAll(searchKey, sortBy, order, page)
-        if(!listTags.length){
-            return res.status(404).json({
-                success: false,
-                message: `no data found`
-            })
-        }
         return res.json({                                                              
             success: true,
             message: `List all tags`,
@@ -28,8 +22,8 @@ exports.getDetailTag = async (req, res) => {
         const tag = await tagsModel.findOne(parseInt(req.params.id))
         return res.json({                                                              
             success: true,
-            messages: 'detail tag',
-            results: tag                                                  
+            message: 'detail tag',
+            result: tag                                                  
         })
     } catch (error) {
         errorHandler(error, res)
@@ -42,8 +36,8 @@ exports.createTag = async (req, res) => {
         const tag = await tagsModel.insert(req.body) 
         return res.json({                                                              
             success: true,
-            messages: 'create tag successfully',
-            results: tag                                                   
+            message: 'create tag successfully',
+            result: tag                                                   
         })
         
     } catch (error) {
@@ -58,13 +52,13 @@ exports.updateTag = async (req, res) => {
         if(tag === "No data has been modified"){
             return res.status(200).json({                                                              
                 success: true,
-                message: user                                                 
+                message: tag                                                 
             })
         }
         return res.json({                                                              
             success: true,
-            messages: 'update tag successfully',
-            results: tag                                                   
+            message: 'update tag successfully',
+            result: tag                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -77,8 +71,8 @@ exports.deleteTag = async (req, res) => {
         const tag = await tagsModel.delete(parseInt(req.params.id)) 
         return res.json({                                                              
             success: true,
-            messages: 'delete tag successfully',
-            results: tag                                                   
+            message: 'delete tag successfully',
+            result: tag                                                   
         })
     } catch (error) {
         errorHandler(error, res)

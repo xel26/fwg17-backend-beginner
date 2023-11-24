@@ -1,4 +1,4 @@
-const orderDetailsModel = require('../../models/orderDetailsModel.model')
+const orderDetailsModel = require('../../models/orderDetails.model')
 const { errorHandler } = require('../../moduls/handling')
 
 
@@ -6,12 +6,6 @@ exports.getAllOrderDetail = async (req, res) => {
     const {sortBy, order, page} = req.query      
     try {
         const listOrderDetails = await orderDetailsModel.findAll(sortBy, order, page)
-        if(!listOrderDetails.length){
-            return res.status(404).json({
-                success: false,
-                message: `no data found`
-            })
-        }
         return res.json({                                                              
             success: true,
             message: `List all orderDetails`,

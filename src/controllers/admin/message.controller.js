@@ -3,15 +3,9 @@ const { errorHandler } = require('../../moduls/handling')
 
 
 exports.getAllMessages = async (req, res) => {       
-    const {searchKey, sortBy, order, page} = req.query      
+    const {sortBy, order, page} = req.query      
     try {
-        const listMessages = await userModel.findAll(searchKey, sortBy, order, page)
-        if(!listMessages.length){
-            return res.status(404).json({
-                success: false,
-                message: `no data found`
-            })
-        }
+        const listMessages = await messageModel.findAll(sortBy, order, page)
         return res.json({                                                              
             success: true,
             message: `List all messages`,

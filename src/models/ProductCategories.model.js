@@ -1,5 +1,5 @@
 const db = require('../lib/db.lib')
-const { isExist, findBy } = require('../moduls/handling')
+const { isExist } = require('../moduls/handling')
 
 
 exports.findAll = async (sortBy="id", order="ASC", page=1) => {

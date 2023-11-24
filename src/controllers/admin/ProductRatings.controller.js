@@ -6,12 +6,6 @@ exports.getAllProductRatings = async (req, res) => {
     const {sortBy, order, page} = req.query      
     try {
         const listProductRatings = await prModel.findAll(sortBy, order, page)
-        if(!listProductRatings.length){
-            return res.status(404).json({
-                success: false,
-                message: `no data found`
-            })
-        }
         return res.json({                                                              
             success: true,
             message: `List all productRatings`,

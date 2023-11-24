@@ -102,7 +102,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
 
 exports.findOne = async (id) => {
     const sql = `
-    SELECT "id", "name", "description", "basePrice", "image", "createdAt"
+    SELECT *
     FROM "products" where "id" = $1
     `
     let values = [id]
@@ -134,6 +134,10 @@ exports.insert = async (body) => {
 
 
 exports.update = async (id, body) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+
     const queryId = await isExist("products", id)                                                                     // melakukan query terlebih dahulu sebelum update, untuk mengecek apakah data yg ingin di update ada di database
     if(queryId){
         throw new Error(queryId)
@@ -151,6 +155,10 @@ exports.update = async (id, body) => {
 
 
 exports.delete = async (id) => {
+    if(isNaN(id)){
+        throw new Error(`invalid input`)
+    }
+    
     const queryId = await isExist("products", id)
     if(queryId){
         throw new Error(queryId)

@@ -1,5 +1,5 @@
 const db = require('../lib/db.lib')
-const { isExist, findBy } = require('../moduls/handling')
+const { isExist, updateColumn } = require('../moduls/handling')
 
 
 exports.findAll = async (sortBy="id", order="ASC", page=1) => {
@@ -69,8 +69,10 @@ exports.insert = async (body) => {
 exports.update = async (id, body) => {
     const queryId = await isExist("productTags", id)
     if(queryId){
+        console.log(queryId)
         throw new Error(queryId)
     }
+
     return await updateColumn(id, body, "productTags")
 }
 

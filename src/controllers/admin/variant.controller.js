@@ -6,15 +6,9 @@ exports.getAllVariant = async (req, res) => {
     const {searchKey, sortBy, order, page} = req.query      
     try {
         const listVariants = await variantModel.findAll(searchKey, sortBy, order, page)
-        if(!listVariants.length){
-            return res.status(404).json({
-                success: false,
-                message: `no data found`
-            })
-        }
         return res.json({                                                              
             success: true,
-            message: `List all users`,
+            message: `List all variants`,
             results: listVariants                                                    
         })
     } catch (error) {

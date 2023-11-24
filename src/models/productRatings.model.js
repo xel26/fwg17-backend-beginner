@@ -1,8 +1,8 @@
 const db = require('../lib/db.lib')
-const { isExist, findBy } = require('../moduls/handling')
+const { isExist } = require('../moduls/handling')
 
 
-exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
+exports.findAll = async (sortBy="id", order="ASC", page=1) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
     
@@ -21,30 +21,34 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     
         const sql = `
         SELECT *
-        FROM "productRatings" WHERE "reviewMessage" ILIKE $1
+        FROM "productRatings"
         ORDER BY ${columnSort.join(', ')}
         LIMIT ${limit} OFFSET ${offset}
         `
-        const values = [`%${searchKey}%`]
+        const values = []
         const {rows} = await db.query(sql, values)
+        if(!rows.length){
+            throw new Error(`no data found `)
+        }
         return rows
     }
 
     const sql = `
     SELECT *
-    FROM "productRatings" WHERE "reviewMessage" ILIKE $1
+    FROM "productRatings"
     ORDER BY "${sortBy}" ${order}
     LIMIT ${limit} OFFSET ${offset}
     `
-    console.log(sortBy)
-    console.log(sql)
-    const values = [`%${searchKey}%`]
+    const values = []
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
     return rows
 }
 
 
-exports.findOne = async (data) => {                                                                             // mencari data berdasarkan column dengan constraint unique
+exports.findOne = async (id) => {                                                                             // mencari data berdasarkan column dengan constraint unique
     const sql = `
     SELECT *
     FROM "productRatings" WHERE "id" = $1

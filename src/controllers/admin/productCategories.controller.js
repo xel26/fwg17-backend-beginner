@@ -6,12 +6,6 @@ exports.getAllProductCategories = async (req, res) => {
     const {sortBy, order, page} = req.query      
     try {
         const listPC = await pcModel.findAll(sortBy, order, page)
-        if(!listPC.length){
-            return res.status(404).json({
-                success: false,
-                message: `no data found`
-            })
-        }
         return res.json({                                                              
             success: true,
             message: `List all productCategories`,
