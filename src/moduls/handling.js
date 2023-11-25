@@ -138,6 +138,11 @@ exports.errorHandler = (error, res) => {
             success: false,
             message: error.message
             })
+    }else if(err instanceof multer.MulterError){
+        return res.status(401).json({
+            success: false,
+            message: err.message
+            })
     }else if(!error.code){
         return res.status(400).json({                                                              
             success: false,

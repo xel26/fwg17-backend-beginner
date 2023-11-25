@@ -4,6 +4,8 @@ const productController = require('../../controllers/admin/product.controller')
 
 const upploadMiddleware = require('../../middleware/upload.middleware')
 
+const multerErrorHandler = require('../../middleware/multerErrorHandler.middleware')
+
 productRouter.get('/', productController.getAllProducts)                       
 productRouter.get('/:id', productController.getDetailProduct)                 
 productRouter.post('/', upploadMiddleware('products').single('image'), productController.createProduct)                      

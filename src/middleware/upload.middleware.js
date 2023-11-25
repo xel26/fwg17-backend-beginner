@@ -31,10 +31,26 @@ const storage = (dest, filename) => multer.diskStorage({
     }
 })
 
+
+const fileFilter = (req, file, cb) => {
+    const allowedFileTypes =['.jpeg','.jpg', '.png']                                                                            // file yg diperbolehkan di upload
+
+    const isExtnameAllowed = allowedFileTypes.includes(path.extname(file.originalname))                                         //  mengambil path(path.extname) dari file(file.originalname) untuk di cek apakah termasuk(includes) allowedFileTypes. variable "isExtnameAllowed" akan berisi nilai true atau false
+    if(isExtnameAllowed){                                                                                                       // jika true file dapat di upload
+        cb(null, true)
+    }else{
+        const errorMessage = 'The file extension is not allowed; only JPEG, JPG, and PNG are permitted'                         // jika false maka akan error dan file tidak dapat di upload
+        cb(new Error(errorMessage), false)
+    }
+}
+
+
 const uploadMiddleware = (dest, filename) => {
     const processUpload = multer({
-        storage: storage(dest, filename)
+        storage: storage(dest, filename),
+        fileFilter: fileFilter
     })
+    
     return processUpload
 }
 
