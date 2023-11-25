@@ -45,10 +45,16 @@ const fileFilter = (req, file, cb) => {
 }
 
 
+const limits = {
+    fileSize: 50 * 1000
+}
+
+
 const uploadMiddleware = (dest, filename) => {
     const processUpload = multer({
-        storage: storage(dest, filename),
-        fileFilter: fileFilter
+        storage: storage(dest, filename),                           // untuk mengatur kemana menyimpan file
+        fileFilter: fileFilter,                                     // untuk mengatur file seperti apa yg bisa di upload
+        limits: limits                                              // untuk mengatur batasan terhadap file yg di upload
     })
     
     return processUpload
