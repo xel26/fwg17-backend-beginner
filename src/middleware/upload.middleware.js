@@ -21,8 +21,11 @@ const storage = (dest, filename) => multer.diskStorage({
             'image/jpeg': '.jpg',
             'image/png': '.png'
         }
-        if(!filename){                                                                  // jika tidak memberikan namaFile maka nama file adalah id dari products
-            filename = req.params.id
+        if(!filename){
+            // filename = req.params.id                                                 // jika tidak memberikan namaFile maka nama file adalah id dari products
+            if(file.mimetype === 'image/jpeg'){
+                filename= file.originalname.replace('.jpeg', '')
+            }
         }
         cb(null, `${filename}${extension[file.mimetype]}`)
     }
