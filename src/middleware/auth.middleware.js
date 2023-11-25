@@ -1,3 +1,4 @@
+// middleware otorisasi
 
 const jwt = require('jsonwebtoken')
 const { errorHandler } = require('../moduls/handling')
@@ -15,7 +16,7 @@ const authMiddleware = (req, res, next) => {
 
         req.user = jwt.verify(token, process.env.APP_SECRET || 'secretKey')                             // verifikasi token.
                                                                                                         // jika verifikasi berhasil jwt akan mengembalikan payload dan server bisa mengakses data payload misal untuk di gunakan di rolekCheck.middleware untuk mengecek role user
-                                                                                                        // req.user = membuat properti baru(user) di object request yg berisi data payload
+                                                                                                        // req.user = membuat properti baru(user) di object reques,t yg berisi data payload
                                                                                                         // server bisa mengakses req.user.role unutk mendapatkan data role user
                                                                                                         
         next()                                                                                          // melanjutkan ke middleware atau penanganan selanjutnya

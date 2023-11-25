@@ -78,10 +78,12 @@ exports.isStringExist = async (table, uniqueColumn, searchKey) => {
 
 
 
-exports.updateColumn = async (id, body, table, ) => {
+exports.updateColumn = async (id, body, table) => {
     if(Object.hasOwn(body, 'password')){
         body.password = await argon.hash(body.password)
     }
+
+
 
     const column = Object.keys(body)
     let values = [id, ...Object.values(body)]

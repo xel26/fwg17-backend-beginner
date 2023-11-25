@@ -1,11 +1,13 @@
 const productRouter = require('express').Router()
 
-const productController = require('../../controllers/admin/product.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const productController = require('../../controllers/admin/product.controller')
 
-productRouter.get('/', productController.getAllProducts)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
-productRouter.get('/:id', productController.getDetailProduct)                         // client mengirim permintaan pengambilan data, ~
-productRouter.post('/', productController.createProduct)                                 // client mengirim permintaan memasukan data, ~
-productRouter.patch('/:id', productController.updateProduct)                             // client mengirim permintaan merubah data, ~
-productRouter.delete('/:id', productController.deleteProduct)                            // client mengirim permintaan menghapus data, ~
+const upploadMiddleware = require('../../middleware/upload.middleware')
+
+productRouter.get('/', productController.getAllProducts)                       
+productRouter.get('/:id', productController.getDetailProduct)                 
+productRouter.post('/', productController.createProduct)                      
+productRouter.patch('/:id',upploadMiddleware('products').single('image'), productController.updateProduct)                      // 'products' = nama folder untuk menyimpan gambar, 'image' = nama column            
+productRouter.delete('/:id', productController.deleteProduct)                       
 
 module.exports = productRouter                                                     

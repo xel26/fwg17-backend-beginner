@@ -49,6 +49,11 @@ exports.createProduct = async (req, res) => {
 
 
 exports.updateProduct = async (req, res) => {
+    if(req.file){
+        console.log(req.file)
+        req.body.image = req.file.filename
+    }
+
     try {
         const product = await productModel.update(parseInt(req.params.id), req.body)
         if(product === "No data has been modified"){
