@@ -50,12 +50,15 @@ exports.orderProducts = async (req, res) => {
 
         await orderFlowModel.countTotal(order.rows[0].id)                                                                                        // 4. menghitung total (menjumlahkan semua subtotal)
 
+        let result = await orderFlowModel.countGrandTotal(order.rows[0].id)
+
         if(promoId){
             await orderFlowModel.countPriceCut(order.rows[0].id)                                                                                // 5. menghitung potongan harga jika ada
+            result = await orderFlowModel.countGrandTotalWithPriceCut(order.rows[0].id)                                                                   // 6. menghitung total akhir (total dikurang potongan harga)
         }
 
 
-        const result = await orderFlowModel.countGrandTotal(order.rows[0].id)                                                                   // 6. menghitung total akhir (total dikurang potongan harga)
+
 
         await db.query('COMMIT')
 
@@ -68,9 +71,20 @@ exports.orderProducts = async (req, res) => {
     } catch (error) {
         console.log(error)
         await db.query('ROLLBACK')
+        if(error.code === '23505'){
+            return res.status(500).json({
+                success: false, 
+                message: `rollback; ${error.detail.replaceAll(/[()="]/g, ' ').replace('Key', 'data with')}`,
+            })
+        }else if(error.code === '23502'){
+            return res.status(500).json({
+                success: false, 
+                message: `rollback; column ${error.column} cannot be empty`,
+            })
+        }
         return res.status(500).json({
             success: false, 
-            message: `create order canceled`,
+            message: `rollback`,
         })
     }
 }

@@ -77,7 +77,21 @@ exports.countPriceCut = async (id) => {
 }
 
 
+
 exports.countGrandTotal = async (id) => {
+    const sql = `
+    update "orders" set "grandTotal" = (select "total" from "orders" where "id" = $1)
+    where "id" = $1
+    RETURNING *
+    `
+    const values = [id]
+    const result = db.query(sql, values)
+    console.log
+    return result
+}
+
+
+exports.countGrandTotalWithPriceCut = async (id) => {
     const sql = `
     update "orders" set "grandTotal" = (select "total" from "orders" where "id" = $1) - (select "priceCut" from "orders" where "id" = $1)
     where "id" = $1
@@ -88,3 +102,5 @@ exports.countGrandTotal = async (id) => {
     console.log
     return result
 }
+
+
