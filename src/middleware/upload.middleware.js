@@ -1,6 +1,5 @@
 const multer = require('multer')                                                        // import module multer
 const path = require('path')                                                            // import path = module bawaan node js. digunakna untuk membuat jalur path yg menyesuaikan karakter pemisah direktori diberbagai sistem operasi (lintas-platform). misal windows menggunakan "backslash"(\) dan macOS/Linux menggunakan "forward slash"(/)
-const { fileURLToPath } = require('url')
 
 
 // 1. diskStorage adalah metode yang disediakan oleh multer untuk membuat objek konfigurasi penyimpanan gambar
@@ -25,12 +24,8 @@ const storage = (dest, filename) => multer.diskStorage({
         }
 
         console.log(filename)
-        // filename = req.params.id                                                 // jika tidak memberikan namaFile maka nama file adalah id dari products
-        if(file.mimetype === 'image/jpeg'){
-            filename = file.originalname.replace('.jpeg', '')
-        }else if(file.mimetype === 'image/png'){
-            filename = file.originalname.replace(path.extname(file.originalname), '')
-        }
+        // filename = req.params.id
+        filename = new Date().getTime()
 
         cb(null, `${filename}${extension[file.mimetype]}`)
     }
@@ -51,7 +46,7 @@ const fileFilter = (req, file, cb) => {
 
 
 const limits = {
-    fileSize: 50 * 1000
+    fileSize: 100 * 1024
 }
 
 

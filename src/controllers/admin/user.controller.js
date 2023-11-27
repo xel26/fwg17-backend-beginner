@@ -1,5 +1,7 @@
 const userModel = require('../../models/user.model')
 const { errorHandler } = require('../../moduls/handling')
+const path = require('path')
+const fs = require('fs/promises')
 
 
 exports.getAllUsers = async (req, res) => { 
@@ -48,6 +50,11 @@ exports.getDetailUser = async (req, res) => {
 
 exports.createUser = async (req, res) => {
     try {
+        if(req.file){
+            console.log(req.file)
+            req.body.picture = req.file.filename
+        }
+
         const user = await userModel.insert(req.body) 
         return res.json({                                                              
             success: true,
@@ -69,8 +76,27 @@ exports.updateUser = async (req, res) => {
         //         message: 'Forbidden access denied cannot change role user'
         //     })
         // }
+
+        const {id} = req.params
+        const data = await userModel.findOne(id)
+        if(!data){
+            throw new Error(`user with id ${id} not found`)
+        }
+
+        if(req.file){                                                                                           
+            if(data.picture){                                                                                   // jika data sebelumnya mempunyai gambar, maka gambara akan di hapus dan di ganti dengan gambar yg baru di upload
+                const picturePath = path.join(global.path, 'uploads', 'users', data.picture)                    // mengambil jalur path gambar
+                console.log(picturePath)
+                await fs.rm(picturePath)                                                                        // menghapus file berdasarkan jalur path
+            }
+            console.log(req.file)
+            req.body.picture = req.file.filename
+        }
     
-        const user = await userModel.update(parseInt(req.params.id), req.body)
+        const user = await userModel.update(parseInt(id), req.body)
+
+
+
         if(user === "No data has been modified"){
             return res.status(200).json({                                                              
                 success: true,
@@ -91,6 +117,11 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     try {
         const user = await userModel.delete(parseInt(req.params.id)) 
+        if(user.picture){
+            const picturePath = path.join(global.path, "uploads", "users", user.picture)                        // mengambil jalur path picture
+            console.log(picturePath)
+            await fs.rm(picturePath)                                                                            // menghapus file berdasarkan jalur path
+        }
         return res.json({                                                              
             success: true,
             message: 'delete user successfully',

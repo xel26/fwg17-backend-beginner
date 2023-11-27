@@ -2,6 +2,8 @@ require('dotenv').config({                                                  //  
   path: './.env'                                                            //  di sebut variable lingkungan karena bersifat lokal pada "lingkungan" tertentu di mana aplikasi sedang berjalan
 })                                                                          //  'dotenv' untuk membaca variabel lingkungan dari file .env . yg memilliki fungsi config() untuk mengonfigurasi (mengakses nilai di variable yg ada di file env dan menggunakan nilai-nilai tersebut dalam aplikasi)
 
+global.path = __dirname
+
 
 const express = require('express')                                          // import module express. express adalah sebuah fungsi yg mereturn sebuah object
 const cors = require('cors')                                                // import module cors. untuk mengatasi pembatasan keamanan browser terkait permintaan lintas domain. karean berjalan di antara permintaan http dan respond sehingga disebut sebagai middleware

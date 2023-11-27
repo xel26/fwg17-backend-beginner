@@ -119,10 +119,10 @@ exports.update = async (id, body) => {
         throw new Error(`invalid input`)
     }
     
-    const queryId = await isExist("users", id)                                                                     // melakukan query terlebih dahulu sebelum update, untuk mengecek apakah data yg ingin di update ada di database
-    if(queryId){
-        throw new Error(queryId)
-    }
+    // const queryId = await isExist("users", id)                                                                     // melakukan query terlebih dahulu sebelum update, untuk mengecek apakah data yg ingin di update ada di database
+    // if(queryId){
+    //     throw new Error(queryId)
+    // }
 
     if(body.email){
         const queryString =  await isStringExist("users", "email", body.email)                                       // melakukan query terlebih dahulu sebelum memasukan data, untuk mengecek apakah ada data string yg sama tapi hanya berbeda huruf kecil dan huruf besarnya saja.

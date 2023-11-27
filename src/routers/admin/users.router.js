@@ -1,11 +1,15 @@
 const userRouter = require('express').Router()
 
-const userController = require('../../controllers/admin/user.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const userController = require('../../controllers/admin/user.controller')        
 
-userRouter.get('/', userController.getAllUsers)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
-userRouter.get('/:id', userController.getDetailUser)                            // client mengirim permintaan pengambilan data, ~
-userRouter.post('/', userController.createUser)                                 // client mengirim permintaan memasukan data, ~
-userRouter.patch('/:id', userController.updateUser)                             // client mengirim permintaan merubah data, ~
-userRouter.delete('/:id', userController.deleteUser)                            // client mengirim permintaan menghapus data, ~
+const uploadMiddleware = require('../../middleware/upload.middleware')
+
+const multerErrorHandler = require('../../middleware/multerErrorHandler.middleware')
+
+userRouter.get('/', userController.getAllUsers)       
+userRouter.get('/:id', userController.getDetailUser)  
+userRouter.post('/',uploadMiddleware('users').single('picture'), multerErrorHandler, userController.createUser)       
+userRouter.patch('/:id', uploadMiddleware('users').single('picture'), multerErrorHandler, userController.updateUser)   
+userRouter.delete('/:id', userController.deleteUser)  
 
 module.exports = userRouter                                                     
