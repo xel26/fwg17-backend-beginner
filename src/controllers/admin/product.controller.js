@@ -84,7 +84,7 @@ exports.updateProduct = async (req, res) => {
             if(data.image){                                                                             // jika data sebelumnya mempunyai gambar, maka gambar akan di hapus dan di ganti dengna gambar yg baru di upload
                 const imagePath = path.join(global.path, 'uploads', 'products', data.image)             // mengambil jalur path gambar        
                 console.log(imagePath)
-                await fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
+                fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
             }
             console.log(req.file)
             req.body.image = req.file.filename
@@ -114,7 +114,7 @@ exports.deleteProduct = async (req, res) => {
         if(product.image){
             const imagePath = path.join(global.path, "uploads", "products", product.image)              // mengambil jalur path image
             console.log(imagePath)
-            await fs.rm(imagePath)                                                                      // menghapus file berdasarkan jalur path
+            fs.rm(imagePath)                                                                      // menghapus file berdasarkan jalur path
         }
         return res.json({                                                              
             success: true,

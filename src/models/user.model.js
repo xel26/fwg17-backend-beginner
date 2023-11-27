@@ -99,7 +99,9 @@ exports.insert = async (body) => {
     //     role = "customer"
     // }
 
-    body.password = await argon.hash(body.password)
+    if(body.password){
+        body.password = await argon.hash(body.password)
+    }
 
     const sql = `
     INSERT INTO "users"

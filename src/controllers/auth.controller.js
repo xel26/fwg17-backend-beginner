@@ -40,12 +40,13 @@ exports.login = async (req, res) => {
 
 exports.register = async (req, res) => {                                                   // sederhananya insert data ke table users di database
     try {
-        const {fullName, email, password} = req.body                                       // destruct req.body
+        const {fullName, email, password, role} = req.body                                       // destruct req.body
 
         await userModel.insert({
             fullName,
             email,
-            password                                                                      // password di hash di userModel insert
+            password,                                                                    // password di hash di userModel insert
+            role
         })
 
         return res.json({

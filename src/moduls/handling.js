@@ -69,7 +69,7 @@ exports.isStringExist = async (table, uniqueColumn, searchKey) => {
         if(uniqueColumn === "name"){
             throw new Error(`${table} with ${uniqueColumn} ${rows[0].name} already exist`)
         }else if(uniqueColumn === "email"){
-            throw new Error(`${uniqueColumn} ${rows[0].email} already exist`)
+            throw new Error(`${uniqueColumn} ${rows[0].email} already registered`)
         }else if(uniqueColumn === "code"){
             throw new Error(`${uniqueColumn} ${rows[0].code} already exist`)
         }
@@ -135,6 +135,11 @@ exports.errorHandler = (error, res) => {
         })
     }else if(error.message.includes("not registered") || error.message.includes("wrong password") || error.message.includes("invalid token")){             // error forbidden access = login dan otorisasi auth.middleware
             return res.status(401).json({
+            success: false,
+            message: error.message
+            })
+    }else if(error.message === 'jwt must be provided'){
+        return res.status(403).json({
             success: false,
             message: error.message
             })
