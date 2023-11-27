@@ -3,12 +3,27 @@ const { errorHandler } = require('../../moduls/handling')
 
 
 exports.getAllOrderDetail = async (req, res) => {       
-    const {sortBy, order, page} = req.query      
     try {
-        const listOrderDetails = await orderDetailsModel.findAll(sortBy, order, page)
+        const {sortBy, order, page=1, limit} = req.query
+        const limitData = parseInt(limit) || 5
+
+        const count = await orderDetailsModel.countAll()      
+        const listOrderDetails = await orderDetailsModel.findAll(sortBy, order, page, limitData)
+        
+        const totalPage = Math.ceil(count / limitData)
+        const nextPage = parseInt(page) + 1
+        const prevPage = parseInt(page) - 1
+
         return res.json({                                                              
             success: true,
             message: `List all orderDetails`,
+            pageInfo: {
+                currentPage: parseInt(page),
+                totalPage,
+                nextPage: nextPage <= totalPage ? nextPage : null,
+                prevPage: prevPage > 1 ? prevPage : null,
+                totalData: parseInt(count)
+            },
             results: listOrderDetails                                                    
         })
     } catch (error) {

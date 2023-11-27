@@ -3,12 +3,27 @@ const { errorHandler } = require('../../moduls/handling')
 
 
 exports.getAllPromo = async (req, res) => {       
-    const {searchKey, sortBy, order, page} = req.query      
     try {
-        const listPromo = await promoModel.findAll(searchKey, sortBy, order, page)
+        const {searchKey, sortBy, order, page=1, limit} = req.query
+        const limitData = parseInt(limit) || 5
+
+        const count = await promoModel.countAll(searchKey)   
+        const listPromo = await promoModel.findAll(searchKey, sortBy, order, page, limitData)
+        
+        const totalPage = Math.ceil(count / limitData)
+        const nextPage = parseInt(page) + 1
+        const prevPage = parseInt(page) - 1
+
         return res.json({                                                              
             success: true,
             message: `List all promo`,
+            pageInfo: {
+                currentPage: parseInt(page),
+                totalPage,
+                nextPage: nextPage <= totalPage ? nextPage : null,
+                prevPage: prevPage > 1 ? prevPage : null,
+                totalData: parseInt(count)
+            },
             results: listPromo                                                    
         })
     } catch (error) {

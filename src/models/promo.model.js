@@ -2,12 +2,12 @@ const db = require('../lib/db.lib')
 const { isExist, isStringExist, updateColumn } = require('../moduls/handling')
 
 
-exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
+exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
     
-    const limit = 10
-    const offset = (page - 1) * limit
+    const limitData = limit
+    const offset = (page - 1) * limitData
 
     if(typeof sortBy === "object"){
         const sortByColumn = ['id', 'name','percentage', 'maximumPromo', 'minimumAmount', 'createdAt']
@@ -23,7 +23,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
         SELECT * 
         FROM "promo" WHERE "name" ILIKE $1
         ORDER BY ${columnSort.join(', ')}
-        LIMIT ${limit} OFFSET ${offset}
+        LIMIT ${limitData} OFFSET ${offset}
         `
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
@@ -37,7 +37,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     SELECT *
     FROM "promo" WHERE "name" ilike $1
     ORDER BY "${sortBy}" ${order}
-    LIMIT ${limit} OFFSET ${offset}
+    LIMIT ${limitData} OFFSET ${offset}
     `
     console.log(sql)
     const values = [`%${searchKey}%`]
@@ -46,6 +46,14 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
         throw new Error(`no data found `)
     }
     return rows
+}
+
+
+exports.countAll = async (searchKey='') => {
+    const sql = `SELECT COUNT("id") AS "counts" FROM "promo" WHERE "name" ILIKE $1`
+    const values = [`%${searchKey}%`]
+    const {rows} = await db.query(sql, values)
+    return rows[0].counts
 }
 
 

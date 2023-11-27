@@ -7,7 +7,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) =>
     order = orderType.includes(order)? order : "ASC"
 
     const limitData = limit
-    const offset = (page - 1) * limit
+    const offset = (page - 1) * limitData
 
     if(sortBy === "categories"){
         const sql = `
@@ -104,7 +104,6 @@ exports.countAll = async (searchKey='') => {
         const sql = `SELECT COUNT("id") AS "counts" FROM "products" WHERE "name" ILIKE $1`
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
-        console.log(rows)
         return rows[0].counts
 }
 

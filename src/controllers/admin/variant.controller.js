@@ -3,12 +3,27 @@ const { errorHandler } = require('../../moduls/handling')
 
 
 exports.getAllVariant = async (req, res) => {       
-    const {searchKey, sortBy, order, page} = req.query      
     try {
-        const listVariants = await variantModel.findAll(searchKey, sortBy, order, page)
+        const {searchKey, sortBy, order, page=1, limit} = req.query
+        const limitData = parseInt(limit) || 5
+
+        const count = await variantModel.countAll(searchKey)   
+        const listVariants = await variantModel.findAll(searchKey, sortBy, order, page, limitData)
+        
+        const totalPage = Math.ceil(count / limitData)
+        const nextPage = parseInt(page) + 1
+        const prevPage = parseInt(page) - 1
+
         return res.json({                                                              
             success: true,
             message: `List all variants`,
+            pageInfo: {
+                currentPage: parseInt(page),
+                totalPage,
+                nextPage: nextPage <= totalPage ? nextPage : null,
+                prevPage: prevPage > 1 ? prevPage : null,
+                totalData: parseInt(count)
+            },
             results: listVariants                                                    
         })
     } catch (error) {

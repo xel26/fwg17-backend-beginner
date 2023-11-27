@@ -1,14 +1,29 @@
-const psModel = require('../../models/sizes.model')
+const sizesModel = require('../../models/sizes.model')
 const { errorHandler } = require('../../moduls/handling')
 
 
 exports.getAllProductSize = async (req, res) => {       
-    const {sortBy, order, page} = req.query      
     try {
-        const listSizes = await psModel.findAll(sortBy, order, page)
+        const {sortBy, order, page=1, limit} = req.query
+        const limitData = parseInt(limit) || 5
+
+        const count = await sizesModel.countAll()  
+        const listSizes = await sizesModel.findAll(sortBy, order, page, limitData)
+        
+        const totalPage = Math.ceil(count / limitData)
+        const nextPage = parseInt(page) + 1
+        const prevPage = parseInt(page) - 1
+
         return res.json({                                                              
             success: true,
             message: `List all sizes`,
+            pageInfo: {
+                currentPage: parseInt(page),
+                totalPage,
+                nextPage: nextPage <= totalPage ? nextPage : null,
+                prevPage: prevPage > 1 ? prevPage : null,
+                totalData: parseInt(count)
+            },
             results: listSizes                                                    
         })
     } catch (error) {
@@ -19,7 +34,7 @@ exports.getAllProductSize = async (req, res) => {
 
 exports.getDetailProductSize = async (req, res) => {                                        
     try {
-        const size = await psModel.findOne(parseInt(req.params.id))
+        const size = await sizesModel.findOne(parseInt(req.params.id))
         return res.json({                                                              
             success: true,
             message: 'detail size',
@@ -33,7 +48,7 @@ exports.getDetailProductSize = async (req, res) => {
 
 exports.createProductSize = async (req, res) => {
     try {
-        const size = await psModel.insert(req.body) 
+        const size = await sizesModel.insert(req.body) 
         return res.json({                                                              
             success: true,
             messages: 'create size successfully',
@@ -48,7 +63,7 @@ exports.createProductSize = async (req, res) => {
 
 exports.updateProductSize = async (req, res) => {
     try {
-        const size = await psModel.update(parseInt(req.params.id), req.body)
+        const size = await sizesModel.update(parseInt(req.params.id), req.body)
         if(size === "No data has been modified"){
             return res.status(200).json({                                                              
                 success: true,
@@ -68,7 +83,7 @@ exports.updateProductSize = async (req, res) => {
 
 exports.deleteProductSize = async (req, res) => {
     try {
-        const size = await psModel.delete(parseInt(req.params.id)) 
+        const size = await sizesModel.delete(parseInt(req.params.id)) 
         return res.json({                                                              
             success: true,
             messages: 'delete size successfully',
