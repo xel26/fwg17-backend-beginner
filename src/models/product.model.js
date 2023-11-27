@@ -2,11 +2,11 @@ const db = require('../lib/db.lib')
 const { isExist, isStringExist, updateColumn } = require('../moduls/handling')
 
 
-exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
+exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
 
-    const limit = 100
+    const limitData = limit
     const offset = (page - 1) * limit
 
     if(sortBy === "categories"){
@@ -19,7 +19,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
         JOIN "categories" on ("categories"."id" = "pc"."categoryId")
         WHERE "p"."name" ILIKE $1
         ORDER BY "${sortBy}"."name" ${order}
-        LIMIT ${limit} OFFSET ${offset}
+        LIMIT ${limitData} OFFSET ${offset}
         `
         console.log(sql)
         const values =[`%${searchKey}%`]
@@ -54,7 +54,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
              JOIN "categories" on ("categories"."id" = "pc"."categoryId")
              WHERE "p"."name" ILIKE $1
              ORDER BY ${columnSort.join(', ')}
-             LIMIT ${limit} OFFSET ${offset}
+             LIMIT ${limitData} OFFSET ${offset}
              `
              console.log(sql)
              const values =[`%${searchKey}%`]
@@ -75,7 +75,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
         SELECT * 
         FROM "products" WHERE "name" ILIKE $1
         ORDER BY ${columnSort.join(', ')}
-        LIMIT ${limit} OFFSET ${offset}
+        LIMIT ${limitData} OFFSET ${offset}
         `
         const values =[`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
@@ -89,7 +89,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     SELECT *
     FROM "products" WHERE "name" ILIKE $1
     ORDER BY "${sortBy}" ${order}
-    LIMIT ${limit} OFFSET ${offset}
+    LIMIT ${limitData} OFFSET ${offset}
     `
     const values =[`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
@@ -98,6 +98,16 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page=1) => {
     }
     return rows
 }
+
+
+exports.countAll = async (searchKey='') => {
+        const sql = `SELECT COUNT("id") AS "counts" FROM "products" WHERE "name" ILIKE $1`
+        const values = [`%${searchKey}%`]
+        const {rows} = await db.query(sql, values)
+        console.log(rows)
+        return rows[0].counts
+}
+
 
 
 exports.findOne = async (id) => {
