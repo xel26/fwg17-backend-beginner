@@ -2,28 +2,56 @@
 const db = require('../lib/db.lib')
 
 exports.insertOrder = async (userId, promoId, deliveryAddress, fullName, email) => {
+    const orderNumber = `12345`
     const sql = `
-    INSERT INTO "orders"("userId", "promoId", "deliveryAddress", "fullName", "email")
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO "orders"("userId", "orderNumber", "promoId", "deliveryAddress", "fullName", "email")
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *
     `
-    const values = [userId, promoId, deliveryAddress, fullName, email]
+    const values = [userId, orderNumber, promoId, deliveryAddress, fullName, email]
     const {rows} = await db.query(sql, values)
     console.log(rows[0])
     return rows[0]
 }
 
 
-exports.insertOrderNumber = async (id) => {
-    // const orderNumber = `${new Date().getFullYear()}${id}`
-    const orderNumber = `salah`;
+// exports.insertOrder = async (userId, promoId, deliveryAddress, fullName, email) => {
+//     const sql = `
+//     INSERT INTO "orders"("userId", "promoId", "deliveryAddress", "fullName", "email")
+//     VALUES ($1, $2, $3, $4, $5)
+//     RETURNING *
+//     `
+//     const values = [userId, promoId, deliveryAddress, fullName, email]
+//     const {rows} = await db.query(sql, values)
+//     console.log(rows[0])
+//     return rows[0]
+// }
 
 
+// exports.insertOrderNumber = async (id) => {
+//     // const orderNumber = `${new Date().getFullYear()}${id}`
+//     const orderNumber = `hjhjhjhj`;
 
-    const sql = `UPDATE "orders" SET "orderNumber" = $1 RETURNING *`
-    const values = [orderNumber]
+//     const sql = `UPDATE "orders" SET "orderNumber" = $1 RETURNING *`
+//     const values = [orderNumber]
+//     const {rows} = await db.query(sql, values)
+//     console.log(rows[0])
+//     return rows[0]
+// }
+
+
+exports.findByColumn = async (searcKey, column, table) => {
+    const sql = `SELECT "id" FROM "${table}" WHERE "${column}" = $1`
+    const values = [searcKey]
     const {rows} = await db.query(sql, values)
-    console.log(rows[0])
+    return rows[0]
+}
+
+
+exports.findById = async (id, column, table) => {
+    const sql = `SELECT "${column}" FROM "${table}" WHERE "id" = $1`
+    const values = [id]
+    const {rows} = await db.query(sql, values)
     return rows[0]
 }
 

@@ -4,61 +4,59 @@ const orderFlowModel = require('../models/orderFlow.model')
 const {errorHandler} = require('../moduls/handling')
 
 exports.orderProducts = async (req, res) => {
-    const {rows}= await db.query('select "orderNumber" from "orders"')
-    console.log(rows)
     try {
         await db.query('BEGIN')
         const {id} = req.user
-        const {promoId, deliveryAddress, fullName, email} = req.body
+        let {codePromo:promoId, deliveryAddress, fullName, email} = req.body
+
+        
+        if(promoId){
+            const promo = await orderFlowModel.findByColumn(promoId, "code", "promo")
+            promoId = promo.id
+        }
+
+        if(!deliveryAddress){
+            const Useraddress = await orderFlowModel.findById(id, "address", "users")
+            deliveryAddress = Useraddress.address
+        }
+
+        if(!fullName){
+            const UserFullName = await orderFlowModel.findById(id, "fullName", "users")
+            fullName = UserFullName.fullName
+        }
+        
+        if(!email){
+            const userEmail = await orderFlowModel.findById(id, "email", "users")
+            email = userEmail.email
+        }
 
         const order = await orderFlowModel.insertOrder(id, promoId, deliveryAddress, fullName, email)
         
-        await orderFlowModel.insertOrderNumber(order.id)
+        // await orderFlowModel.insertOrderNumber(order.id)
 
-        const products = [                                                                           
-            {
-                id: 1,
-                sizeId: 2,
-                variantId: 5,
-                quantity: 2,
-            },
-            {
-                id: 2,
-                sizeId: 3,
-                variantId: 5,
-                quantity: 2,
-            },
-            {
-                id: 3,
-                sizeId: 2,
-                variantId: 5,
-                quantity: 3,
-            }
-        ]
 
-        for (const product of products) {
+        const {productId, sizeId, variantId, quantity} = req.body
+
+        for(let i = 0; i < productId.length; i++){
             const orderDetails = await orderFlowModel.insertOrderDetails(                            
                 order.id,
-                product.id,
-                product.sizeId,
-                product.variantId,
-                product.quantity
+                productId[i],
+                sizeId[i],
+                variantId[i],
+                quantity[i]
               );
 
-              await orderFlowModel.countSubtotal(orderDetails.id)                                    
+              await orderFlowModel.countSubtotal(orderDetails.id) 
         }
-
 
         await orderFlowModel.countTotal(order.id)                                                    
 
-        let result = await orderFlowModel.countGrandTotal(order.id)
 
+        let results = await orderFlowModel.countGrandTotal(order.id)
         if(promoId){
             await orderFlowModel.countPriceCut(order.id)                                             
-            result = await orderFlowModel.countGrandTotalWithPriceCut(order.id)                      
+            results = await orderFlowModel.countGrandTotalWithPriceCut(order.id)                      
         }
-
-
 
 
         // await db.query('COMMIT')
@@ -66,7 +64,7 @@ exports.orderProducts = async (req, res) => {
         return res.json({
             success: true, 
             message: `create order success`,
-            result: result
+            results: results
         })
 
     } catch (error) {
