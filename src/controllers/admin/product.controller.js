@@ -21,8 +21,8 @@ exports.getAllProducts = async (req, res) => {
             message: 'List all products',
             pageInfo: {
                 currentPage: parseInt(page),
-                totalPage,
                 nextPage: nextPage <= totalPage ? nextPage : null,
+                totalPage,
                 prevPage: prevPage > 1 ? prevPage : null,
                 totalData: parseInt(count)
             },
@@ -40,7 +40,7 @@ exports.getDetailProduct = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'detail product',
-            result: product                                                  
+            results: product                                                  
         })
 
     } catch (error) {
@@ -61,7 +61,7 @@ exports.createProduct = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'create product successfully',
-            result: product                                                   
+            results: product                                                   
         })
         
     } catch (error) {
@@ -76,6 +76,7 @@ exports.updateProduct = async (req, res) => {
 
         const {id} = req.params
         const data = await productModel.findOne(id)
+
         if(!data){
             throw new Error(`product with id ${id} not found`)
         }
@@ -84,7 +85,7 @@ exports.updateProduct = async (req, res) => {
             if(data.image){                                                                             // jika data sebelumnya mempunyai gambar, maka gambar akan di hapus dan di ganti dengna gambar yg baru di upload
                 const imagePath = path.join(global.path, 'uploads', 'products', data.image)             // mengambil jalur path gambar        
                 console.log(imagePath)
-                fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
+                await fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
             }
             console.log(req.file)
             req.body.image = req.file.filename
@@ -100,7 +101,7 @@ exports.updateProduct = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'update product successfully',
-            result: product                                                   
+            results: product                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -114,12 +115,12 @@ exports.deleteProduct = async (req, res) => {
         if(product.image){
             const imagePath = path.join(global.path, "uploads", "products", product.image)              // mengambil jalur path image
             console.log(imagePath)
-            fs.rm(imagePath)                                                                      // menghapus file berdasarkan jalur path
+            await fs.rm(imagePath)                                                                      // menghapus file berdasarkan jalur path
         }
         return res.json({                                                              
             success: true,
             message: 'delete product successfully',
-            result: product                                                   
+            results: product                                                   
         })
     } catch (error) {
         errorHandler(error, res)

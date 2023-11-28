@@ -6,10 +6,18 @@ const { errorHandler } = require('../moduls/handling')
 exports.login = async (req, res) => { 
     try {
         const {email, password} = req.body                                                              // destruct data dari req.body                           
-    
+        
+        if(!email){
+            throw new Error(`email cannot be empty`)
+        }
+        
         const user = await userModel.findOneByEmail(email)                                              // melakukan pengecekan apakah email ada didatabase dengan kata lain apa sudah terdaftar
         if(!user){
             throw new Error(`email not registered`)                                                     // jika email tidak di temukan di database maka lempar error ke catch 
+        }
+        
+        if(!password){
+            throw new Error(`password cannot be empty`)
         }
     
         const verify = await argon.verify(user.password, password)                                      // pengecekan apakah password benar jika tidak maka lempar error ke catch

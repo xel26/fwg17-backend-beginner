@@ -1,18 +1,30 @@
-// masih ada bug. tidak bisa menggunakna destructuring untuk mengakses data,
-//penyebab belum di ketahui, sehingga masih menggunakan cara manual untuk mengakses data
-
 
 const db = require('../lib/db.lib')
 
-exports.insertOrder = async (userId, orderNumber, promoId, deliveryAddress, fullName, email) => {
+exports.insertOrder = async (userId, promoId, deliveryAddress, fullName, email) => {
     const sql = `
-    INSERT INTO "orders"("userId", "orderNumber", "promoId", "deliveryAddress", "fullName", "email")
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO "orders"("userId", "promoId", "deliveryAddress", "fullName", "email")
+    VALUES ($1, $2, $3, $4, $5)
     RETURNING *
     `
-    const values = [userId, orderNumber, promoId, deliveryAddress, fullName, email]
-    const result = db.query(sql, values)
-    return result
+    const values = [userId, promoId, deliveryAddress, fullName, email]
+    const {rows} = await db.query(sql, values)
+    console.log(rows[0])
+    return rows[0]
+}
+
+
+exports.insertOrderNumber = async (id) => {
+    // const orderNumber = `${new Date().getFullYear()}${id}`
+    const orderNumber = `salah`;
+
+
+
+    const sql = `UPDATE "orders" SET "orderNumber" = $1 RETURNING *`
+    const values = [orderNumber]
+    const {rows} = await db.query(sql, values)
+    console.log(rows[0])
+    return rows[0]
 }
 
 
@@ -23,8 +35,8 @@ exports.insertOrderDetails = async (orderId, productId, sizeId, variantId, quant
     RETURNING *
     `
     const values = [orderId, productId, sizeId, variantId, quantity]
-    const result = db.query(sql, values)
-    return result
+    const {rows} = await db.query(sql, values)
+    return rows[0]
 }
 
 
@@ -42,8 +54,8 @@ exports.countSubtotal = async (id) => {
     RETURNING *
     `
     const values = [id]
-    const result = db.query(sql, values)
-    return result
+    const {rows} = await db.query(sql, values)
+    return rows[0]
 }
 
 
@@ -54,8 +66,22 @@ exports.countTotal = async (id) => {
     RETURNING *
     `
     const values = [id]
-    const result = db.query(sql, values)
-    return result
+    const {rows} = await db.query(sql, values)
+    return rows[0]
+}
+
+
+
+exports.countGrandTotal = async (id) => {
+    const sql = `
+    update "orders" set "grandTotal" = (select "total" from "orders" where "id" = $1)
+    where "id" = $1
+    RETURNING *
+    `
+    const values = [id]
+    const {rows} = await db.query(sql, values)
+    console.log
+    return rows[0]
 }
 
 
@@ -72,23 +98,10 @@ exports.countPriceCut = async (id) => {
     RETURNING *
     `
     const values = [id]
-    const result = db.query(sql, values)
-    return result
+    const {rows} = await db.query(sql, values)
+    return rows[0]
 }
 
-
-
-exports.countGrandTotal = async (id) => {
-    const sql = `
-    update "orders" set "grandTotal" = (select "total" from "orders" where "id" = $1)
-    where "id" = $1
-    RETURNING *
-    `
-    const values = [id]
-    const result = db.query(sql, values)
-    console.log
-    return result
-}
 
 
 exports.countGrandTotalWithPriceCut = async (id) => {
@@ -98,9 +111,9 @@ exports.countGrandTotalWithPriceCut = async (id) => {
     RETURNING *
     `
     const values = [id]
-    const result = db.query(sql, values)
+    const {rows} = await db.query(sql, values)
     console.log
-    return result
+    return rows[0]
 }
 
 

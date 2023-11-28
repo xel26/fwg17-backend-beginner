@@ -12,7 +12,7 @@ const path = require('path')                                                    
 //      - properti "destination" yg berisi fungsi untuk menentukan dimana gambar akan di simpan
 //      - properti "filename" yg berisi fungsi untuk menentukan bagaimana penamaan file  (jika tidak diatur multer akan membuat nama acak yang tidak menyertakan ekstensi file apa pun)
 
-const storage = (dest, filename) => multer.diskStorage({
+const storage = (dest) => multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path.join('uploads', dest))                                            // path.join('uploads', 'products') = Menggabungkan beberapa bagian jalur menjadi satu jalur lengkap
     },
@@ -23,9 +23,9 @@ const storage = (dest, filename) => multer.diskStorage({
             'image/png': '.png'
         }
 
-        console.log(filename)
+        
         // filename = req.params.id
-        filename = new Date().getTime()
+        const filename = new Date().getTime()
 
         cb(null, `${filename}${extension[file.mimetype]}`)
     }
