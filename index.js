@@ -11,7 +11,7 @@ const morgan = require('morgan')                                            // u
 
 const app = express()                                                       // memanggil fungsi express yg mereturn object express
 
-app.use(express.urlencoded({extended: false}))                              // mengakses method use didalam object express untuk mendaftarkan middleware express.urlencoded
+app.use(express.urlencoded({extended: false}))                              // 
 app.use(morgan('dev'))                                                      // menambahkan middleware ke rantai penanganan permintaan. setiap kali ada permintaan HTTP, morgan akan mencatat informasi log. 'dev' adalah salah satu format log yang disediakan oleh morgan yg mencakup informasi penting seperti metode HTTP, status, waktu respons, dan alamat IP klien.
 app.use(cors({}))                                                           // menambahkan middleware ke rantai penanganan permintaan. setiap kali ada permintaan HTTP, cors akan di jalankan
 

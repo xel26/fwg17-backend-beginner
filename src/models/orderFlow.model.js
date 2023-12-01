@@ -2,7 +2,15 @@
 const db = require('../lib/db.lib')
 
 exports.insertOrder = async (userId, promoId, deliveryAddress, fullName, email) => {
-    const orderNumber = `12345`
+    let uniqueNumber
+    while (true) {                                                                          // agar hanya menghasilkan 3 angka bulat
+        uniqueNumber = Math.ceil(Math.random() * 1000)
+        if(uniqueNumber.toString().length === 3){
+            break
+        }
+    }
+
+    const orderNumber = `${new Date().getFullYear()}${(new Date().getMonth() + 1).toString().padStart(2, '0')}${new Date().getDate().toString().padStart(2, '0')}-${uniqueNumber}`
     const sql = `
     INSERT INTO "orders"("userId", "orderNumber", "promoId", "deliveryAddress", "fullName", "email")
     VALUES ($1, $2, $3, $4, $5, $6)
