@@ -6,11 +6,11 @@ const fs = require('fs/promises')
 
 exports.getAllProducts = async (req, res) => {   
     try {
-        const {searchKey, sortBy, order, page=1, limit} = req.query
-        const limitData = parseInt(limit) || 5
+        const {searchKey, sortBy, order, page=1, limit, category} = req.query
+        const limitData = parseInt(limit) || 6
 
-        const count = await productModel.countAll(searchKey)
-        const listProducts = await productModel.findAll(searchKey, sortBy, order, page, limitData)
+        const count = await productModel.countAll(searchKey, category)
+        const listProducts = await productModel.findAll(searchKey, sortBy, order, page, limitData, category)
 
         const totalPage = Math.ceil(count / limitData)
         const nextPage = parseInt(page) + 1
@@ -55,7 +55,6 @@ exports.createProduct = async (req, res) => {
             console.log(req.file)
             req.body.image = req.file.filename
         }
-    
 
         const product = await productModel.insert(req.body) 
         return res.json({                                                              

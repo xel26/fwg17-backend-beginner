@@ -48,7 +48,7 @@ exports.listAllData = async (model, table, res) => {
 
 exports.isExist = async (table, id) => {
     try {
-        const query = `SELECT "id" FROM ${table}`
+        const query = `SELECT "id" FROM "${table}"`
         const {rows} = await db.query(query)
         const results = rows.map(item => item.id)
         if(results.indexOf(id) === -1){
@@ -61,7 +61,7 @@ exports.isExist = async (table, id) => {
 
 
 exports.isStringExist = async (table, uniqueColumn, searchKey) => {
-    const sql = `SELECT * FROM ${table} WHERE ${uniqueColumn} ILIKE $1`
+    const sql = `SELECT * FROM "${table}" WHERE ${uniqueColumn} ILIKE $1`
     let values = [searchKey]
     const {rows} = await db.query(sql, values)
 
@@ -95,7 +95,7 @@ exports.updateColumn = async (id, body, table) => {
         return `No data has been modified`
     }
 
-    const sql = `UPDATE ${table} SET ${set.join(', ')}, "updatedAt" = now() WHERE "id" = $1 RETURNING *`
+    const sql = `UPDATE "${table}" SET ${set.join(', ')}, "updatedAt" = now() WHERE "id" = $1 RETURNING *`
     const {rows} = await db.query(sql, values)
     return rows[0]
 }

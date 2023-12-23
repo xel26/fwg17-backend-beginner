@@ -40,7 +40,7 @@ exports.getDetailUser = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'detail user',
-            result: user                                                  
+            results: user                                                  
         })
     } catch (error) {
         errorHandler(error, res)
@@ -59,7 +59,7 @@ exports.createUser = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'create user successfully',
-            result: user                                                   
+            results: user                                                   
         })
         
     } catch (error) {
@@ -106,7 +106,7 @@ exports.updateUser = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'update user successfully',
-            result: user                                                   
+            results: user                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -125,7 +125,7 @@ exports.deleteUser = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'delete user successfully',
-            result: user                                                   
+            results: user                                                   
         })
     } catch (error) {
         errorHandler(error, res)

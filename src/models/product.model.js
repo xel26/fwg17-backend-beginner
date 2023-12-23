@@ -2,22 +2,117 @@ const db = require('../lib/db.lib')
 const { isExist, isStringExist, updateColumn } = require('../moduls/handling')
 
 
-exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) => {
+exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, category) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
 
     const limitData = limit
     const offset = (page - 1) * limitData
 
+    // if search by category start
+    if(category){
+        if(typeof category === "object"){
+
+            if(typeof sortBy === "object"){
+
+                const sql = `
+                SELECT 
+                "p".*, "c"."name" AS "productCategory", sum("pr"."rate")/count("pr"."id") as "rating"
+                FROM "products" "p"
+                JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+                JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
+                JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+                WHERE "p"."name" ILIKE $1 AND (${category.map(item => `"c"."name" = '${item}'`).join(' OR ')})
+                GROUP BY "p"."id", "c"."name"
+                ORDER BY ${sortBy.map(item => `"${item}" ${order}`).join(', ')}
+                LIMIT ${limitData} OFFSET ${offset}
+                `
+                console.log(sql)
+                const values =[`%${searchKey}%`]
+                const {rows} = await db.query(sql, values)
+                if(!rows.length){
+                    throw new Error(`no data found`)
+                }
+                return rows
+            }
+
+
+            const sql = `
+            SELECT 
+            "p".*, "c"."name" AS "productCategory", sum("pr"."rate")/count("pr"."id") as "rating"
+            FROM "products" "p"
+            JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+            JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
+            JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+            WHERE "p"."name" ILIKE $1 AND (${category.map(item => `"c"."name" = '${item}'`).join(' OR ')})
+            GROUP BY "p"."id", "c"."name"
+            ORDER BY "${sortBy}" ${order}
+            LIMIT ${limitData} OFFSET ${offset}
+            `
+            console.log(sql)
+            const values =[`%${searchKey}%`]
+            const {rows} = await db.query(sql, values)
+            if(!rows.length){
+                throw new Error(`no data found`)
+            }
+            return rows
+        }
+
+        if(typeof sortBy === "object"){
+
+            const sql = `
+            SELECT 
+            "p".*, "c"."name" AS "productCategory", sum("pr"."rate")/count("pr"."id") as "rating"
+            FROM "products" "p"
+            JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+            JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
+            JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+            WHERE "p"."name" ILIKE $1 AND "c"."name" = '${category}'
+            GROUP BY "p"."id" , "c"."name"
+            ORDER BY ${sortBy.map(item => `"${item}" ${order}`).join(', ')}
+            LIMIT ${limitData} OFFSET ${offset}
+            `
+            console.log(sql)
+            const values =[`%${searchKey}%`]
+            const {rows} = await db.query(sql, values)
+            if(!rows.length){
+                throw new Error(`no data found`)
+            }
+            return rows
+        }
+
+        const sql = `
+        SELECT 
+        "p".*, "c"."name" AS "productCategory", sum("pr"."rate")/count("pr"."id") as "rating"
+        FROM "products" "p"
+        JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+        JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
+        JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+        WHERE "p"."name" ILIKE $1 AND "c"."name" = '${category}'
+        GROUP BY "p"."id", "c"."name"
+        ORDER BY "${sortBy}" ${order}
+        LIMIT ${limitData} OFFSET ${offset}
+        `
+        const values =[`%${searchKey}%`]
+        const {rows} = await db.query(sql, values)
+        if(!rows.length){
+            throw new Error(`no data found`)
+        }
+        return rows
+    }
+    // if search by category end
+
+
     if(sortBy === "categories"){
         const sql = `
         SELECT 
-        "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image",
-        "p"."discount", "p"."isRecommended", "p"."createdAt", "categories"."name" AS "category"
+        "p".*, "categories"."name" AS "category", sum("pr"."rate")/count("pr"."id") as "rating"
         FROM "products" "p"
-        JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
-        JOIN "categories" on ("categories"."id" = "pc"."categoryId")
+        JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+        JOIN "productCategories" "pc" ON ("pc"."productId" = "p"."id")
+        JOIN "categories" ON ("categories"."id" = "pc"."categoryId")
         WHERE "p"."name" ILIKE $1
+        GROUP BY "p"."id", "categories"."name"
         ORDER BY "${sortBy}"."name" ${order}
         LIMIT ${limitData} OFFSET ${offset}
         `
@@ -31,28 +126,26 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) =>
     }
 
     if(typeof sortBy === "object"){
-        const sortByColumn = ["id", "name", "basePrice", "createdAt", "categories"]
-        const columnSort = []
 
         if(sortBy.includes("categories")){
-            sortBy.map(item => {
-                if(sortByColumn.includes(item)){
-                    if(item === "categories"){
-                        columnSort.push(`"${item}"."name" ${order}`)
-                        return
-                    }
-                 columnSort.push(`"p"."${item}" ${order}`)
-                }
-             })
+            const columnSort = []
+            sortBy.map((item) => {
+              if (item === "categories") {
+                columnSort.push(`"${item}"."name" ${order}`);
+                return;
+              }
+              columnSort.push(`"p"."${item}" ${order}`);
+            });
              
              const sql = `
              SELECT 
-             "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image",
-             "p"."discount", "p"."isRecommended", "p"."createdAt", "categories"."name" AS "category"
+             "p".*, "categories"."name" AS "category", sum("pr"."rate")/count("pr"."id") as "rating"
              FROM "products" "p"
-             JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
-             JOIN "categories" on ("categories"."id" = "pc"."categoryId")
+             JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+             JOIN "productCategories" "pc" ON ("pc"."productId" = "p"."id")
+             JOIN "categories" ON ("categories"."id" = "pc"."categoryId")
              WHERE "p"."name" ILIKE $1
+             GROUP BY "p"."id", "categories"."name"
              ORDER BY ${columnSort.join(', ')}
              LIMIT ${limitData} OFFSET ${offset}
              `
@@ -65,16 +158,14 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) =>
              return rows
         }
         
-        sortBy.map(item => {
-           if(sortByColumn.includes(item)){
-            columnSort.push(`"${item}" ${order}`)
-           }
-        })
         
         const sql = `
-        SELECT * 
-        FROM "products" WHERE "name" ILIKE $1
-        ORDER BY ${columnSort.join(', ')}
+        SELECT "p".*, sum("pr"."rate")/count("pr"."id") as "rating"
+        FROM "products" "p" 
+        JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+        WHERE "p"."name" ILIKE $1
+        GROUP BY "p"."id"
+        ORDER BY ${sortBy.map(item => `"${item}" ${order}`).join(', ')}
         LIMIT ${limitData} OFFSET ${offset}
         `
         const values =[`%${searchKey}%`]
@@ -86,8 +177,11 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) =>
     }
 
     const sql = `
-    SELECT *
-    FROM "products" WHERE "name" ILIKE $1
+    SELECT "p".*, sum("pr"."rate")/count("pr"."id") as "rating"
+    FROM "products" "p" 
+    JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+    WHERE "p"."name" ILIKE $1
+    GROUP BY "p"."id"
     ORDER BY "${sortBy}" ${order}
     LIMIT ${limitData} OFFSET ${offset}
     `
@@ -100,7 +194,32 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) =>
 }
 
 
-exports.countAll = async (searchKey='') => {
+exports.countAll = async (searchKey='', category) => {
+        if(category){
+            if(typeof category === "object"){
+                const sql = `
+                SELECT COUNT("p"."id") AS "counts"
+                FROM "products" "p"
+                JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
+                JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+                WHERE "p"."name" ILIKE $1 AND (${category.map(item => `"c"."name" = '${item}'`).join(' OR ')})
+                `
+                const values = [`%${searchKey}%`]
+                const {rows} = await db.query(sql, values)
+                return rows[0].counts
+            }
+
+            const sql = `
+            SELECT COUNT("p"."id") AS "counts"
+            FROM "products" "p"
+            JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
+            JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+            WHERE "p"."name" ILIKE $1 AND "c"."name" = '${category}' 
+            `
+            const values = [`%${searchKey}%`]
+            const {rows} = await db.query(sql, values)
+            return rows[0].counts
+        }
         const sql = `SELECT COUNT("id") AS "counts" FROM "products" WHERE "name" ILIKE $1`
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
@@ -123,8 +242,8 @@ exports.findOne = async (id) => {
 }
 
 
-exports.insert = async (body) => {
-    const queryString = await isStringExist("products", "name", body.name)
+exports.insert = async ({name, description, basePrice, image, discount=0, isRecommended=false}) => {
+    const queryString = await isStringExist("products", "name", name)
     if(queryString){
         throw new Error(isStringExist)
     }
@@ -136,7 +255,7 @@ exports.insert = async (body) => {
     ($1, $2, $3, $4, $5, $6)
     RETURNING *
     `
-    const values = [body.name, body.description, body.basePrice, body.image, body.discount, body.isRecommended]
+    const values = [name, description, basePrice, image, discount, isRecommended]
     const {rows} = await db.query(sql, values)
     return rows[0]
 }

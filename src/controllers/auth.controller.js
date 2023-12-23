@@ -8,7 +8,7 @@ exports.login = async (req, res) => {
         const {email, password} = req.body                                                              // destruct data dari req.body                           
         
         if(!email){
-            throw new Error(`email cannot be empty`)
+            throw new Error(`please enter your email`)
         }
         
         const user = await userModel.findOneByEmail(email)                                              // melakukan pengecekan apakah email ada didatabase dengan kata lain apa sudah terdaftar
@@ -17,7 +17,7 @@ exports.login = async (req, res) => {
         }
         
         if(!password){
-            throw new Error(`password cannot be empty`)
+            throw new Error(`please enter your password`)
         }
     
         const verify = await argon.verify(user.password, password)                                      // pengecekan apakah password benar jika tidak maka lempar error ke catch
@@ -48,9 +48,34 @@ exports.login = async (req, res) => {
 
 exports.register = async (req, res) => {                                                   // sederhananya insert data ke table users di database
     try {
-        const {fullName, email, password, role} = req.body                                       // destruct req.body
+        const {fullName, email, password, confirmPassword, role} = req.body                                       // destruct req.body
 
-        await userModel.insert({
+        if(!fullName){
+            throw new Error(`Full Name cannot be empty`)
+        }
+
+        if(!email){
+            throw new Error(`email cannot be empty`)
+        }
+
+        const user = await userModel.findOneByEmail(email)                              // handling isStringExist di insert tidak berjalan jika methode guarding di jalankan, sehingga membuat handling error baru               
+        if(user){
+            throw new Error(`email already registered`)                                                
+        }
+
+        if(!password){
+            throw new Error(`password cannot be empty`)
+        }
+
+        if(!confirmPassword){
+            throw new Error(`please confirm password`)
+        }
+
+        if(password !== confirmPassword){
+            throw new Error(`wrong confirm password`)
+        }
+
+        await userModel.insert({                                                        
             fullName,
             email,
             password,                                                                    // password di hash di userModel insert
@@ -59,7 +84,7 @@ exports.register = async (req, res) => {                                        
 
         return res.json({
             success: true,
-            message: 'Register successfully'
+            message: 'Register success'
         })
     } catch (error) {
         errorHandler(error, res)
