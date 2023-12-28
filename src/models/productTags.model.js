@@ -1,3 +1,5 @@
+// note : productTags sudah di hapus di database, relasinya menjadi many to one dan membuat field baru "tagId" di table products
+
 const db = require('../lib/db.lib')
 const { isExist, updateColumn } = require('../moduls/handling')
 

@@ -8,7 +8,7 @@ const multerErrorHandler = (err, req, res, next) => {
         if(err.code === 'LIMIT_FILE_SIZE'){
             return res.status(400).json({
                 success: false,
-                message: 'The file size exceeds the maximum limit of 100 KB'
+                message: 'The file size exceeds the maximum limit of 500 KB'
             })
         }
     }else if (err.message === 'The file extension is not allowed; only JPEG, JPG, and PNG are permitted'){                              // error.message berasal dari fungsi "fileFilter" di file "upload.middleware" 

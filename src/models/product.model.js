@@ -16,15 +16,17 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
             if(typeof sortBy === "object"){
 
                 const sql = `
-                SELECT 
-                "p".*, "c"."name" AS "productCategory", sum("pr"."rate")/count("pr"."id") as "rating"
+                SELECT
+                "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount", "p"."createdAt",
+                "c"."name" AS "productCategory", "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") as "rating"
                 FROM "products" "p"
-                JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
-                JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
-                JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+                LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+                LEFT JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
+                LEFT JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+                LEFT join "tags" "t" on ("t"."id" = "p"."tagId")
                 WHERE "p"."name" ILIKE $1 AND (${category.map(item => `"c"."name" = '${item}'`).join(' OR ')})
-                GROUP BY "p"."id", "c"."name"
-                ORDER BY ${sortBy.map(item => `"${item}" ${order}`).join(', ')}
+                GROUP BY "p"."id", "c"."name", "t"."name"
+                ORDER BY ${sortBy.map(item => `"p"."${item}" ${order}`).join(', ')}
                 LIMIT ${limitData} OFFSET ${offset}
                 `
                 console.log(sql)
@@ -39,14 +41,16 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
 
             const sql = `
             SELECT 
-            "p".*, "c"."name" AS "productCategory", sum("pr"."rate")/count("pr"."id") as "rating"
+            "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount",
+            "c"."name" AS "productCategory", "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") as "rating"
             FROM "products" "p"
-            JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
-            JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
-            JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+            LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+            LEFT JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
+            LEFT JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+            LEFT join "tags" "t" on ("t"."id" = "p"."tagId")
             WHERE "p"."name" ILIKE $1 AND (${category.map(item => `"c"."name" = '${item}'`).join(' OR ')})
-            GROUP BY "p"."id", "c"."name"
-            ORDER BY "${sortBy}" ${order}
+            GROUP BY "p"."id", "c"."name", "t"."name"
+            ORDER BY "p"."${sortBy}" ${order}
             LIMIT ${limitData} OFFSET ${offset}
             `
             console.log(sql)
@@ -61,15 +65,16 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
         if(typeof sortBy === "object"){
 
             const sql = `
-            SELECT 
-            "p".*, "c"."name" AS "productCategory", sum("pr"."rate")/count("pr"."id") as "rating"
+            SELECT "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount",
+            "c"."name" AS "productCategory", "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") as "rating"
             FROM "products" "p"
-            JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
-            JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
-            JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+            LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+            LEFT JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
+            LEFT JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+            LEFT join "tags" "t" on ("t"."id" = "p"."tagId")
             WHERE "p"."name" ILIKE $1 AND "c"."name" = '${category}'
-            GROUP BY "p"."id" , "c"."name"
-            ORDER BY ${sortBy.map(item => `"${item}" ${order}`).join(', ')}
+            GROUP BY "p"."id", "c"."name", "t"."name"
+            ORDER BY ${sortBy.map(item => `"p"."${item}" ${order}`).join(', ')}
             LIMIT ${limitData} OFFSET ${offset}
             `
             console.log(sql)
@@ -82,15 +87,16 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
         }
 
         const sql = `
-        SELECT 
-        "p".*, "c"."name" AS "productCategory", sum("pr"."rate")/count("pr"."id") as "rating"
+        SELECT "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount", 
+        "c"."name" AS "productCategory", "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") as "rating"
         FROM "products" "p"
-        JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
-        JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
-        JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+        LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+        LEFT JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
+        LEFT JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
+        LEFT join "tags" "t" on ("t"."id" = "p"."tagId")
         WHERE "p"."name" ILIKE $1 AND "c"."name" = '${category}'
-        GROUP BY "p"."id", "c"."name"
-        ORDER BY "${sortBy}" ${order}
+        GROUP BY "p"."id", "c"."name", "t"."name"
+        ORDER BY "p"."${sortBy}" ${order}
         LIMIT ${limitData} OFFSET ${offset}
         `
         const values =[`%${searchKey}%`]
@@ -100,19 +106,20 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
         }
         return rows
     }
-    // if search by category end
+    // search by category end
 
 
     if(sortBy === "categories"){
         const sql = `
-        SELECT 
-        "p".*, "categories"."name" AS "category", sum("pr"."rate")/count("pr"."id") as "rating"
+        SELECT "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount",
+        "categories"."name" AS "category", "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") as "rating"
         FROM "products" "p"
-        JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
-        JOIN "productCategories" "pc" ON ("pc"."productId" = "p"."id")
-        JOIN "categories" ON ("categories"."id" = "pc"."categoryId")
+        LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+        LEFT JOIN "productCategories" "pc" ON ("pc"."productId" = "p"."id")
+        LEFT JOIN "categories" ON ("categories"."id" = "pc"."categoryId")
+        LEFT join "tags" "t" on ("t"."id" = "p"."tagId")
         WHERE "p"."name" ILIKE $1
-        GROUP BY "p"."id", "categories"."name"
+        GROUP BY "p"."id", "categories"."name", "t"."name"
         ORDER BY "${sortBy}"."name" ${order}
         LIMIT ${limitData} OFFSET ${offset}
         `
@@ -138,14 +145,15 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
             });
              
              const sql = `
-             SELECT 
-             "p".*, "categories"."name" AS "category", sum("pr"."rate")/count("pr"."id") as "rating"
+             SELECT "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount",
+             "categories"."name" AS "category", "t"."name" as "tag",  sum("pr"."rate")/count("pr"."id") as "rating"
              FROM "products" "p"
-             JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
-             JOIN "productCategories" "pc" ON ("pc"."productId" = "p"."id")
-             JOIN "categories" ON ("categories"."id" = "pc"."categoryId")
+             LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+             LEFT JOIN "productCategories" "pc" ON ("pc"."productId" = "p"."id")
+             LEFT JOIN "categories" ON ("categories"."id" = "pc"."categoryId")
+             LEFT join "tags" "t" on ("t"."id" = "p"."tagId")
              WHERE "p"."name" ILIKE $1
-             GROUP BY "p"."id", "categories"."name"
+             GROUP BY "p"."id", "categories"."name", "t"."name"
              ORDER BY ${columnSort.join(', ')}
              LIMIT ${limitData} OFFSET ${offset}
              `
@@ -160,12 +168,14 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
         
         
         const sql = `
-        SELECT "p".*, sum("pr"."rate")/count("pr"."id") as "rating"
+        SELECT "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount",
+        "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") as "rating"
         FROM "products" "p" 
-        JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+        LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+        LEFT join "tags" "t" on ("t"."id" = "p"."tagId")
         WHERE "p"."name" ILIKE $1
-        GROUP BY "p"."id"
-        ORDER BY ${sortBy.map(item => `"${item}" ${order}`).join(', ')}
+        GROUP BY "p"."id", "t"."name"
+        ORDER BY ${sortBy.map(item => `"p"."${item}" ${order}`).join(', ')}
         LIMIT ${limitData} OFFSET ${offset}
         `
         const values =[`%${searchKey}%`]
@@ -177,12 +187,14 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
     }
 
     const sql = `
-    SELECT "p".*, sum("pr"."rate")/count("pr"."id") as "rating"
+    SELECT "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount", 
+    "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") as "rating"
     FROM "products" "p" 
-    JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+    LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+    LEFT join "tags" "t" on ("t"."id" = "p"."tagId")
     WHERE "p"."name" ILIKE $1
-    GROUP BY "p"."id"
-    ORDER BY "${sortBy}" ${order}
+    GROUP BY "p"."id", "t"."name"
+    ORDER BY "p"."${sortBy}" ${order}
     LIMIT ${limitData} OFFSET ${offset}
     `
     const values =[`%${searchKey}%`]
@@ -206,6 +218,9 @@ exports.countAll = async (searchKey='', category) => {
                 `
                 const values = [`%${searchKey}%`]
                 const {rows} = await db.query(sql, values)
+                if(!rows.length){
+                    throw new Error(`no data found`)
+                }
                 return rows[0].counts
             }
 
@@ -223,6 +238,9 @@ exports.countAll = async (searchKey='', category) => {
         const sql = `SELECT COUNT("id") AS "counts" FROM "products" WHERE "name" ILIKE $1`
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
+        if(!rows.length){
+            throw new Error(`no data found`)
+        }
         return rows[0].counts
 }
 
@@ -230,8 +248,14 @@ exports.countAll = async (searchKey='', category) => {
 
 exports.findOne = async (id) => {
     const sql = `
-    SELECT *
-    FROM "products" where "id" = $1
+    SELECT
+    "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount", "p"."createdAt", "p"."isRecommended",
+    "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") AS "rating", count("pr"."id") AS "review"
+    FROM "products" "p"
+    LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
+    LEFT join "tags" "t" on ("t"."id" = "p"."tagId")
+    WHERE "p"."id" = $1
+    GROUP BY "p"."id", "t"."name"
     `
     let values = [id]
     const {rows} = await db.query(sql, values)

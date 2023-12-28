@@ -46,7 +46,7 @@ const fileFilter = (req, file, cb) => {
 
 
 const limits = {
-    fileSize: 100 * 1024
+    fileSize: 500 * 1024
 }
 
 
