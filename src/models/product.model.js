@@ -2,7 +2,7 @@ const db = require('../lib/db.lib')
 const { isExist, isStringExist, updateColumn } = require('../moduls/handling')
 
 
-exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, category) => {
+exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, category, isRecommended) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
 
@@ -187,12 +187,12 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
     }
 
     const sql = `
-    SELECT "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount", 
+    SELECT "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount", "p"."isRecommended",
     "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") as "rating"
     FROM "products" "p" 
     LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
     LEFT join "tags" "t" on ("t"."id" = "p"."tagId")
-    WHERE "p"."name" ILIKE $1
+    WHERE "p"."name" ILIKE $1 ${isRecommended ? 'AND "isRecommended" = true' : ''}
     GROUP BY "p"."id", "t"."name"
     ORDER BY "p"."${sortBy}" ${order}
     LIMIT ${limitData} OFFSET ${offset}
@@ -206,7 +206,7 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
 }
 
 
-exports.countAll = async (searchKey='', category) => {
+exports.countAll = async (searchKey='', category, isRecommended) => {
         if(category){
             if(typeof category === "object"){
                 const sql = `
@@ -235,7 +235,7 @@ exports.countAll = async (searchKey='', category) => {
             const {rows} = await db.query(sql, values)
             return rows[0].counts
         }
-        const sql = `SELECT COUNT("id") AS "counts" FROM "products" WHERE "name" ILIKE $1`
+        const sql = `SELECT COUNT("id") AS "counts" FROM "products" WHERE "name" ILIKE $1 ${isRecommended ? 'AND "isRecommended" = true' : ''}`
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
         if(!rows.length){

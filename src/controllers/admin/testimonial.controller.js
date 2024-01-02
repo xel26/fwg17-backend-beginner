@@ -39,15 +39,13 @@ exports.updateTesti = async (req, res) => {
         const {id} = req.params
         const data = await testiModel.findOne(id)
 
-        // if(!data){
-        //     throw new Error(`testimonial with id ${id} not found`)
-        // }
-
         if(req.file){
             if(data.image){                                                                             // jika data sebelumnya mempunyai gambar, maka gambar akan di hapus dan di ganti dengna gambar yg baru di upload
                 const imagePath = path.join(global.path, 'uploads', 'testimonial', data.image)             // mengambil jalur path gambar        
                 console.log(imagePath)
-                await fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
+                fs.access(imagePath, fs.constants.R_OK).then(() => {
+                    fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
+                })                                                                  // menghapus file berdasarkan jalur path
             }
             console.log(req.file)
             req.body.image = req.file.filename

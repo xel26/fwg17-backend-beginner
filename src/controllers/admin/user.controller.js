@@ -86,8 +86,9 @@ exports.updateUser = async (req, res) => {
         if(req.file){                                                                                           
             if(data.picture){                                                                                   // jika data sebelumnya mempunyai gambar, maka gambara akan di hapus dan di ganti dengan gambar yg baru di upload
                 const picturePath = path.join(global.path, 'uploads', 'users', data.picture)                    // mengambil jalur path gambar
-                console.log(picturePath)
-                await fs.rm(picturePath)                                                                        // menghapus file berdasarkan jalur path
+                fs.access(picturePath, fs.constants.R_OK).then(() => {
+                    fs.rm(picturePath)                                                                  // menghapus file berdasarkan jalur path
+                })                                                                        // menghapus file berdasarkan jalur path
             }
             console.log(req.file)
             req.body.picture = req.file.filename
@@ -120,7 +121,9 @@ exports.deleteUser = async (req, res) => {
         if(user.picture){
             const picturePath = path.join(global.path, "uploads", "users", user.picture)                        // mengambil jalur path picture
             console.log(picturePath)
-            await fs.rm(picturePath)                                                                            // menghapus file berdasarkan jalur path
+            fs.access(picturePath, fs.constants.R_OK).then(() => {
+                fs.rm(picturePath)                                                                  // menghapus file berdasarkan jalur path
+            })                                                                           // menghapus file berdasarkan jalur path
         }
         return res.json({                                                              
             success: true,

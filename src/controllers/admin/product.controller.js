@@ -6,11 +6,11 @@ const fs = require('fs/promises')
 
 exports.getAllProducts = async (req, res) => {   
     try {
-        const {searchKey, sortBy, order, page=1, limit, category} = req.query
+        const {searchKey, sortBy, order, page=1, limit, category, isRecommended} = req.query
         const limitData = parseInt(limit) || 6
 
-        const count = await productModel.countAll(searchKey, category)
-        const listProducts = await productModel.findAll(searchKey, sortBy, order, page, limitData, category)
+        const count = await productModel.countAll(searchKey, category, isRecommended)
+        const listProducts = await productModel.findAll(searchKey, sortBy, order, page, limitData, category, isRecommended)
 
         const totalPage = Math.ceil(count / limitData)
         const nextPage = parseInt(page) + 1
@@ -76,15 +76,13 @@ exports.updateProduct = async (req, res) => {
         const {id} = req.params
         const data = await productModel.findOne(id)
 
-        if(!data){
-            throw new Error(`product with id ${id} not found`)
-        }
-
         if(req.file){
             if(data.image){                                                                             // jika data sebelumnya mempunyai gambar, maka gambar akan di hapus dan di ganti dengna gambar yg baru di upload
                 const imagePath = path.join(global.path, 'uploads', 'products', data.image)             // mengambil jalur path gambar        
                 console.log(imagePath)
-                await fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
+                fs.access(imagePath, fs.constants.R_OK).then(() => {
+                    fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
+                })
             }
             console.log(req.file)
             req.body.image = req.file.filename
@@ -114,8 +112,11 @@ exports.deleteProduct = async (req, res) => {
         if(product.image){
             const imagePath = path.join(global.path, "uploads", "products", product.image)              // mengambil jalur path image
             console.log(imagePath)
-            await fs.rm(imagePath)                                                                      // menghapus file berdasarkan jalur path
+            fs.access(imagePath, fs.constants.R_OK).then(() => {
+                fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
+            })                                                                      // menghapus file berdasarkan jalur path
         }
+
         return res.json({                                                              
             success: true,
             message: 'delete product successfully',

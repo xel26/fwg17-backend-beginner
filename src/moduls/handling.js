@@ -6,43 +6,20 @@ const db = require('../lib/db.lib')
 const argon = require('argon2')
 
 
-exports.listAllData = async (model, table, res) => {
-    try {
-        const listData = await model.findAll()
-        return res.json({                                                              
-            success: true,
-            messages: `List all ${table.replaceAll('_', ' ')}`,
-            results: listData                                                    
-        })
-    } catch (error) {
-        return res.status(500).json({                                                              
-            success: false,
-            messages: `Internal server error`                                                    
-        })
-    }
-}
-
-
-
-// exports.findBy = async (table, uniqueColumn, searchKey) => {
-//     if(isNaN(searchKey)){                                                                                                   // jika searchKey berupa string text
-//         const sql = `SELECT * FROM ${table} where ${uniqueColumn}::varchar ILIKE $1`                                        // maka pencarian akan menggunakan ilike agar case-insensitive
-//         let values = [searchKey]
-//         const {rows} = await db.query(sql, values)
-//         if(!rows.length){
-//             throw new Error(`data with ${uniqueColumn.replace('_', ' ')} ${searchKey} not found `)                          // jika data tidak ditemukan maka akan melempar errro yg akan di tangkap oleh catch di file controller 
-//         }
-//         return rows[0]
+// exports.listAllData = async (model, table, res) => {
+//     try {
+//         const listData = await model.findAll()
+//         return res.json({                                                              
+//             success: true,
+//             messages: `List all ${table.replaceAll('_', ' ')}`,
+//             results: listData                                                    
+//         })
+//     } catch (error) {
+//         return res.status(500).json({                                                              
+//             success: false,
+//             messages: `Internal server error`                                                    
+//         })
 //     }
-
-//     const sql = `SELECT * FROM ${table} where ${uniqueColumn} = $1`
-//     let values = []
-//     values = [searchKey]
-//     const {rows} = await db.query(sql, values)
-//     if(!rows.length){
-//         throw new Error(`data with ${uniqueColumn.replaceAll('_', ' ')} ${searchKey} not found `)
-//     }
-//     return rows[0]
 // }
 
 

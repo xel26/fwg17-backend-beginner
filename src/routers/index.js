@@ -11,9 +11,7 @@ const multerErrorHandler = require('../middleware/multerErrorHandler.middleware'
 
 router.use('/auth', require('./auth.router'))
 router.use('/admin', authMiddleware, roleCheckMiddleware("admin"), require('./admin'))                            // setiap ada permintaan ke path /admin authMiddleware dan roleCheckMiddleware akan selalu dijalankan untuk pengecekan otorisasi
-
-router.get('/users/:id', userController.getDetailUser) 
-router.patch('/users/:id', uploadMiddleware('users').single('picture'), multerErrorHandler, userController.updateUser)
+router.use('/profile', authMiddleware, require('./profile.router'))
 
 router.get('/products', productController.getAllProducts)
 router.get('/products/:id', productController.getDetailProduct) 
