@@ -82,7 +82,7 @@ exports.updateProduct = async (req, res) => {
                 console.log(imagePath)
                 fs.access(imagePath, fs.constants.R_OK).then(() => {
                     fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
-                })
+                }).catch(() => {});
             }
             console.log(req.file)
             req.body.image = req.file.filename
@@ -114,7 +114,7 @@ exports.deleteProduct = async (req, res) => {
             console.log(imagePath)
             fs.access(imagePath, fs.constants.R_OK).then(() => {
                 fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
-            })                                                                      // menghapus file berdasarkan jalur path
+            }).catch(() => {});                                                                      // menghapus file berdasarkan jalur path
         }
 
         return res.json({                                                              

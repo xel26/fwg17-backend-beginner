@@ -21,7 +21,7 @@ exports.getAllProductTags = async (req, res) => {
                 currentPage: parseInt(page),
                 totalPage,
                 nextPage: nextPage <= totalPage ? nextPage : null,
-                prevPage: prevPage > 1 ? prevPage : null,
+                prevPage: prevPage >= 1 ? prevPage : null,
                 totalData: parseInt(count)
             },
             results: listProductTags                                                    

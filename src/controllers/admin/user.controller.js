@@ -88,7 +88,7 @@ exports.updateUser = async (req, res) => {
                 const picturePath = path.join(global.path, 'uploads', 'users', data.picture)                    // mengambil jalur path gambar
                 fs.access(picturePath, fs.constants.R_OK).then(() => {
                     fs.rm(picturePath)                                                                  // menghapus file berdasarkan jalur path
-                })                                                                        // menghapus file berdasarkan jalur path
+                }).catch(() => {});                                                                        // menghapus file berdasarkan jalur path
             }
             console.log(req.file)
             req.body.picture = req.file.filename
@@ -123,7 +123,7 @@ exports.deleteUser = async (req, res) => {
             console.log(picturePath)
             fs.access(picturePath, fs.constants.R_OK).then(() => {
                 fs.rm(picturePath)                                                                  // menghapus file berdasarkan jalur path
-            })                                                                           // menghapus file berdasarkan jalur path
+            }).catch(() => {});                                                                           // menghapus file berdasarkan jalur path
         }
         return res.json({                                                              
             success: true,

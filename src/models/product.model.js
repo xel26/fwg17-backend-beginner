@@ -3,8 +3,10 @@ const { isExist, isStringExist, updateColumn } = require('../moduls/handling')
 
 
 exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, category, isRecommended) => {
-    const orderType = ["ASC", "DESC"]
-    order = orderType.includes(order)? order : "ASC"
+    // const orderType = ["ASC", "DESC"]
+    // order = orderType.includes(order)? order : "ASC"
+    order = sortBy == "createdAt" ? "DESC" : order
+
 
     const limitData = limit
     const offset = (page - 1) * limitData
@@ -187,7 +189,7 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
     }
 
     const sql = `
-    SELECT "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount", "p"."isRecommended",
+    SELECT "p".*,
     "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") as "rating"
     FROM "products" "p" 
     LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")

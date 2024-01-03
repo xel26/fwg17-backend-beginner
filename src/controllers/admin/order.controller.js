@@ -2,13 +2,43 @@ const orderModel = require('../../models/order.model')
 const { errorHandler } = require('../../moduls/handling')
 
 
-exports.getAllOrders = async (req, res) => {       
-    try {
-        const {searchKey, sortBy, order, page=1, limit} = req.query
-        const limitData = parseInt(limit) || 5
+// exports.getAllOrders = async (req, res) => {       
+//     try {
+//         const {searchKey, sortBy, order, page=1, limit} = req.query
+//         const limitData = parseInt(limit) || 4
 
-        const count = await orderModel.countAll(searchKey)      
-        const listOrders = await orderModel.findAll(searchKey, sortBy, order, page, limitData)
+//         const count = await orderModel.countAll(searchKey)      
+//         const listOrders = await orderModel.findAll(searchKey, sortBy, order, page, limitData)
+        
+//         const totalPage = Math.ceil(count / limitData)
+//         const nextPage = parseInt(page) + 1
+//         const prevPage = parseInt(page) - 1
+
+//         return res.json({                                                              
+//             success: true,
+//             messages: `List all users`,
+//             pageInfo: {
+//                 currentPage: parseInt(page),
+//                 totalPage,
+//                 nextPage: nextPage <= totalPage ? nextPage : null,
+//                 prevPage: prevPage > 1 ? prevPage : null,
+//                 totalData: parseInt(count)
+//             },
+//             results: listOrders                                                    
+//         })
+//     } catch (error) {
+//         errorHandler(error, res)
+//     }
+// }
+
+exports.getAllOrders = async (req, res) => {  
+    const {id} = req.user     
+    try {
+        const {page=1, limit, status} = req.query
+        const limitData = parseInt(limit) || 4
+
+        const count = await orderModel.countAll(id, status)      
+        const listOrders = await orderModel.findAll(parseInt(id), page, limitData, status)
         
         const totalPage = Math.ceil(count / limitData)
         const nextPage = parseInt(page) + 1
@@ -21,7 +51,7 @@ exports.getAllOrders = async (req, res) => {
                 currentPage: parseInt(page),
                 totalPage,
                 nextPage: nextPage <= totalPage ? nextPage : null,
-                prevPage: prevPage > 1 ? prevPage : null,
+                prevPage: prevPage >= 1 ? prevPage : null,
                 totalData: parseInt(count)
             },
             results: listOrders                                                    
@@ -32,13 +62,26 @@ exports.getAllOrders = async (req, res) => {
 }
 
 
+// exports.getDetailOrder = async (req, res) => {                                        
+//     try {
+//         const order = await orderModel.findOne(parseInt(req.params.id))
+//         return res.json({                                                              
+//             success: true,
+//             messages: 'detail order',
+//             result: order                                                  
+//         })
+//     } catch (error) {
+//         errorHandler(error, res)
+//     }
+// }
+
 exports.getDetailOrder = async (req, res) => {                                        
     try {
         const order = await orderModel.findOne(parseInt(req.params.id))
         return res.json({                                                              
             success: true,
             messages: 'detail order',
-            result: order                                                  
+            results: order                                                  
         })
     } catch (error) {
         errorHandler(error, res)
@@ -47,8 +90,9 @@ exports.getDetailOrder = async (req, res) => {
 
 
 exports.createOrder = async (req, res) => {
+    const {id} = req.user
     try {
-        const order = await orderModel.insert(req.body) 
+        const order = await orderModel.insert(id, req.body) 
         return res.json({                                                              
             success: true,
             messages: 'create order successfully',
