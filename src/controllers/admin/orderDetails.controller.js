@@ -2,7 +2,8 @@ const orderDetailsModel = require('../../models/orderDetails.model')
 const { errorHandler } = require('../../moduls/handling')
 
 
-exports.getAllOrderDetail = async (req, res) => {       
+exports.getAllOrderDetail = async (req, res) => { 
+    
     try {
         const {sortBy, order, page=1, limit} = req.query
         const limitData = parseInt(limit) || 5

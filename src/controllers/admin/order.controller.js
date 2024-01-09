@@ -46,7 +46,7 @@ exports.getAllOrders = async (req, res) => {
 
         return res.json({                                                              
             success: true,
-            messages: `List all users`,
+            messages: `List all orders`,
             pageInfo: {
                 currentPage: parseInt(page),
                 totalPage,
@@ -68,7 +68,7 @@ exports.getAllOrders = async (req, res) => {
 //         return res.json({                                                              
 //             success: true,
 //             messages: 'detail order',
-//             result: order                                                  
+//             results: order                                                  
 //         })
 //     } catch (error) {
 //         errorHandler(error, res)
@@ -90,13 +90,13 @@ exports.getDetailOrder = async (req, res) => {
 
 
 exports.createOrder = async (req, res) => {
-    const {id} = req.user
+    const {id: userId} = req.user
     try {
-        const order = await orderModel.insert(id, req.body) 
+        const order = await orderModel.insert(userId, req.body) 
         return res.json({                                                              
             success: true,
             messages: 'create order successfully',
-            result: order                                                   
+            results: order                                                   
         })
         
     } catch (error) {
@@ -117,7 +117,7 @@ exports.updateOrder = async (req, res) => {
         return res.json({                                                              
             success: true,
             messages: 'update order successfully',
-            result: order                                                   
+            results: order                                                   
         })
     } catch (error) {
         errorHandler(error, res)
@@ -131,7 +131,7 @@ exports.deleteOrder = async (req, res) => {
         return res.json({                                                              
             success: true,
             messages: 'delete order successfully',
-            result: order                                                   
+            results: order                                                   
         })
     } catch (error) {
         errorHandler(error, res)

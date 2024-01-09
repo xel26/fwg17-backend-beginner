@@ -110,7 +110,7 @@ exports.errorHandler = (error, res) => {
             success: false,
             message: error.message                                                          // message error berasal dari error custom =>  throw new Error('message')                                               
         })
-    }else if(error.message.includes("not registered") || error.message.includes("wrong password") || error.message.includes("invalid token")){             // error forbidden access = login dan otorisasi auth.middleware
+    }else if(error.message.includes("not registered") || error.message.includes("wrong password") || error.message.includes("invalid token") || error.message.includes("malformed")){             // error forbidden access = login dan otorisasi auth.middleware
             return res.status(401).json({
             success: false,
             message: error.message

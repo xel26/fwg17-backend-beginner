@@ -98,7 +98,7 @@ exports.findOne = async (id) => {
 }
 
 
-exports.insert = async (id, body) => {
+exports.insert = async (userId, body) => {
     // if(body.userId){
     //     const queryId = await isExist("users", parseInt(body.userId))                                                                     // melakukan query terlebih dahulu sebelum update, untuk mengecek apakah data yg ingin di update ada di database
     //     if(queryId){
@@ -111,17 +111,17 @@ exports.insert = async (id, body) => {
 
     const sql = `
     INSERT INTO "orders"
-    ("userId", "orderNumber", "total", "status", "deliveryAddress", "fullName", "email")
+    ("userId", "orderNumber", "total", "subTotal", "tax", "deliveryFee", "deliveryShipping", "status", "deliveryAddress", "fullName", "email")
     VALUES
     (
-    $1, $2, $3, $4
+    $1, $2, $3, $4, $5, $6, $7, $8,
     (select "address" from "users" where "id" = $1),
     (select "fullName" from "users" where "id" = $1),
     (select "email" from "users" where "id" = $1)
     )
     RETURNING *
     `
-    const values = [id, orderNumber, body.total, body.status]
+    const values = [userId, orderNumber, body.total, body.subTotal, body.tax, body.deliveryFee, body.deliveryShipping, body.status]
     const {rows} = await db.query(sql, values)
     return rows[0]
 }
