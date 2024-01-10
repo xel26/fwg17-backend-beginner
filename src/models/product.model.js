@@ -44,7 +44,8 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
             const sql = `
             SELECT 
             "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount",
-            "c"."name" AS "productCategory", "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") as "rating"
+            "c"."name" AS "productCategory" AS "productCategory", 
+            "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") as "rating"
             FROM "products" "p"
             LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
             LEFT JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
@@ -251,11 +252,29 @@ exports.countAll = async (searchKey='', category, isRecommended) => {
 exports.findOne = async (id) => {
     const sql = `
     SELECT
-    "p"."id", "p"."name", "p"."description", "p"."basePrice", "p"."image", "p"."discount", "p"."createdAt", "p"."isRecommended",
-    "t"."name" as "tag", sum("pr"."rate")/count("pr"."id") AS "rating", count("pr"."id") AS "review"
+    "p"."id",
+    "p"."name",
+    "p"."description",
+    "p"."basePrice",
+    "p"."image",
+    "p"."discount",
+    "p"."createdAt",
+    "p"."isRecommended",
+    "t"."name" as "tag",
+    sum("pr"."rate")/count("pr"."id") AS "rating",
+    count("pr"."id") AS "review",
+    JSONB_AGG(
+        DISTINCT JSONB_BUILD_OBJECT(
+            'id', "v"."id",
+            'name', "v"."name",
+            'additionalPrice', "v"."additionalPrice"
+        )
+    ) AS "variantsProduct"
     FROM "products" "p"
     LEFT JOIN "productRatings" "pr" ON ("pr"."productId" = "p"."id")
-    LEFT join "tags" "t" on ("t"."id" = "p"."tagId")
+    LEFT JOIN "tags" "t" on ("t"."id" = "p"."tagId")
+    LEFT JOIN "productVariant" "pv" on ("pv"."productId" = "p"."id")
+    LEFT JOIN "variant" "v" on ("pv"."variantId" = "v"."id")
     WHERE "p"."id" = $1
     GROUP BY "p"."id", "t"."name"
     `

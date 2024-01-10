@@ -6,7 +6,7 @@ const { errorHandler } = require('../moduls/handling')
 
 exports.getPriceSize = async (req, res) => {                                        
     try {
-        const size = await checkoutModel.getPriceSize(req.query.name)
+        const size = await checkoutModel.getDataSize(req.query.name)
         return res.json({                                                              
             success: true,
             message: 'detail size',
@@ -19,7 +19,7 @@ exports.getPriceSize = async (req, res) => {
 
 exports.getPriceVariant = async (req, res) => {                                        
     try {
-        const size = await checkoutModel.getPriceVariant(req.query.name)
+        const size = await checkoutModel.getDataVariant(req.query.name)
         return res.json({                                                              
             success: true,
             message: 'detail variant',
@@ -65,6 +65,7 @@ exports.getOrderProducts = async (req, res) => {
 exports.createOrder = async (req, res) => {
     try {
         await db.query('BEGIN')
+
         const {id: userId} = req.user
         const {products, deliveryShipping} = req.body
         console.log(typeof products, JSON.parse(products))
@@ -78,10 +79,17 @@ exports.createOrder = async (req, res) => {
         console.log(order)
 
         const parsedProducts = JSON.parse(products)
-        await Promise.all(parsedProducts.map(async (product) => {
-            const orderDetails = await checkoutModel.insertOrderDetails(order.id, product.id, product.sizeId, product.variantId, product.quantity)
-            await checkoutModel.countSubtotal(orderDetails.id)
-        }))
+        for(const product of parsedProducts){
+            try {
+                const sizeId = await checkoutModel.getDataSize(product.size)
+                const variantId = await checkoutModel.getDataVariant(product.variant)
+                const orderDetails = await checkoutModel.insertOrderDetails(order.id, product.id, sizeId.id, variantId.id, product.quantity)
+                await checkoutModel.countSubtotal(orderDetails.id)
+            } catch (error) {
+                console.log(error.message)
+                await db.query('ROLLBACK')
+            }
+        }
 
         await checkoutModel.countTotal(order.id)
         await checkoutModel.countTotalTransaction(order.id)

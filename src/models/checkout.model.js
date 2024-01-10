@@ -1,7 +1,7 @@
 const db = require('../lib/db.lib')
 const { isExist } = require('../moduls/handling')
 
-exports.getPriceSize = async (name) => {
+exports.getDataSize = async (name) => {
     const sql = `
     SELECT *
     FROM "sizes" WHERE "size" ILIKE $1
@@ -14,7 +14,7 @@ exports.getPriceSize = async (name) => {
     return rows[0]
 }
 
-exports.getPriceVariant = async (name) => {
+exports.getDataVariant = async (name) => {
     const sql = `
     SELECT *
     FROM "variant" WHERE "name" ILIKE $1
@@ -73,7 +73,7 @@ exports.findOrderProducts = async (sortBy="id", order="ASC", page, limit, orderI
 }
 
 
-exports.insertOrder = async (userId, orderNumber, tax, deliveryFee, status, deliveryShipping) => {
+exports.insertOrder = async (userId, orderNumber, tax, deliveryFee, status, deliveryShipping, deliveryAddress, fullName, email) => {
     const sql = `
     INSERT INTO "orders"
     ("userId", "orderNumber", "tax", "deliveryFee", "status", "deliveryShipping", "deliveryAddress", "fullName", "email")
@@ -87,6 +87,18 @@ exports.insertOrder = async (userId, orderNumber, tax, deliveryFee, status, deli
     RETURNING *
     `
     const values = [userId, orderNumber, tax, deliveryFee, status, deliveryShipping]
+    if(deliveryAddress){
+        values.push(deliveryAddress)
+    }
+
+    if(fullName){
+        values.push(fullName)
+    }
+
+    if(email){
+        values.push(email)
+    }
+
     const {rows} = await db.query(sql, values)
     return rows[0]
 }
@@ -106,7 +118,7 @@ exports.insertOrderDetails = async (orderId, productId, sizeId, variantId, quant
 exports.countSubtotal = async(orderDetailsId) => {
     const sql = `
     update "orderDetails" set "subtotal" = (
-        select (("p"."basePrice" - "p"."discount") * "od"."quantity") + "s"."additionalPrice" + "v"."additionalPrice"
+        select (("p"."basePrice" - "p"."discount" + "s"."additionalPrice" + "v"."additionalPrice") * "od"."quantity")
         from "orderDetails" "od"
         join "products" "p" on ("p"."id" = "od"."productId")
         join "sizes" "s" on ("s"."id" = "od"."sizeId")

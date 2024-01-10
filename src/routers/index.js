@@ -16,18 +16,18 @@ router.use('/admin', authMiddleware, roleCheckMiddleware("admin"), require('./ad
 
 router.use('/profile', authMiddleware, require('./profile.router'))
 
+
 router.get('/products', productController.getAllProducts)
 router.get('/products/:id', productController.getDetailProduct) 
 
-// router.post('/checkout', authMiddleware, orderController.createOrder)  
 router.post('/checkout', authMiddleware, checkoutController.createOrder)
 
 router.get('/orders', authMiddleware, orderController.getAllOrders)
 router.get('/order/:id', authMiddleware, orderController.getDetailOrder)
 router.post('/order-details', authMiddleware, orderDetailsController.createOrderDetail)
 router.get('/order-details', authMiddleware, checkoutController.getOrderProducts)
-router.get('/additional-price-size', checkoutController.getPriceSize)
-router.get('/additional-price-variant', checkoutController.getPriceVariant)
+router.get('/data-size', checkoutController.getPriceSize)
+router.get('/data-variant', checkoutController.getPriceVariant)
 
 router.post('/order-flow', authMiddleware, roleCheckMiddleware("customer"), orderFlow.orderProducts)
 
