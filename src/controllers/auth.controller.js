@@ -48,7 +48,7 @@ exports.login = async (req, res) => {
 
 exports.register = async (req, res) => {                                                   // sederhananya insert data ke table users di database
     try {
-        const {fullName, email, password, confirmPassword, role} = req.body                                       // destruct req.body
+        const {fullName, email, password, confirmPassword} = req.body                                       // destruct req.body
 
         if(!fullName){
             throw new Error(`Full Name cannot be empty`)
@@ -79,7 +79,7 @@ exports.register = async (req, res) => {                                        
             fullName,
             email,
             password,                                                                    // password di hash di userModel insert
-            role
+            role: "customer"
         })
 
         return res.json({

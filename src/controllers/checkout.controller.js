@@ -67,31 +67,55 @@ exports.createOrder = async (req, res) => {
         await db.query('BEGIN')
 
         const {id: userId} = req.user
-        const {products, deliveryShipping} = req.body
-        console.log(typeof products, JSON.parse(products))
+        // const {products, deliveryShipping} = req.body
+        const {productId, sizeProduct, variantProduct, quantityProduct, deliveryShipping} = req.body
+        // console.log(typeof products, JSON.parse(products))
+
+        const idProduct = productId.split(',')
+        const size = sizeProduct.split(',')
+        const variant = variantProduct.split(',')
+        const quantity = quantityProduct.split(',')
+
+        console.log(idProduct)
+        console.log(size)
+        console.log(variant)
+        console.log(quantity)
 
         const date = moment(new Date())
         const orderNumber = `${date.format('YY')}${date.format('M').padStart(2, '0')}${date.format('D').padStart(2, '0')}${Math.floor(Math.random()*1000)}`
-        const tax = 4000
         const status = "On Progress"
         const deliveryFee = 5000
-        const order = await checkoutModel.insertOrder(userId, orderNumber, tax, deliveryFee, status, deliveryShipping)
+        const order = await checkoutModel.insertOrder(userId, orderNumber, deliveryFee, status, deliveryShipping)
         console.log(order)
 
-        const parsedProducts = JSON.parse(products)
-        for(const product of parsedProducts){
-            try {
-                const sizeId = await checkoutModel.getDataSize(product.size)
-                const variantId = await checkoutModel.getDataVariant(product.variant)
-                const orderDetails = await checkoutModel.insertOrderDetails(order.id, product.id, sizeId.id, variantId.id, product.quantity)
-                await checkoutModel.countSubtotal(orderDetails.id)
-            } catch (error) {
-                console.log(error.message)
-                await db.query('ROLLBACK')
-            }
+        for (let i = 0; i < idProduct.length; i++) {
+              try {
+                  const sizeId = await checkoutModel.getDataSize(size[i])
+                  const variantId = await checkoutModel.getDataVariant(variant[i])
+                  const orderDetails = await checkoutModel.insertOrderDetails(order.id, parseInt(idProduct[i]), sizeId.id, variantId.id, parseInt(quantity[i]))
+                  await checkoutModel.countSubtotal(orderDetails.id)
+              } catch (error) {
+                  console.log(error.message)
+                  await db.query('ROLLBACK')
+              }
         }
 
+
+        // const parsedProducts = JSON.parse(products)
+        // for(const product of parsedProducts){
+        //     try {
+        //         const sizeId = await checkoutModel.getDataSize(product.size)
+        //         const variantId = await checkoutModel.getDataVariant(product.variant)
+        //         const orderDetails = await checkoutModel.insertOrderDetails(order.id, product.id, sizeId.id, variantId.id, product.quantity)
+        //         await checkoutModel.countSubtotal(orderDetails.id)
+        //     } catch (error) {
+        //         console.log(error.message)
+        //         await db.query('ROLLBACK')
+        //     }
+        // }
+
         await checkoutModel.countTotal(order.id)
+        await checkoutModel.countTax(order.Id)
         await checkoutModel.countTotalTransaction(order.id)
 
         await db.query('COMMIT')

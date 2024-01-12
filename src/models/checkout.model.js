@@ -73,20 +73,20 @@ exports.findOrderProducts = async (sortBy="id", order="ASC", page, limit, orderI
 }
 
 
-exports.insertOrder = async (userId, orderNumber, tax, deliveryFee, status, deliveryShipping, deliveryAddress, fullName, email) => {
+exports.insertOrder = async (userId, orderNumber, deliveryFee, status, deliveryShipping, deliveryAddress, fullName, email) => {
     const sql = `
     INSERT INTO "orders"
-    ("userId", "orderNumber", "tax", "deliveryFee", "status", "deliveryShipping", "deliveryAddress", "fullName", "email")
+    ("userId", "orderNumber", "deliveryFee", "status", "deliveryShipping", "deliveryAddress", "fullName", "email")
     VALUES
     (
-    $1, $2, $3, $4, $5, $6,
+    $1, $2, $3, $4, $5,
     (select "address" from "users" where "id" = $1),
     (select "fullName" from "users" where "id" = $1),
     (select "email" from "users" where "id" = $1)
     )
     RETURNING *
     `
-    const values = [userId, orderNumber, tax, deliveryFee, status, deliveryShipping]
+    const values = [userId, orderNumber, deliveryFee, status, deliveryShipping]
     if(deliveryAddress){
         values.push(deliveryAddress)
     }
@@ -126,6 +126,7 @@ exports.countSubtotal = async(orderDetailsId) => {
         where "od"."id" = $1
     )
     where "id" = $1
+    RETURNING *
     `
     const values = [orderDetailsId]
     const {rows} = await db.query(sql, values)
@@ -137,9 +138,22 @@ exports.countTotal = async(orderId) => {
     const sql = `
     update "orders" set "total" = (select sum("subtotal") from "orderDetails" where "orderId" = $1)
     where "id" = $1
+    RETURNING *
     `
     const values = [orderId]
     const {rows} = await db.query(sql, values)
+    return rows[0]
+}
+
+exports.countTax = async (orderId) => {
+    const sql = `
+    update "orders" set "tax" = (select ("total" * 0.025) from "orders" where "id" = $1)
+    where "id" = $1
+    RETURNING *
+    `
+    const values = [orderId]
+    const {rows} = await db.query(sql, values)
+    console.log(rows)
     return rows[0]
 }
 
@@ -147,6 +161,7 @@ exports.countTotalTransaction = async(id) => {
     const sql = `
     UPDATE "orders" set "subtotal" = (select "total" from "orders" where "id" = $1) + (select "tax" from "orders" where "id" = $1) + (select "deliveryFee" from "orders" where "id" = $1)
     WHERE "id" = $1
+    RETURNING *
     `
     const values = [id]
     const {rows} = await db.query(sql, values)
