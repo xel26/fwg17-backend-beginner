@@ -31,6 +31,9 @@ exports.countAll = async (id, status) => {
     const sql = `SELECT COUNT("orderId") AS "counts" FROM "orderDetails" WHERE "orderId" = $1 ${status ? 'AND "status" = $2' : ''}`
     const values = status ? [id, status] : [id]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
     return rows[0].counts
 }
 
@@ -73,33 +76,52 @@ exports.findOrderProducts = async (sortBy="id", order="ASC", page, limit, orderI
 }
 
 
+exports.getDeliveryAddress = async (userId) => {
+    const sql = `select "address" from "users" where "id" = $1`
+    const values = [userId]
+    const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
+    return rows[0].address
+}
+
+
+exports.getFullName = async (userId) => {
+    const sql = `select "fullName" from "users" where "id" = $1`
+    const values = [userId]
+    const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
+    return rows[0].fullName
+}
+
+
+exports.getEmail = async (userId) => {
+    const sql = `select "email" from "users" where "id" = $1`
+    const values = [userId]
+    const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
+    return rows[0].email
+}
+
+
 exports.insertOrder = async (userId, orderNumber, deliveryFee, status, deliveryShipping, deliveryAddress, fullName, email) => {
     const sql = `
     INSERT INTO "orders"
     ("userId", "orderNumber", "deliveryFee", "status", "deliveryShipping", "deliveryAddress", "fullName", "email")
     VALUES
-    (
-    $1, $2, $3, $4, $5,
-    (select "address" from "users" where "id" = $1),
-    (select "fullName" from "users" where "id" = $1),
-    (select "email" from "users" where "id" = $1)
-    )
+    ($1, $2, $3, $4, $5, $6, $7, $8)
     RETURNING *
     `
-    const values = [userId, orderNumber, deliveryFee, status, deliveryShipping]
-    if(deliveryAddress){
-        values.push(deliveryAddress)
-    }
-
-    if(fullName){
-        values.push(fullName)
-    }
-
-    if(email){
-        values.push(email)
-    }
-
+    const values = [userId, orderNumber, deliveryFee, status, deliveryShipping, deliveryAddress, fullName, email]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
     return rows[0]
 }
 
@@ -111,6 +133,9 @@ exports.insertOrderDetails = async (orderId, productId, sizeId, variantId, quant
     `
     const values = [orderId, productId, sizeId, variantId, quantity]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
     return rows[0]
 }
 
@@ -130,6 +155,9 @@ exports.countSubtotal = async(orderDetailsId) => {
     `
     const values = [orderDetailsId]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
     return rows[0]
 }
 
@@ -142,10 +170,14 @@ exports.countTotal = async(orderId) => {
     `
     const values = [orderId]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
     return rows[0]
 }
 
 exports.countTax = async (orderId) => {
+    console.log(orderId)
     const sql = `
     update "orders" set "tax" = (select ("total" * 0.025) from "orders" where "id" = $1)
     where "id" = $1
@@ -154,6 +186,9 @@ exports.countTax = async (orderId) => {
     const values = [orderId]
     const {rows} = await db.query(sql, values)
     console.log(rows)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
     return rows[0]
 }
 
@@ -165,5 +200,8 @@ exports.countTotalTransaction = async(id) => {
     `
     const values = [id]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`no data found `)
+    }
     return rows[0]
 }
