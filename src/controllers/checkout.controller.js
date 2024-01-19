@@ -93,7 +93,7 @@ exports.createOrder = async (req, res) => {
             email = await checkoutModel.getEmail(userId)
         }
 
-        const order = await checkoutModel.insertOrder(userId, orderNumber, deliveryFee, status, deliveryShipping, deliveryAddress, fullName, email)
+        let order = await checkoutModel.insertOrder(userId, orderNumber, deliveryFee, status, deliveryShipping, deliveryAddress, fullName, email)
         console.log(order)
 
         for (let i = 0; i < idProduct.length; i++) {
@@ -110,7 +110,7 @@ exports.createOrder = async (req, res) => {
 
         await checkoutModel.countTotal(order.id)
         await checkoutModel.countTax(order.id)
-        await checkoutModel.countTotalTransaction(order.id)
+        order = await checkoutModel.countTotalTransaction(order.id)
 
         await db.query('COMMIT')
 

@@ -1,5 +1,4 @@
 const db = require('../lib/db.lib')
-const { isExist } = require('../moduls/handling')
 
 exports.getDataSize = async (name) => {
     const sql = `
