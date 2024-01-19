@@ -13,7 +13,7 @@ const app = express()                                                       // m
 
 app.use(express.urlencoded({extended: true}))                              // 
 app.use(morgan('dev'))                                                      // menambahkan middleware ke rantai penanganan permintaan. setiap kali ada permintaan HTTP, morgan akan mencatat informasi log. 'dev' adalah salah satu format log yang disediakan oleh morgan yg mencakup informasi penting seperti metode HTTP, status, waktu respons, dan alamat IP klien.
-app.use(cors({origin: "https://dapper-boba-9ec9d1.netlify.app"}))                                                           // menambahkan middleware ke rantai penanganan permintaan. setiap kali ada permintaan HTTP, cors akan di jalankan
+app.use(cors())                                                           // menambahkan middleware ke rantai penanganan permintaan. setiap kali ada permintaan HTTP, cors akan di jalankan
 
 app.use('/uploads/products', express.static('uploads/products'))             // mengambil path lengkap untuk di front end "http://localhost:8888/uploads/products/1703311927594.jpg"
 app.use('/uploads/users', express.static('uploads/users'))
