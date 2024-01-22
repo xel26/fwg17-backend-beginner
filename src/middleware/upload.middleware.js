@@ -1,7 +1,3 @@
-const multer = require('multer')                                                        // import module multer
-const path = require('path')                                                            // import path = module bawaan node js. digunakna untuk membuat jalur path yg menyesuaikan karakter pemisah direktori diberbagai sistem operasi (lintas-platform). misal windows menggunakan "backslash"(\) dan macOS/Linux menggunakan "forward slash"(/)
-
-
 // 1. diskStorage adalah metode yang disediakan oleh multer untuk membuat objek konfigurasi penyimpanan gambar
 // 2. storage mengembalikan hasil dari pemanggilan fungsi multer.diskStorage
 // 3. Callback pada properti destination digunakan untuk memberi tahu multer di mana file harus disimpan
@@ -12,24 +8,80 @@ const path = require('path')                                                    
 //      - properti "destination" yg berisi fungsi untuk menentukan dimana gambar akan di simpan
 //      - properti "filename" yg berisi fungsi untuk menentukan bagaimana penamaan file  (jika tidak diatur multer akan membuat nama acak yang tidak menyertakan ekstensi file apa pun)
 
-const storage = (dest) => multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join('uploads', dest))                                            // path.join('uploads', 'products') = Menggabungkan beberapa bagian jalur menjadi satu jalur lengkap
-    },
-    filename: (req, file, cb) => {
-        console.log(file)
-        const extension = {                                                             // membuat object ekstensi. yg di tentukan berdasarkan mimetype
-            'image/jpeg': '.jpg',
-            'image/png': '.png'
-        }
+
+
+
+
+
+
+
+
+
+
+const multer = require('multer')                                                        // import module multer
+const path = require('path')                                                            // import path = module bawaan node js. digunakna untuk membuat jalur path yg menyesuaikan karakter pemisah direktori diberbagai sistem operasi (lintas-platform). misal windows menggunakan "backslash"(\) dan macOS/Linux menggunakan "forward slash"(/)
+const { CloudinaryStorage } = require('multer-storage-cloudinary')
+const  { v2: cloudinary } = require ("cloudinary");
+const { v4: uuidv4 } = require('uuid');
+
+
+
+
+
+// // tanpa cloudinary :
+// const storage = (dest) => multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, path.join('uploads', dest))                                            // path.join('uploads', 'products') = Menggabungkan beberapa bagian jalur menjadi satu jalur lengkap
+//     },
+//     filename: (req, file, cb) => {
+//         console.log(file)
+//         const extension = {                                                             // membuat object ekstensi. yg di tentukan berdasarkan mimetype
+//             'image/jpeg': '.jpg',
+//             'image/png': '.png'
+//         }
 
         
-        // filename = req.params.id
-        const filename = new Date().getTime()
+//         // filename = req.params.id
+//         // const filename = new Date().getTime()
+//         // const filename = uuidv4()
 
-        cb(null, `${filename}${extension[file.mimetype]}`)
+//         cb(null, `${filename}${extension[file.mimetype]}`)
+//     }
+// })
+
+
+
+
+
+// // dengan cloudinary :
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME, 
+    api_key: process.env.API_KEY, 
+    api_secret: process.env.API_SECRET
+})
+
+
+const storage = (dest) => new CloudinaryStorage({
+    cloudinary,
+    params: async (req, file) =>  {
+        console.log("storage", file)
+
+        const extension = {
+          "image/jpeg": "jpg",
+          "image/png": "png",
+        }
+
+        return {
+            folder: `coffee-shop-be/${dest}`,
+            format: extension[file.mimetype],
+            public_id: uuidv4()
+        }
     }
 })
+
+
+
+
 
 
 const fileFilter = (req, file, cb) => {

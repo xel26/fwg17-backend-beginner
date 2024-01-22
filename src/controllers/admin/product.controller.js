@@ -2,6 +2,7 @@ const productModel = require('../../models/product.model')
 const {errorHandler} = require('../../moduls/handling')
 const path = require('path')
 const fs = require('fs/promises')
+const  { v2: cloudinary } = require ("cloudinary");
 
 
 exports.getAllProducts = async (req, res) => {   
@@ -53,7 +54,9 @@ exports.createProduct = async (req, res) => {
     try {
         if(req.file){
             console.log(req.file)
-            req.body.image = req.file.filename
+            // req.body.image = req.file.filename                               // tanpa cloudinary
+            req.body.image = req.file.path                                      // dengan cloudinary
+        
         }
 
         const product = await productModel.insert(req.body) 
@@ -77,15 +80,30 @@ exports.updateProduct = async (req, res) => {
         const data = await productModel.findOne(id)
 
         if(req.file){
-            if(data.image){                                                                             // jika data sebelumnya mempunyai gambar, maka gambar akan di hapus dan di ganti dengna gambar yg baru di upload
-                const imagePath = path.join(global.path, 'uploads', 'products', data.image)             // mengambil jalur path gambar        
-                console.log(imagePath)
-                fs.access(imagePath, fs.constants.R_OK).then(() => {
-                    fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
-                }).catch(() => {});
+            // if(data.image){                                                                             // jika data sebelumnya mempunyai gambar, maka gambar akan di hapus dan di ganti dengna gambar yg baru di upload
+            //     const imagePath = path.join(global.path, 'uploads', 'products', data.image)             // mengambil jalur path gambar        
+            //     console.log(imagePath)
+            //     fs.access(imagePath, fs.constants.R_OK).then(() => {
+            //         fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
+            //     }).catch(() => {});
+            // }
+
+            if(data.image){
+                cloudinary.search
+                .expression(`${encodeURIComponent(data.image)}`)
+                .max_results(1)
+                .execute()
+                .then(result => {
+                    cloudinary.uploader.destroy(result.resources[0].public_id)
+                    .then(result => console.log({...result, message: "delete image success"}))
+                    .catch(err => console.log(err))
+                }).catch(err => console.log(err))
             }
-            console.log(req.file)
-            req.body.image = req.file.filename
+
+
+            console.log("update", req.file)
+            // req.body.image = req.file.filename                               // tanpa cloudinary
+            req.body.image = req.file.path                                      // dengan cloudinary
         }
     
         const product = await productModel.update(parseInt(id), req.body)
@@ -109,12 +127,25 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
     try {
         const product = await productModel.delete(parseInt(req.params.id))
+
+        // if(product.image){
+        //     const imagePath = path.join(global.path, "uploads", "products", product.image)              // mengambil jalur path image
+        //     console.log(imagePath)
+        //     fs.access(imagePath, fs.constants.R_OK).then(() => {
+        //         fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
+        //     }).catch(() => {});                                                                      // menghapus file berdasarkan jalur path
+        // }
+
         if(product.image){
-            const imagePath = path.join(global.path, "uploads", "products", product.image)              // mengambil jalur path image
-            console.log(imagePath)
-            fs.access(imagePath, fs.constants.R_OK).then(() => {
-                fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
-            }).catch(() => {});                                                                      // menghapus file berdasarkan jalur path
+            cloudinary.search
+            .expression(`${encodeURIComponent(product.image)}`)
+            .max_results(1)
+            .execute()
+            .then(result => {
+                cloudinary.uploader.destroy(result.resources[0].public_id)
+                .then(result => console.log({...result, message: "delete image success"}))
+                .catch(err => console.log(err))
+            }).catch(err => console.log(err))
         }
 
         return res.json({                                                              

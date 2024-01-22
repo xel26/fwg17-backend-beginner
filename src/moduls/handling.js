@@ -73,6 +73,7 @@ exports.updateColumn = async (id, body, table) => {
     }
 
     const sql = `UPDATE "${table}" SET ${set.join(', ')}, "updatedAt" = now() WHERE "id" = $1 RETURNING *`
+    console.log(sql)
     const {rows} = await db.query(sql, values)
     return rows[0]
 }

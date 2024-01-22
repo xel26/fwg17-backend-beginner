@@ -2,6 +2,7 @@ const userModel = require('../../models/user.model')
 const { errorHandler } = require('../../moduls/handling')
 const path = require('path')
 const fs = require('fs/promises')
+const  { v2: cloudinary } = require ("cloudinary");
 
 
 exports.getAllUsers = async (req, res) => { 
@@ -52,7 +53,8 @@ exports.createUser = async (req, res) => {
     try {
         if(req.file){
             console.log(req.file)
-            req.body.picture = req.file.filename
+            // req.body.picture = req.file.filename
+            req.body.picture = req.file.path
         }
 
         const user = await userModel.insert(req.body) 
@@ -83,15 +85,33 @@ exports.updateUser = async (req, res) => {
             throw new Error(`user with id ${id} not found`)
         }
 
-        if(req.file){                                                                                           
-            if(data.picture){                                                                                   // jika data sebelumnya mempunyai gambar, maka gambara akan di hapus dan di ganti dengan gambar yg baru di upload
-                const picturePath = path.join(global.path, 'uploads', 'users', data.picture)                    // mengambil jalur path gambar
-                fs.access(picturePath, fs.constants.R_OK).then(() => {
-                    fs.rm(picturePath)                                                                  // menghapus file berdasarkan jalur path
-                }).catch(() => {});                                                                        // menghapus file berdasarkan jalur path
-            }
+        if(req.file){   
+
+            // if(data.picture){                                                                                   // jika data sebelumnya mempunyai gambar, maka gambara akan di hapus dan di ganti dengan gambar yg baru di upload
+            //     const picturePath = path.join(global.path, 'uploads', 'users', data.picture)                    // mengambil jalur path gambar
+            //     fs.access(picturePath, fs.constants.R_OK).then(() => {
+            //         fs.rm(picturePath)                                                                  // menghapus file berdasarkan jalur path
+            //     }).catch(() => {});                                                                        // menghapus file berdasarkan jalur path
+            // }
+
+
+            
+        if(data.picture){
+            cloudinary.search
+            .expression(`${encodeURIComponent(data.picture)}`)
+            .max_results(1)
+            .execute()
+            .then(result => {
+                cloudinary.uploader.destroy(result.resources[0].public_id)
+                .then(result => console.log({...result, message: "delete picture success"}))
+                .catch(() => {})
+            }).catch(() => {})
+        }
+
+
             console.log(req.file)
-            req.body.picture = req.file.filename
+            // req.body.picture = req.file.filename
+            req.body.picture = req.file.path
         }
     
         const user = await userModel.update(parseInt(id), req.body)
@@ -118,13 +138,29 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     try {
         const user = await userModel.delete(parseInt(req.params.id)) 
+
+        // if(user.picture){
+        //     const picturePath = path.join(global.path, "uploads", "users", user.picture)                        // mengambil jalur path picture
+        //     console.log(picturePath)
+        //     fs.access(picturePath, fs.constants.R_OK).then(() => {
+        //         fs.rm(picturePath)                                                                  // menghapus file berdasarkan jalur path
+        //     }).catch(() => {});                                                                           // menghapus file berdasarkan jalur path
+        // }
+
+
         if(user.picture){
-            const picturePath = path.join(global.path, "uploads", "users", user.picture)                        // mengambil jalur path picture
-            console.log(picturePath)
-            fs.access(picturePath, fs.constants.R_OK).then(() => {
-                fs.rm(picturePath)                                                                  // menghapus file berdasarkan jalur path
-            }).catch(() => {});                                                                           // menghapus file berdasarkan jalur path
+            cloudinary.search
+            .expression(`${encodeURIComponent(user.picture)}`)
+            .max_results(1)
+            .execute()
+            .then(result => {
+                cloudinary.uploader.destroy(result.resources[0].public_id)
+                .then(result => console.log({...result, message: "delete picture success"}))
+                .catch(err => console.log(err))
+            }).catch(err => console.log(err))
         }
+
+
         return res.json({                                                              
             success: true,
             message: 'delete user successfully',
