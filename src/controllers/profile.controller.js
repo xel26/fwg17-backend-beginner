@@ -70,7 +70,7 @@ exports.updateProfile = async (req, res) => {
 
         return res.json({                                                              
             success: true,
-            message: 'update user successfully',
+            message: 'update profile success. . . ',
             results: user                                                   
         })
     } catch (error) {

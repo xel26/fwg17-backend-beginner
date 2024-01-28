@@ -91,14 +91,14 @@ const fileFilter = (req, file, cb) => {
     if(isExtnameAllowed){                                                                                                       // jika true file dapat di upload
         cb(null, true)
     }else{
-        const errorMessage = 'The file extension is not allowed; only JPEG, JPG, and PNG are permitted'                         // jika false maka akan error dan file tidak dapat di upload
+        const errorMessage = `only jpeg, jpg, and png files allowed`                        // jika false maka akan error dan file tidak dapat di upload
         cb(new Error(errorMessage), false)
     }
 }
 
 
 const limits = {
-    fileSize: 500 * 1024
+    fileSize: 2 * 1024 * 1024
 }
 
 

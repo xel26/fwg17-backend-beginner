@@ -1,7 +1,10 @@
 const userModel = require('../models/user.model')
+const forgotModel = require('../models/ForgotPassword.model')
 const argon = require('argon2')
 const jwt = require('jsonwebtoken')
 const { errorHandler } = require('../moduls/handling')
+const transport = require('../../mail.helper')
+const db= require('../lib/db.lib')
 
 exports.login = async (req, res) => { 
     try {
@@ -13,7 +16,7 @@ exports.login = async (req, res) => {
         
         const user = await userModel.findOneByEmail(email)                                              // melakukan pengecekan apakah email ada didatabase dengan kata lain apa sudah terdaftar
         if(!user){
-            throw new Error(`email not registered`)                                                     // jika email tidak di temukan di database maka lempar error ke catch 
+            throw new Error(`email not registered. . . please sign up to create new account`)                                                     // jika email tidak di temukan di database maka lempar error ke catch 
         }
         
         if(!password){
@@ -22,7 +25,7 @@ exports.login = async (req, res) => {
     
         const verify = await argon.verify(user.password, password)                                      // pengecekan apakah password benar jika tidak maka lempar error ke catch
         if(!verify){
-            throw new Error(`wrong password`)
+            throw new Error(`wrong password. . . please try again`)
         }
 
         const payload = {                                                                               // membuat data payload yg berisi informasi penggunaa biasanya id dan role untuk membuat token
@@ -34,7 +37,7 @@ exports.login = async (req, res) => {
 
         return res.json({                                                                              // server mengirim respon saat login berhasil
             success: true,
-            message: `Login success`,
+            message: `login success. . . embark your coffee journey`,
             results: {
                 token: token
             }
@@ -60,20 +63,20 @@ exports.register = async (req, res) => {                                        
 
         const user = await userModel.findOneByEmail(email)                              // handling isStringExist di insert tidak berjalan jika methode guarding di jalankan, sehingga membuat handling error baru               
         if(user){
-            throw new Error(`email already registered`)                                                
+            throw new Error(`email already registered. . . please login`)                                                
         }
 
         if(!password){
             throw new Error(`password cannot be empty`)
         }
 
-        if(!confirmPassword){
-            throw new Error(`please confirm password`)
-        }
+        // if(!confirmPassword){
+        //     throw new Error(`please confirm password`)
+        // }
 
-        if(password !== confirmPassword){
-            throw new Error(`wrong confirm password`)
-        }
+        // if(password !== confirmPassword){
+        //     throw new Error(`confirm password does not match! please double-check`)
+        // }
 
         await userModel.insert({                                                        
             fullName,
@@ -84,35 +87,132 @@ exports.register = async (req, res) => {                                        
 
         return res.json({
             success: true,
-            message: 'Register success'
+            message: 'register success. . . welcome aboard! '
         })
     } catch (error) {
         errorHandler(error, res)
     }
 }
+
+
+
+// exports.forgotPassword = async (req, res) => {
+//     try {
+//         const rawToken = req.headers.authorization || ''                                               // user yg pernah login akan memiliki token                    
+//         const prefix = "Bearer "                                                                       // token tersebut bisa di pakai untuk otentikasi user, bahwa user tersebut sudah terdaftar   
+//         const token = rawToken.slice(prefix.length)                                                    // di dalam token terdapat payload yg merupakan informasi user(id, role) yg bisa di gunakan untuk parameter pencarian ke database, password user mana yg ingin di ubah
+
+//         const payload = jwt.verify(token, process.env.APP_SECRET || 'secretKey')                       // verifikasi token, jika berhasil mengembalikan id dan role user lalu di simpan di variable payload
+
+//         const id = payload.id                                                                          // mengakses user id
+//         const newPassword = req.body.password                                                          // memasukan password baru
+
+//         const hashedPassword = await argon.hash(newPassword)                                            // hash password
+//         await userModel.forgotPassword(id, hashedPassword)                                              // melakukan update password ke database
+
+//         return res.json({
+//             success: true, 
+//             message: `change password success`
+//         })
+
+
+//     } catch (error) {
+//         errorHandler(error, res)
+//     }
+// }
+
 
 
 exports.forgotPassword = async (req, res) => {
     try {
-        const rawToken = req.headers.authorization || ''                                               // user yg pernah login akan memiliki token                    
-        const prefix = "Bearer "                                                                       // token tersebut bisa di pakai untuk otentikasi user, bahwa user tersebut sudah terdaftar   
-        const token = rawToken.slice(prefix.length)                                                    // di dalam token terdapat payload yg merupakan informasi user(id, role) yg bisa di gunakan untuk parameter pencarian ke database, password user mana yg ingin di ubah
+      const {email, otp, newPassword} = req.body
+      
+      if(email){
+        await db.query('BEGIN')
 
-        const payload = jwt.verify(token, process.env.APP_SECRET || 'secretKey')                       // verifikasi token, jika berhasil mengembalikan id dan role user lalu di simpan di variable payload
+        const user = await userModel.findOneByEmail(email)
+        if(user){
+          const { customAlphabet } = await import("nanoid");
+          const rand = customAlphabet("1234567890", 6);
+          const otp = rand();
+  
+          const request = await forgotModel.insert({
+            otp,
+            email: user.email,
+            userId: user.userId,
+          });
+  
+          //nodemailer start
+          const mailOptions = {
+            from: process.env.GMAIL_EMAIL_ADDRESS,
+            to: request.email,
+            subject: `Ini adalah Kode OTP anda ${otp}`,
+            html:`
+            <div>
+              <p>Masukan kode 6 digit di bawah ini untuk membuat password baru dan mendapatkan kembali akses ke akun anda</p>
+              <p>${otp}</p>
+              <p>Terima kasih telah membantu kami menjaga keamanan akun Anda.</p>
+              <p>Tim Coffee Shop Digital App</p>
+            </div>`,
+          }
+  
+          const sendMail = async () => {
+            try {
+              const mailer = await transport();
+              await mailer.sendMail(mailOptions);
+              console.log("Email terkirim!");
+            } catch (err) {
+              await db.query('ROLLBACK')
+              console.log(err);
+              console.log("Gagal!");
+            }
+          };
+  
+          sendMail();
+          //nodemailer end
+          
+          await db.query('COMMIT')
+          return res.json({
+            success: true,
+            message: `OTP code sent. . . .  please check your email`,
+          });
+        }
 
-        const id = payload.id                                                                          // mengakses user id
-        const newPassword = req.body.password                                                          // memasukan password baru
+         throw new Error(`email not registered. . . . please use another email`)
 
-        const hashedPassword = await argon.hash(newPassword)                                            // hash password
-        await userModel.forgotPassword(id, hashedPassword)                                              // melakukan update password ke database
+      }else{
+        if(otp){
+          await db.query('BEGIN')
 
-        return res.json({
-            success: true, 
-            message: `change password success`
-        })
+          const found = await forgotModel.findOnebyOtp(otp)
+          if(!found){
+            throw new Error('invalid OTP code. . . please enter the correct code')
+          }
 
-
-    } catch (error) {
-        errorHandler(error, res)
+          // logic untuk melakukan check expired otp
+          // cratedAt + 15 > date.now then throw 'expired_otp'
+  
+          const user = await userModel.findOneByEmail(found.email)
+  
+          const update = await userModel.update(user.id, {password: newPassword})
+  
+          if(!update){
+            throw new Error('create new password failed, try again!')
+          }
+  
+          await forgotModel.delete(found.id)
+  
+          await db.query('COMMIT')
+          return res.json({
+            success: true,
+            message: "create new password success"
+          })
+        }
+      }
+  
+    } catch (err) {
+      await db.query('ROLLBACK')
+      console.error(err)
+      errorHandler(err, res)
     }
-}
+  }

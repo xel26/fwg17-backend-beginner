@@ -73,6 +73,26 @@ exports.createProduct = async (req, res) => {
 
 
 
+exports.createProductImages = async (req, res) => {
+    try {
+        if(req.file){
+            req.body.imageUrl = req.file.path
+        
+        }
+
+        const productImages = await productModel.insertImages(req.body) 
+        return res.json({                                                              
+            success: true,
+            message: 'insert product images successfully',
+            results: productImages                                                   
+        })
+    } catch (error) {
+        errorHandler(error, res)
+    }
+}
+
+
+
 exports.updateProduct = async (req, res) => {
     try {
 
@@ -96,8 +116,8 @@ exports.updateProduct = async (req, res) => {
                 .then(result => {
                     cloudinary.uploader.destroy(result.resources[0].public_id)
                     .then(result => console.log({...result, message: "delete image success"}))
-                    .catch(err => console.log(err))
-                }).catch(err => console.log(err))
+                    .catch(()=> {})
+                }).catch(()=> {})
             }
 
 
@@ -144,8 +164,8 @@ exports.deleteProduct = async (req, res) => {
             .then(result => {
                 cloudinary.uploader.destroy(result.resources[0].public_id)
                 .then(result => console.log({...result, message: "delete image success"}))
-                .catch(err => console.log(err))
-            }).catch(err => console.log(err))
+                .catch(()=> {})
+            }).catch(()=> {})
         }
 
         return res.json({                                                              
