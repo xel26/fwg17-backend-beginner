@@ -174,7 +174,7 @@ exports.forgotPassword = async (req, res) => {
           await db.query('COMMIT')
           return res.json({
             success: true,
-            message: `OTP code sent. . . .  please check your email`,
+            message: `OTP code sent. . . .  This might take time. please wait and avoid making repeated requests in close succession`,
           });
         }
 
