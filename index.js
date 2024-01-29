@@ -47,3 +47,6 @@ app.get('/', (req, res) => {                                                // c
 app.listen(process.env.PORT, () => {                                            // mengakses method "listen" di dalam object express
     console.log(`App listening on port ${process.env.PORT}`)                    // mengakses nilai variabel PORT di variable lingkungan (.env)
 })
+
+
+module.exports = app
