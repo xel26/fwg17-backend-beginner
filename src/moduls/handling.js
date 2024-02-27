@@ -73,15 +73,13 @@ exports.updateColumn = async (id, body, table) => {
     }
 
     const sql = `UPDATE "${table}" SET ${set.join(', ')}, "updatedAt" = now() WHERE "id" = $1 RETURNING *`
-    console.log(sql)
     const {rows} = await db.query(sql, values)
-    console.log(rows)
     return rows[0]
 }
 
 
 exports.errorHandler = (error, res) => {
-    console.log(error)
+    console.log(error, error.code)
     if(error.code === "23502"){                                                             // kode error not null constraint
         return res.status(400).json({                                                              
             success: false,

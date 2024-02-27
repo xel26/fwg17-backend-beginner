@@ -139,7 +139,7 @@ exports.forgotPassword = async (req, res) => {
           const request = await forgotModel.insert({
             otp,
             email: user.email,
-            userId: user.userId,
+            userId: user.id,
           });
   
           //nodemailer start
@@ -174,7 +174,7 @@ exports.forgotPassword = async (req, res) => {
           await db.query('COMMIT')
           return res.json({
             success: true,
-            message: `OTP code sent. . . .  This might take time. please wait and avoid making repeated requests in close succession`,
+            message: `OTP has been sent to your email`,
           });
         }
 
@@ -205,7 +205,7 @@ exports.forgotPassword = async (req, res) => {
           await db.query('COMMIT')
           return res.json({
             success: true,
-            message: "create new password success"
+            message: `create new password for ${found.email} success`
           })
         }
       }

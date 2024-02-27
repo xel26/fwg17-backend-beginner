@@ -1,7 +1,5 @@
 const userModel = require('../../models/user.model')
 const { errorHandler } = require('../../moduls/handling')
-const path = require('path')
-const fs = require('fs/promises')
 const  { v2: cloudinary } = require ("cloudinary");
 
 
@@ -24,7 +22,7 @@ exports.getAllUsers = async (req, res) => {
                 currentPage: parseInt(page),
                 totalPage,
                 nextPage: nextPage <= totalPage ? nextPage : null,
-                prevPage: prevPage > 1 ? prevPage : null,
+                prevPage: prevPage >= 1 ? prevPage : null,
                 totalData: parseInt(count)
             },
             results: listUsers                                                    

@@ -26,7 +26,6 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) =>
         ORDER BY ${columnSort.join(', ')}
         LIMIT ${limitData} OFFSET ${offset}
         `
-        console.log(sql)
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
         if(!rows.length){
@@ -41,7 +40,6 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) =>
     ORDER BY "${sortBy}" ${order}
     LIMIT ${limitData} OFFSET ${offset}
     `
-    console.log(sql)
     const values = [`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
     if(!rows.length){
