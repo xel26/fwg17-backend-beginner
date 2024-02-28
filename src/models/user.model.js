@@ -17,6 +17,8 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) =>
         sortBy.forEach(item => {
            if(sortByColumn.includes(item)){
             columnSort.push(`"${item}" ${order}`)
+           }else{
+            throw new Error(`column ${item} does not exist`)
            }
         })
     
@@ -28,9 +30,6 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) =>
         `
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
-        if(!rows.length){
-            throw new Error(`no data found`)
-        }
         return rows
     }
 
@@ -65,7 +64,7 @@ exports.findOne = async (id) => {
     const  values = [id]
     const {rows} = await db.query(sql, values)
     if(!rows.length){
-        throw new Error(`user with id ${id} not found `)
+        throw new Error(`user with id ${id} not found`)
     }
     return rows[0]
 }
@@ -115,9 +114,9 @@ exports.insert = async (body) => {
 
 
 exports.update = async (id, body) => {
-    if(isNaN(id)){
-        throw new Error(`invalid input`)
-    }
+    // if(isNaN(id)){
+    //     throw new Error(`invalid input`)
+    // }
     
     // const queryId = await isExist("users", id)                                                                     // melakukan query terlebih dahulu sebelum update, untuk mengecek apakah data yg ingin di update ada di database
     // if(queryId){
@@ -136,15 +135,6 @@ exports.update = async (id, body) => {
 
 
 exports.delete = async (id) => {
-    if(isNaN(id)){                                                                            // error code 22P02 tidak ternotice karena ada isExist jadi lempar error custom jika data yg di masukan bukan number 
-        throw new Error(`invalid input`)                            
-    }            
-
-    const queryId = await isExist("users", id)                                                 // melakukan query terlebih dahulu sebelum delete, untuk mengecek apakah data yg ingin di delete ada di database
-    if(queryId){
-        throw new Error(queryId)
-    }
-
     const sql = `DELETE FROM "users" WHERE "id" = $1 RETURNING *`
     const values = [id]
     const {rows} = await db.query(sql, values)

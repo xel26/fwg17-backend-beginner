@@ -28,7 +28,7 @@ exports.getAllOrderDetail = async (req, res) => {
             results: listOrderDetails                                                    
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -42,7 +42,7 @@ exports.getDetailOrderDetail = async (req, res) => {
             result: orderDetails                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -77,7 +77,7 @@ exports.updateOrderDetail = async (req, res) => {
             result: orderDetails                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -91,6 +91,6 @@ exports.deleteOrderDetail = async (req, res) => {
             result: orderDetails                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

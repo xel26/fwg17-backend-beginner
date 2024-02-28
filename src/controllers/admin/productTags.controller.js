@@ -27,7 +27,7 @@ exports.getAllProductTags = async (req, res) => {
             results: listProductTags                                                    
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -41,7 +41,7 @@ exports.getDetailProductTags = async (req, res) => {
             result: productTag                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -76,7 +76,7 @@ exports.updateProductTags = async (req, res) => {
             results: productTag                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -90,6 +90,6 @@ exports.deleteProductTags = async (req, res) => {
             results: productTag                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

@@ -27,7 +27,7 @@ exports.getAllTags = async (req, res) => {
             results: listTags                                                    
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -41,7 +41,7 @@ exports.getDetailTag = async (req, res) => {
             result: tag                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -56,7 +56,7 @@ exports.createTag = async (req, res) => {
         })
         
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -76,7 +76,7 @@ exports.updateTag = async (req, res) => {
             result: tag                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -90,6 +90,6 @@ exports.deleteTag = async (req, res) => {
             result: tag                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

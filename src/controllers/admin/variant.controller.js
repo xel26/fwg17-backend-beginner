@@ -27,7 +27,7 @@ exports.getAllVariant = async (req, res) => {
             results: listVariants                                                    
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -41,7 +41,7 @@ exports.getDetailVariant = async (req, res) => {
             result: variant                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -76,7 +76,7 @@ exports.updateVariant = async (req, res) => {
             result: variant                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -90,6 +90,6 @@ exports.deleteVariant = async (req, res) => {
             result: variant                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

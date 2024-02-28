@@ -27,7 +27,7 @@ exports.getAllCategories = async (req, res) => {
             results: listCategories                                                    
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }}
 
 
@@ -40,7 +40,7 @@ exports.getDetailCategory = async (req, res) => {
             result: category                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -55,7 +55,7 @@ exports.createCategory = async (req, res) => {
         })
         
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -75,7 +75,7 @@ exports.updateCategory = async (req, res) => {
             result: category                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -89,6 +89,6 @@ exports.deleteCategory = async (req, res) => {
             result: category                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

@@ -27,7 +27,7 @@ const { errorHandler } = require('../../moduls/handling')
 //             results: listOrders                                                    
 //         })
 //     } catch (error) {
-//         errorHandler(error, res)
+//         return errorHandler(error, res)
 //     }
 // }
 
@@ -57,7 +57,7 @@ exports.getAllOrders = async (req, res) => {
             results: listOrders                                                    
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -71,7 +71,7 @@ exports.getAllOrders = async (req, res) => {
 //             results: order                                                  
 //         })
 //     } catch (error) {
-//         errorHandler(error, res)
+//         return errorHandler(error, res)
 //     }
 // }
 
@@ -84,7 +84,7 @@ exports.getDetailOrder = async (req, res) => {
             results: order                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -100,7 +100,7 @@ exports.createOrder = async (req, res) => {
         })
         
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -120,7 +120,7 @@ exports.updateOrder = async (req, res) => {
             results: order                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -134,6 +134,6 @@ exports.deleteOrder = async (req, res) => {
             results: order                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

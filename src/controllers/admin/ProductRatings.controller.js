@@ -27,7 +27,7 @@ exports.getAllProductRatings = async (req, res) => {
             results: listProductRatings                                                    
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -41,7 +41,7 @@ exports.getDetailProductRating = async (req, res) => {
             result: productRating                                                 
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -76,7 +76,7 @@ exports.updateProductRating = async (req, res) => {
             result: productRating                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -90,6 +90,6 @@ exports.deleteProductRating = async (req, res) => {
             result: productRating                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

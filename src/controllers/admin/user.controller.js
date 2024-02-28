@@ -28,7 +28,7 @@ exports.getAllUsers = async (req, res) => {
             results: listUsers                                                    
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -42,7 +42,7 @@ exports.getDetailUser = async (req, res) => {
             results: user                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -50,12 +50,12 @@ exports.getDetailUser = async (req, res) => {
 exports.createUser = async (req, res) => {
     try {
         if(req.file){
-            console.log(req.file)
+            // console.log(req.file)
             // req.body.picture = req.file.filename
             req.body.picture = req.file.path
         }
 
-        const user = await userModel.insert(req.body) 
+        const user = await userModel.insert(req.body)
         return res.json({                                                              
             success: true,
             message: 'create user successfully',
@@ -63,7 +63,7 @@ exports.createUser = async (req, res) => {
         })
         
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -83,7 +83,8 @@ exports.updateUser = async (req, res) => {
             throw new Error(`user with id ${id} not found`)
         }
 
-        if(req.file){   
+        if(req.file){
+            console.log(req.body.picture)   
 
             // if(data.picture){                                                                                   // jika data sebelumnya mempunyai gambar, maka gambara akan di hapus dan di ganti dengan gambar yg baru di upload
             //     const picturePath = path.join(global.path, 'uploads', 'users', data.picture)                    // mengambil jalur path gambar
@@ -107,7 +108,7 @@ exports.updateUser = async (req, res) => {
         }
 
 
-            console.log(req.file)
+            // console.log(req.file)
             // req.body.picture = req.file.filename
             req.body.picture = req.file.path
         }
@@ -117,8 +118,8 @@ exports.updateUser = async (req, res) => {
 
 
         if(user === "No data has been modified"){
-            return res.status(200).json({                                                              
-                success: true,
+            return res.status(400).json({                                                              
+                success: false,
                 message: user                                                 
             })
         }
@@ -128,14 +129,20 @@ exports.updateUser = async (req, res) => {
             results: user                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
 
 exports.deleteUser = async (req, res) => {
     try {
-        const user = await userModel.delete(parseInt(req.params.id)) 
+        const {id} = req.params
+        const data = await userModel.findOne(id)
+        if(!data){
+            throw new Error(`user with id ${id} not found`)
+        }
+
+        const user = await userModel.delete(parseInt(id)) 
 
         // if(user.picture){
         //     const picturePath = path.join(global.path, "uploads", "users", user.picture)                        // mengambil jalur path picture
@@ -165,6 +172,6 @@ exports.deleteUser = async (req, res) => {
             results: user                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

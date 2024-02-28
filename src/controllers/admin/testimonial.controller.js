@@ -29,7 +29,7 @@ exports.getAllTesti = async (req, res) => {
             results: listTestimonial
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -82,6 +82,6 @@ exports.updateTesti = async (req, res) => {
             results: testi                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

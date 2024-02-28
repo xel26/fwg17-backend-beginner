@@ -70,6 +70,6 @@ exports.orderProducts = async (req, res) => {
     } catch (error) {
         console.log(error)
         await db.query('ROLLBACK')
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

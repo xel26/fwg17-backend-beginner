@@ -27,7 +27,7 @@ exports.getAllProductSize = async (req, res) => {
             results: listSizes                                                    
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -41,7 +41,7 @@ exports.getDetailProductSize = async (req, res) => {
             result: size                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -56,7 +56,7 @@ exports.createProductSize = async (req, res) => {
         })
         
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -76,7 +76,7 @@ exports.updateProductSize = async (req, res) => {
             results: size                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -90,6 +90,6 @@ exports.deleteProductSize = async (req, res) => {
             results: size                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

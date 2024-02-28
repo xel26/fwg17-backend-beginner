@@ -44,14 +44,14 @@ exports.login = async (req, res) => {
         })
 
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }                                 
 }
 
 
 exports.register = async (req, res) => {                                                   // sederhananya insert data ke table users di database
     try {
-        const {fullName, email, password, confirmPassword} = req.body                                       // destruct req.body
+        const {fullName, email, password} = req.body                                       // destruct req.body
 
         if(!fullName){
             throw new Error(`Full Name cannot be empty`)
@@ -63,20 +63,12 @@ exports.register = async (req, res) => {                                        
 
         const user = await userModel.findOneByEmail(email)                              // handling isStringExist di insert tidak berjalan jika methode guarding di jalankan, sehingga membuat handling error baru               
         if(user){
-            throw new Error(`email already registered. . . please login`)                                                
+            throw new Error(`email ${email} already registered. . . please login`)                                                
         }
 
         if(!password){
             throw new Error(`password cannot be empty`)
         }
-
-        // if(!confirmPassword){
-        //     throw new Error(`please confirm password`)
-        // }
-
-        // if(password !== confirmPassword){
-        //     throw new Error(`confirm password does not match! please double-check`)
-        // }
 
         await userModel.insert({                                                        
             fullName,
@@ -87,10 +79,10 @@ exports.register = async (req, res) => {                                        
 
         return res.json({
             success: true,
-            message: 'register success. . . welcome aboard! '
+            message: 'register success. . . welcome aboard!'
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -117,7 +109,7 @@ exports.register = async (req, res) => {                                        
 
 
 //     } catch (error) {
-//         errorHandler(error, res)
+//         return errorHandler(error, res)
 //     }
 // }
 
@@ -163,13 +155,13 @@ exports.forgotPassword = async (req, res) => {
               console.log("Email terkirim!");
             } catch (err) {
               await db.query('ROLLBACK')
-              console.log(err);
+              // console.log(err);
               console.log("Gagal!");
             }
           };
   
           sendMail();
-          //nodemailer end
+          console.log(otp)
           
           await db.query('COMMIT')
           return res.json({
@@ -188,17 +180,14 @@ exports.forgotPassword = async (req, res) => {
           if(!found){
             throw new Error('invalid OTP code. . . please enter the correct code')
           }
-
-          // logic untuk melakukan check expired otp
-          // cratedAt + 15 > date.now then throw 'expired_otp'
   
           const user = await userModel.findOneByEmail(found.email)
   
-          const update = await userModel.update(user.id, {password: newPassword})
+          await userModel.update(user.id, {password: newPassword})
   
-          if(!update){
-            throw new Error('create new password failed, try again!')
-          }
+          // if(!update){
+          //   throw new Error('create new password failed, try again!')
+          // }
   
           await forgotModel.delete(found.id)
   
@@ -212,7 +201,6 @@ exports.forgotPassword = async (req, res) => {
   
     } catch (err) {
       await db.query('ROLLBACK')
-      console.error(err)
-      errorHandler(err, res)
+      return errorHandler(err, res)
     }
   }

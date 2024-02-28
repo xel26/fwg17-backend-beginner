@@ -13,7 +13,7 @@ exports.getPriceSize = async (req, res) => {
             results: size                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -26,7 +26,7 @@ exports.getPriceVariant = async (req, res) => {
             results: size                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -57,7 +57,7 @@ exports.getOrderProducts = async (req, res) => {
             results: listOrderDetails                                                    
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -122,6 +122,6 @@ exports.createOrder = async (req, res) => {
         
     } catch (error) {
         await db.query('ROLLBACK')
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

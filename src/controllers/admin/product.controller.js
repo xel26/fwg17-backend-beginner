@@ -30,7 +30,7 @@ exports.getAllProducts = async (req, res) => {
             results: listProducts
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -45,7 +45,7 @@ exports.getDetailProduct = async (req, res) => {
         })
 
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -67,7 +67,7 @@ exports.createProduct = async (req, res) => {
         })
         
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -87,7 +87,7 @@ exports.createProductImages = async (req, res) => {
             results: productImages                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -139,7 +139,7 @@ exports.updateProduct = async (req, res) => {
             results: product                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -174,6 +174,6 @@ exports.deleteProduct = async (req, res) => {
             results: product                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

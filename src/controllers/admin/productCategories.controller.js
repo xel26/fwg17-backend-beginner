@@ -27,7 +27,7 @@ exports.getAllProductCategories = async (req, res) => {
             result: listPC                                                    
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -41,7 +41,7 @@ exports.getDetailProductCategories = async (req, res) => {
             result: ProductCategories                                                  
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -70,7 +70,7 @@ exports.updateProductCategories = async (req, res) => {
             result: ProductCategories                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }
 
@@ -84,6 +84,6 @@ exports.deleteProductCategories = async (req, res) => {
             result: ProductCategories                                                   
         })
     } catch (error) {
-        errorHandler(error, res)
+        return errorHandler(error, res)
     }
 }

@@ -79,7 +79,7 @@ exports.updateColumn = async (id, body, table) => {
 
 
 exports.errorHandler = (error, res) => {
-    console.log(error, error.code)
+    // console.log(error, error.code)
     if(error.code === "23502"){                                                             // kode error not null constraint
         return res.status(400).json({                                                              
             success: false,
@@ -103,7 +103,7 @@ exports.errorHandler = (error, res) => {
     }else if(error.code === "23503"){                                                      // kode error foreign key / keterkaitan table
         return res.status(409).json({
             success: false,
-            message: error.detail.replaceAll(/[()="]/g, ' ').replace('Key', 'data with')
+            message: error.detail.replaceAll(/[()"]/g, '').replace('=', ' ').replace('Key', 'data with').replace('.', '')
         })
     }else if(error.message.includes("found")){                                         // pesan dan status error not found
         return res.status(404).json({                                                              
