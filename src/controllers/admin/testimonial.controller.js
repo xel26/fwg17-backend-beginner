@@ -70,12 +70,7 @@ exports.updateTesti = async (req, res) => {
         }
     
         const testi = await testiModel.update(parseInt(id), req.body)
-        if(testi === "No data has been modified"){
-            return res.status(200).json({                                                              
-                success: true,
-                message: testi                                                 
-            })
-        }
+
         return res.json({                                                              
             success: true,
             message: 'update testimonial successfully',

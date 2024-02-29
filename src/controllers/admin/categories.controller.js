@@ -63,12 +63,7 @@ exports.createCategory = async (req, res) => {
 exports.updateCategory = async (req, res) => {
     try {
         const category = await categoriesModel.update(parseInt(req.params.id), req.body)
-        if(category === "No data has been modified"){
-            return res.status(200).json({                                                              
-                success: true,
-                messages: category                                                 
-            })
-        }
+
         return res.json({                                                              
             success: true,
             messages: 'update category successfully',

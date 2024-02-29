@@ -64,12 +64,7 @@ exports.createProductRating = async (req, res) => {
 exports.updateProductRating = async (req, res) => {
     try {
         const productRating = await prModel.update(parseInt(req.params.id), req.body)
-        if(productRating === "No data has been modified"){
-            return res.status(200).json({                                                              
-                success: true,
-                message: productRating                                         
-            })
-        }
+
         return res.json({                                                              
             success: true,
             message: 'update productRating successfully',

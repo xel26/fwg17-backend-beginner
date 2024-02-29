@@ -64,12 +64,7 @@ exports.createProductSize = async (req, res) => {
 exports.updateProductSize = async (req, res) => {
     try {
         const size = await sizesModel.update(parseInt(req.params.id), req.body)
-        if(size === "No data has been modified"){
-            return res.status(200).json({                                                              
-                success: true,
-                message: size                                                 
-            })
-        }
+
         return res.json({                                                              
             success: true,
             messages: 'update size successfully',

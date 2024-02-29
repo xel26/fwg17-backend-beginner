@@ -108,12 +108,7 @@ exports.createOrder = async (req, res) => {
 exports.updateOrder = async (req, res) => {
     try {
         const order = await orderModel.update(parseInt(req.params.id), req.body)
-        if(order === "No data has been modified"){
-            return res.status(200).json({                                                              
-                success: true,
-                messages: order                                                 
-            })
-        }
+
         return res.json({                                                              
             success: true,
             messages: 'update order successfully',

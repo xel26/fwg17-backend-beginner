@@ -64,12 +64,7 @@ exports.createVariant = async (req, res) => {
 exports.updateVariant = async (req, res) => {
     try {
         const variant = await variantModel.update(parseInt(req.params.id), req.body)
-        if(variant === "No data has been modified"){
-            return res.status(200).json({                                                              
-                success: true,
-                message: variant                                                 
-            })
-        }
+
         return res.json({                                                              
             success: true,
             message: 'update variant successfully',

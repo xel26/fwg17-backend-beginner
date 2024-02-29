@@ -64,12 +64,7 @@ exports.createTag = async (req, res) => {
 exports.updateTag = async (req, res) => {
     try {
         const tag = await tagsModel.update(parseInt(req.params.id), req.body) 
-        if(tag === "No data has been modified"){
-            return res.status(200).json({                                                              
-                success: true,
-                message: tag                                                 
-            })
-        }
+
         return res.json({                                                              
             success: true,
             message: 'update tag successfully',

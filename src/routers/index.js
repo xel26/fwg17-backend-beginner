@@ -26,8 +26,8 @@ router.get('/orders', authMiddleware, orderController.getAllOrders)
 router.get('/order/:id', authMiddleware, orderController.getDetailOrder)
 router.post('/order-details', authMiddleware, orderDetailsController.createOrderDetail)
 router.get('/order-details', authMiddleware, checkoutController.getOrderProducts)
-router.get('/data-size', checkoutController.getPriceSize)
-router.get('/data-variant', checkoutController.getPriceVariant)
+router.get('/data-size', checkoutController.getDataSize)
+router.get('/data-variant', checkoutController.getDataVariant)
 
 router.post('/order-flow', authMiddleware, roleCheckMiddleware("customer"), orderFlow.orderProducts)
 

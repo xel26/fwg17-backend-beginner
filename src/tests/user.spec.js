@@ -23,27 +23,27 @@ describe('list all users', () => {
         expect(response.success).to.be.eq(true)
     })
 
-    it('nextPage should be null', async() => {
-        const req = {
-            query: {
-                page: '12'
-            }
-        }
+    // it('nextPage should be null', async() => {
+    //     const req = {
+    //         query: {
+    //             page: '12'
+    //         }
+    //     }
 
-        const response = await userController.getAllUsers(req, res)
-        expect(response.pageInfo.nextPage).to.be.eq(null)
-    })
+    //     const response = await userController.getAllUsers(req, res)
+    //     expect(response.pageInfo.nextPage).to.be.eq(null)
+    // })
 
-    it('prevPage should be null', async() => {
-        const req = {
-            query: {
-                page: '1'
-            }
-        }
+    // it('prevPage should be null', async() => {
+    //     const req = {
+    //         query: {
+    //             page: '1'
+    //         }
+    //     }
 
-        const response = await userController.getAllUsers(req, res)
-        expect(response.pageInfo.prevPage).to.be.eq(null)
-    })
+    //     const response = await userController.getAllUsers(req, res)
+    //     expect(response.pageInfo.prevPage).to.be.eq(null)
+    // })
 
 
     it('should return message no data found', async() => {

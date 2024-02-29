@@ -115,14 +115,6 @@ exports.updateUser = async (req, res) => {
     
         const user = await userModel.update(parseInt(id), req.body)
 
-
-
-        if(user === "No data has been modified"){
-            return res.status(400).json({                                                              
-                success: false,
-                message: user                                                 
-            })
-        }
         return res.json({                                                              
             success: true,
             message: 'update user successfully',

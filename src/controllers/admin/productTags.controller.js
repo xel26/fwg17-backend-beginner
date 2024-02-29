@@ -64,12 +64,7 @@ exports.createProductTags = async (req, res) => {
 exports.updateProductTags = async (req, res) => {
     try {
         const productTag = await ptModel.update(parseInt(req.params.id), req.body)
-        if(productTag === "No data has been modified"){
-            return res.status(200).json({                                                              
-                success: true,
-                message: productTag                                                 
-            })
-        }
+
         return res.json({                                                              
             success: true,
             messages: 'update product tag successfully',

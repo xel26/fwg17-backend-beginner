@@ -24,16 +24,12 @@ const argon = require('argon2')
 
 
 exports.isExist = async (table, id) => {
-    try {
-        const query = `SELECT "id" FROM "${table}"`
-        const {rows} = await db.query(query)
-        const results = rows.map(item => item.id)
-        if(results.indexOf(id) === -1){
-            throw new Error(`data with id ${id} not found`)
-        }
-    } catch (error) {
-        return error.message
+    const query = `SELECT * FROM "${table}" where "id" = ${id}`
+    const {rows} = await db.query(query)
+    if(!rows.length){
+        throw new Error(`${table} with id ${id} not found`)
     }
+    return rows
 }
 
 
@@ -69,7 +65,7 @@ exports.updateColumn = async (id, body, table) => {
     })
 
     if(!set.length){
-        return `No data has been modified`
+        throw new Error(`No data has been modified`)
     }
 
     const sql = `UPDATE "${table}" SET ${set.join(', ')}, "updatedAt" = now() WHERE "id" = $1 RETURNING *`
@@ -79,7 +75,7 @@ exports.updateColumn = async (id, body, table) => {
 
 
 exports.errorHandler = (error, res) => {
-    // console.log(error, error.code)
+    // console.log(error)
     if(error.code === "23502"){                                                             // kode error not null constraint
         return res.status(400).json({                                                              
             success: false,
@@ -88,7 +84,7 @@ exports.errorHandler = (error, res) => {
     }else if(error.code === "23505"){                                                       // kode error unique constraint
         return res.status(400).json({                                                              
             success: false,
-            message:`${error.detail.split(' ')[1].replaceAll(/[()="]/g, ' ').trim()} already exist`                               
+            message:`${error.detail.split(' ')[1].replaceAll(/[()"]/g, '').replace("=", ' ').trim()} already exist`                               
         })
     }else if(error.code === "42703"){                                                       // kode error column does not exist
         return res.status(400).json({

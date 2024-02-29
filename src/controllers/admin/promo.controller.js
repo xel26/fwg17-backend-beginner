@@ -64,12 +64,7 @@ exports.createPromo = async (req, res) => {
 exports.updatePromo = async (req, res) => {
     try {
         const promo = await promoModel.update(parseInt(req.params.id), req.body)
-        if(promo === "No data has been modified"){
-            return res.status(200).json({                                                              
-                success: true,
-                message: promo                                                 
-            })
-        }
+
         return res.json({                                                              
             success: true,
             message: 'update promo successfully',

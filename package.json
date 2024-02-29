@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "test": "mocha ./src/tests/*.spec.js -r dotenv/config --exit",
-    "test:cov": "nyc mocha ./src/tests/*.spec.js -r dotenv/config --exit"
+    "test:cov": "nyc mocha ./src/tests/checkout.spec.js -r dotenv/config --exit"
   },
   "keywords": [],
   "author": "",

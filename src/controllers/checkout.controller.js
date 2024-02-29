@@ -4,12 +4,12 @@ const moment = require('moment')
 const checkoutModel = require('../models/checkout.model')
 const { errorHandler } = require('../moduls/handling')
 
-exports.getPriceSize = async (req, res) => {                                        
+exports.getDataSize = async (req, res) => {                                        
     try {
         const size = await checkoutModel.getDataSize(req.query.name)
         return res.json({                                                              
             success: true,
-            message: 'detail size',
+            message: 'data size',
             results: size                                                  
         })
     } catch (error) {
@@ -17,12 +17,12 @@ exports.getPriceSize = async (req, res) => {
     }
 }
 
-exports.getPriceVariant = async (req, res) => {                                        
+exports.getDataVariant = async (req, res) => {                                        
     try {
         const size = await checkoutModel.getDataVariant(req.query.name)
         return res.json({                                                              
             success: true,
-            message: 'detail variant',
+            message: 'data variant',
             results: size                                                  
         })
     } catch (error) {
@@ -34,26 +34,13 @@ exports.getOrderProducts = async (req, res) => {
     const {id: userId} = req.user
     
     try {
-        const {sortBy, order, page=1, limit, orderId} = req.query
-        const limitData = parseInt(limit) || 5
-
-        const count = await checkoutModel.countAll(orderId)      
-        const listOrderDetails = await checkoutModel.findOrderProducts(sortBy, order, page, limitData, orderId, userId)
-        
-        const totalPage = Math.ceil(count / limitData)
-        const nextPage = parseInt(page) + 1
-        const prevPage = parseInt(page) - 1
+        const {orderId} = req.query
+     
+        const listOrderDetails = await checkoutModel.getOrderProducts(orderId, userId)
 
         return res.json({                                                              
             success: true,
-            message: `get all order products`,
-            pageInfo: {
-                currentPage: parseInt(page),
-                totalPage,
-                nextPage: nextPage <= totalPage ? nextPage : null,
-                prevPage: prevPage >= 1 ? prevPage : null,
-                totalData: parseInt(count)
-            },
+            message: `list all order products`,
             results: listOrderDetails                                                    
         })
     } catch (error) {
@@ -94,7 +81,6 @@ exports.createOrder = async (req, res) => {
         }
 
         let order = await checkoutModel.insertOrder(userId, orderNumber, deliveryFee, status, deliveryShipping, deliveryAddress, fullName, email)
-        console.log(order)
 
         for (let i = 0; i < idProduct.length; i++) {
               try {
@@ -103,8 +89,8 @@ exports.createOrder = async (req, res) => {
                   const orderDetails = await checkoutModel.insertOrderDetails(order.id, parseInt(idProduct[i]), sizeId.id, variantId.id, parseInt(quantity[i]))
                   await checkoutModel.countSubtotal(orderDetails.id)
               } catch (error) {
-                  console.log(error.message)
                   await db.query('ROLLBACK')
+                  return errorHandler(error, res)
               }
         }
 
@@ -116,7 +102,7 @@ exports.createOrder = async (req, res) => {
 
         return res.json({                                                              
             success: true,
-            messages: 'create order successfully',
+            message: 'create order successfully',
             results: order                                                   
         })
         

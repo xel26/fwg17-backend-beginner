@@ -64,12 +64,6 @@ exports.createMessage = async (req, res) => {
 exports.updateMessage = async (req, res) => {
     try {
         const message = await messageModel.update(parseInt(req.params.id), req.body)
-        if(message === "No data has been modified"){
-            return res.status(200).json({                                                              
-                success: true,
-                message: message                                                 
-            })
-        }
         return res.json({                                                              
             success: true,
             message: 'update message successfully',

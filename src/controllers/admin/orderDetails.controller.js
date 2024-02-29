@@ -65,12 +65,7 @@ exports.createOrderDetail = async (req, res) => {
 exports.updateOrderDetail = async (req, res) => {
     try {
         const orderDetails = await orderDetailsModel.update(parseInt(req.params.id), req.body) 
-        if(orderDetails === "No data has been modified"){
-            return res.status(200).json({                                                              
-                success: true,
-                message: orderDetails                                                 
-            })
-        }
+
         return res.json({                                                              
             success: true,
             message: 'update order details successfully',

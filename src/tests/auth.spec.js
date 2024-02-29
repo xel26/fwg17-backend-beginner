@@ -22,10 +22,10 @@ describe("register", () => {
         }
     }
 
-    // it("should return success true", async () => {
-    //     const response = await authController.register(req, res)
-    //     expect(response.success).to.be.eq(true)
-    // })
+    it("should return success true", async () => {
+        const response = await authController.register(req, res)
+        expect(response.success).to.be.eq(true)
+    })
 
     
 
@@ -159,15 +159,15 @@ describe('login', () => {
 
 
 describe('forgotPassword', () => {
-    // it('should return message OTP has been sent to your email', async () => {
-    //     const req = {
-    //         body: {
-    //             email: "shellaananda2636@gmail.com"
-    //         }
-    //     }
-    //     const response = await authController.forgotPassword(req, res)
-    //     expect(response.message).to.be.eq("OTP has been sent to your email")
-    // })
+    it('should return message OTP has been sent to your email', async () => {
+        const req = {
+            body: {
+                email: "shellaananda2636@gmail.com"
+            }
+        }
+        const response = await authController.forgotPassword(req, res)
+        expect(response.message).to.be.eq("OTP has been sent to your email")
+    })
 
 
 
@@ -201,14 +201,14 @@ describe('forgotPassword', () => {
 
 
 
-    // it('should return message create new password success', async () => {
-    //     const req = {
-    //         body: {
-    //             otp: "021408",
-    //             newPassword: "123"
-    //         }
-    //     }
-    //     const response = await authController.forgotPassword(req, res)
-    //     expect(response.message).to.be.eq("create new password for shellaananda2636@gmail.com success")
-    // })
+    it('should return message create new password success', async () => {
+        const req = {
+            body: {
+                otp: "717729",
+                newPassword: "123"
+            }
+        }
+        const response = await authController.forgotPassword(req, res)
+        expect(response.message).to.be.eq("create new password for shellaananda2636@gmail.com success")
+    })
 })
