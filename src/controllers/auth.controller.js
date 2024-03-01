@@ -99,8 +99,7 @@ exports.register = async (req, res) => {                                        
 //         const id = payload.id                                                                          // mengakses user id
 //         const newPassword = req.body.password                                                          // memasukan password baru
 
-//         const hashedPassword = await argon.hash(newPassword)                                            // hash password
-//         await userModel.forgotPassword(id, hashedPassword)                                              // melakukan update password ke database
+//         await userModel.update(user.id, {password: newPassword})                                              // melakukan update password ke database
 
 //         return res.json({
 //             success: true, 

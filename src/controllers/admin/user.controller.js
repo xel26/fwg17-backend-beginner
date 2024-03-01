@@ -1,6 +1,8 @@
-const userModel = require('../../models/user.model')
-const { errorHandler } = require('../../moduls/handling')
 const  { v2: cloudinary } = require ("cloudinary");
+const argon = require('argon2')
+
+const userModel = require('../../models/user.model')
+const { errorHandler, updateColumn } = require('../../moduls/handling')
 
 
 exports.getAllUsers = async (req, res) => { 
@@ -35,7 +37,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getDetailUser = async (req, res) => {                                        
     try {
-        const user = await userModel.findOne(parseInt(req.params.id))
+        const user = await userModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
             message: 'detail user',
@@ -55,6 +57,8 @@ exports.createUser = async (req, res) => {
             req.body.picture = req.file.path
         }
 
+        req.body.password = await argon.hash(req.body.password)
+
         const user = await userModel.insert(req.body)
         return res.json({                                                              
             success: true,
@@ -70,21 +74,11 @@ exports.createUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     try {
-        // if(req.body.role){
-        //     return res.status(403).json({
-        //         success: false,
-        //         message: 'Forbidden access denied cannot change role user'
-        //     })
-        // }
-
         const {id} = req.params
-        const data = await userModel.findOne(id)
-        if(!data){
-            throw new Error(`user with id ${id} not found`)
-        }
+        await userModel.findOne(id)
 
-        if(req.file){
-            console.log(req.body.picture)   
+
+        if(req.file){ 
 
             // if(data.picture){                                                                                   // jika data sebelumnya mempunyai gambar, maka gambara akan di hapus dan di ganti dengan gambar yg baru di upload
             //     const picturePath = path.join(global.path, 'uploads', 'users', data.picture)                    // mengambil jalur path gambar
@@ -113,7 +107,7 @@ exports.updateUser = async (req, res) => {
             req.body.picture = req.file.path
         }
     
-        const user = await userModel.update(parseInt(id), req.body)
+        const user = await updateColumn(id, req.body, "users")
 
         return res.json({                                                              
             success: true,
@@ -129,12 +123,9 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     try {
         const {id} = req.params
-        const data = await userModel.findOne(id)
-        if(!data){
-            throw new Error(`user with id ${id} not found`)
-        }
+        await userModel.findOne(id)
 
-        const user = await userModel.delete(parseInt(id)) 
+        const user = await userModel.delete(id) 
 
         // if(user.picture){
         //     const picturePath = path.join(global.path, "uploads", "users", user.picture)                        // mengambil jalur path picture

@@ -1,8 +1,8 @@
 const db = require('../lib/db.lib')
-const { isExist, isStringExist, updateColumn } = require('../moduls/handling')
 
 
 exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, category, isRecommended) => {
+    console.log(category,isRecommended)
     order = sortBy == "createdAt" ? "DESC" : order
 
     const limitData = limit
@@ -26,7 +26,7 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
     const values =[`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
     if(!rows.length){
-        throw new Error(`no data found`)
+        throw new Error(`data products not found`)
     }
     return rows
 }
@@ -119,11 +119,6 @@ exports.insertImages = async ({imageUrl, productId}) => {
     const values = [imageUrl, productId]
     const {rows} = await db.query(sql, values)
     return rows[0]
-}
-
-
-exports.update = async (id, body) => {
-    return await updateColumn(id, body, "products")
 }
 
 

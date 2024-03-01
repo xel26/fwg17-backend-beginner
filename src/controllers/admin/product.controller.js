@@ -1,5 +1,5 @@
 const productModel = require('../../models/product.model')
-const {errorHandler, isExist, isStringExist} = require('../../moduls/handling')
+const {errorHandler, updateColumn, isStringExist} = require('../../moduls/handling')
 
 const  { v2: cloudinary } = require ("cloudinary");
 
@@ -7,6 +7,7 @@ const  { v2: cloudinary } = require ("cloudinary");
 exports.getAllProducts = async (req, res) => {   
     try {
         const {searchKey, sortBy, order, page=1, limit, category, isRecommended} = req.query
+        console.log(req.query)
         const limitData = parseInt(limit) || 6
 
         const count = await productModel.countAll(searchKey, category, isRecommended)
@@ -58,6 +59,8 @@ exports.createProduct = async (req, res) => {
         
         }
 
+        await isStringExist("products", "name", req.body.name)
+
         const product = await productModel.insert(req.body) 
         return res.json({                                                              
             success: true,
@@ -95,11 +98,11 @@ exports.createProductImages = async (req, res) => {
 exports.updateProduct = async (req, res) => {
     try {
         const {id} = req.params
-        const {name}= req.body
 
-        const data = await isExist("products", id)
-        if(name){
-            await isStringExist("products", "name", name)
+        await productModel.findOne(req.params.id)
+
+        if(req.body.name){
+            await isStringExist("products", "name", req.body.name)
         }
 
         if(req.file){
@@ -129,7 +132,7 @@ exports.updateProduct = async (req, res) => {
             req.body.image = req.file.path                                      // dengan cloudinary
         }
     
-        const product = await productModel.update(id, req.body)
+        const product = await updateColumn(id, req.body, "products")
 
         return res.json({                                                              
             success: true,
@@ -144,7 +147,7 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
     try {
-        await isExist("products", req.params.id)
+        await productModel.findOne(req.params.id)
 
         const product = await productModel.delete(req.params.id)
 

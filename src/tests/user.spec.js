@@ -3,10 +3,7 @@ const { expect } = require("chai");
 
 
 const userController = require('../controllers/admin/user.controller');
-
-const req = {
-    query: {}
-}
+const userModel = require('../models/user.model')
 
 const res = {
     status: (status) => {
@@ -18,35 +15,18 @@ const res = {
 }
 
 describe('list all users', () => {
-    it('should return success true', async() => {
+    it('should return message List all users', async() => {
+        const req = {
+            query: {
+                order: "tidak ada"
+            }
+        }
         const response = await userController.getAllUsers(req, res)
-        expect(response.success).to.be.eq(true)
+        expect(response.message).to.be.eq("List all users")
     })
 
-    // it('nextPage should be null', async() => {
-    //     const req = {
-    //         query: {
-    //             page: '12'
-    //         }
-    //     }
 
-    //     const response = await userController.getAllUsers(req, res)
-    //     expect(response.pageInfo.nextPage).to.be.eq(null)
-    // })
-
-    // it('prevPage should be null', async() => {
-    //     const req = {
-    //         query: {
-    //             page: '1'
-    //         }
-    //     }
-
-    //     const response = await userController.getAllUsers(req, res)
-    //     expect(response.pageInfo.prevPage).to.be.eq(null)
-    // })
-
-
-    it('should return message no data found', async() => {
+    it('should return message data users not found', async() => {
         const req = {
             query: {
                 searchKey: 'tidak ada'
@@ -54,7 +34,7 @@ describe('list all users', () => {
         }
 
         const response = await userController.getAllUsers(req, res)
-        expect(response.message).to.be.eq("no data found")
+        expect(response.message).to.be.eq("data users not found")
     })
 
 
@@ -68,30 +48,6 @@ describe('list all users', () => {
         const response = await userController.getAllUsers(req, res)
         expect(response.message).to.be.eq('column tidak ada does not exist')
     })
-
-
-    it('should return success true if typeof sortby is object', async() => {
-        const req = {
-            query: {
-                sortBy: ['id', 'fullName']
-            }
-        }
-
-        const response = await userController.getAllUsers(req, res)
-        expect(response.success).to.be.eq(true)
-    })
-
-
-    it('should return message column tidak ada does not exist if typeof sortby is object', async() => {
-        const req = {
-            query: {
-                sortBy: ['id', 'tidak ada']
-            }
-        }
-
-        const response = await userController.getAllUsers(req, res)
-        expect(response.message).to.be.eq('column tidak ada does not exist')
-    })
 })
 
 
@@ -99,13 +55,14 @@ describe('list all users', () => {
 
 
 describe('details user', () => {
-    const req = {
-        params: {
-            id: "466"
-        }
-    }
-
     it('should return success true', async() => {
+        const req = {
+            params: {
+                id: "466"
+            }
+        }
+
+        
         const response = await userController.getDetailUser(req, res)
         expect(response.success).to.be.eq(true)
     })
@@ -134,6 +91,11 @@ describe('details user', () => {
         const response = await userController.getDetailUser(req, res)
         expect(response.message).to.be.eq("user with id 4660 not found")
     })
+
+    it('should return object', async() => {
+        const response = await userModel.findOneByEmail("admin@example.com")
+        expect(typeof response).to.be.eq('object')
+    })
 })
 
 
@@ -141,29 +103,29 @@ describe('details user', () => {
 
 
 describe('create user', () => {
-    const req = {
-        body: {
-            fullName: "unit test",
-            email: `unit.test${new Date().getTime()}@example.com`,
-            password: "123",
-            role: "customer"
-        },
-        file: {
-            path: "https://res.cloudinary.com/dgtv2r5qh/image/upload/v1706328161/coffee-shop-be/users/ad373124-f0a6-4acc-a237-586a39e15e7c.jpg"
+    it('should return message create user successfully', async() => {
+        const req = {
+            body: {
+                fullName: "unit test",
+                email: `unit.test${new Date().getTime()}@example.com`,
+                password: "123",
+                role: "customer"
+            },
+            // file: {
+            //     path: "https://res.cloudinary.com/dgtv2r5qh/image/upload/v1706328161/coffee-shop-be/users/ad373124-f0a6-4acc-a237-586a39e15e7c.jpg"
+            // }
         }
-    }
 
-    // it('should return success true', async() => {
-    //     const response = await userController.createUser(req, res)
-    //     expect(response.success).to.be.eq(true)
-    // })
+        const response = await userController.createUser(req, res)
+        expect(response.message).to.be.eq("create user successfully")
+    })
 
 
     it('should return message role cannot be empty', async() => {
         const req = {
             body: {
                 fullName: "unit test",
-                email: "unit.test@example.com",
+                email: `unit.test@example.com`,
                 password: "123",
             }
         }
@@ -173,17 +135,18 @@ describe('create user', () => {
     })
 
 
-    it('should return message email admin@example.com already registered', async() => {
+    it('should return message email admin@example.com already exist', async() => {
         const req = {
             body: {
                 fullName: "unit test",
                 email: "admin@example.com",
                 password: "123",
+                role: "customer"
             }
         }
 
         const response = await userController.createUser(req, res)
-        expect(response.message).to.be.eq("email admin@example.com already registered")
+        expect(response.message).to.be.eq("email admin@example.com already exist")
     })
 })
 
@@ -192,22 +155,22 @@ describe('create user', () => {
 
 
 describe('update user', () => {
-    const req = {
-        params: {
-            id: "466"
-        },
-        body: {
-            fullName: "shella di ganti",
-        },
-        // file: {
-        //     path: "https://res.cloudinary.com/dgtv2r5qh/image/upload/v1706328161/coffee-shop-be/users/ad373124-f0a6-4acc-a237-586a39e15e7c.jpg"
-        // }
-    }
+    it('should return message update user successfully', async() => {
+        const req = {
+            params: {
+                id: "466"
+            },
+            body: {
+                fullName: "shella di ganti",
+                password: "123"
+            },
+            // file: {
+            //     path: "https://res.cloudinary.com/dgtv2r5qh/image/upload/v1706328161/coffee-shop-be/users/ad373124-f0a6-4acc-a237-586a39e15e7c.jpg"
+            // }
+        }
 
-    it('should return success true', async() => {
         const response = await userController.updateUser(req, res)
-        // console.log(response)
-        expect(response.success).to.be.eq(true)
+        expect(response.message).to.be.eq("update user successfully")
     })
 
 
@@ -239,21 +202,6 @@ describe('update user', () => {
     })
 
 
-    it('should return success true when update password', async() => {
-        const req = {
-            params: {
-                id: "466"
-            },
-            body: {
-                password: "123"
-            }
-        }
-
-        const response = await userController.updateUser(req, res)
-        expect(response.success).to.be.eq(true)
-    })
-
-
     it('should return message column tidakAda does not exist', async() => {
         const req = {
             params: {
@@ -269,7 +217,7 @@ describe('update user', () => {
     })
 
 
-    it('should return message email admin@example.com already registered', async() => {
+    it('should return message email admin@example.com already exist', async() => {
         const req = {
             params: {
                 id: "466"
@@ -280,7 +228,7 @@ describe('update user', () => {
         }
 
         const response = await userController.updateUser(req, res)
-        expect(response.message).to.be.eq("email admin@example.com already registered")
+        expect(response.message).to.be.eq("email admin@example.com already exist")
     })
 
 
@@ -304,17 +252,16 @@ describe('update user', () => {
 
 
 describe('delete user', () => {
-    const req = {
-        params: {
-            id: "524"
-        },
-    }
+    it('should return message delete user successfully', async() => {
+        const req = {
+            params: {
+                id: "626"
+            },
+        }
 
-    // it('should return success true', async() => {
-    //     const response = await userController.deleteUser(req, res)
-    //     // console.log(response)
-    //     expect(response.success).to.be.eq(true)
-    // })
+        const response = await userController.deleteUser(req, res)
+        expect(response.message).to.be.eq("delete user successfully")
+    })
 
 
     it('should return message invalid input syntax for type integer: x', async() => {

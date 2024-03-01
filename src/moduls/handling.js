@@ -39,13 +39,7 @@ exports.isStringExist = async (table, uniqueColumn, searchKey) => {
     const {rows} = await db.query(sql, values)
 
     if(rows.length){
-        if(uniqueColumn === "name"){
-            throw new Error(`${table} with ${uniqueColumn} ${rows[0].name} already exist`)
-        }else if(uniqueColumn === "email"){
-            throw new Error(`${uniqueColumn} ${rows[0].email} already registered`)
-        }else if(uniqueColumn === "code"){
-            throw new Error(`${uniqueColumn} ${rows[0].code} already exist`)
-        }
+        throw new Error(`${table.replace('s', '')} with ${uniqueColumn} ${searchKey} already exist`)
     }
 }
 
