@@ -7,7 +7,6 @@ const  { v2: cloudinary } = require ("cloudinary");
 exports.getAllProducts = async (req, res) => {   
     try {
         const {searchKey, sortBy, order, page=1, limit, category, isRecommended} = req.query
-        console.log(req.query)
         const limitData = parseInt(limit) || 6
 
         const count = await productModel.countAll(searchKey, category, isRecommended)
@@ -94,7 +93,6 @@ exports.createProductImages = async (req, res) => {
 }
 
 
-
 exports.updateProduct = async (req, res) => {
     try {
         const {id} = req.params
@@ -147,8 +145,6 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
     try {
-        await productModel.findOne(req.params.id)
-
         const product = await productModel.delete(req.params.id)
 
         // if(product.image){

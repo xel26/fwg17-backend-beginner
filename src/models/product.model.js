@@ -1,16 +1,13 @@
 const db = require('../lib/db.lib')
 
-
 exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, category, isRecommended) => {
-    console.log(category,isRecommended)
     order = sortBy == "createdAt" ? "DESC" : order
 
-    const limitData = limit
-    const offset = (page - 1) * limitData
+    const offset = (page - 1) * limit
 
     const sql = `
     SELECT "p".*,
-    "c"."name" AS "productCategory",
+    "c"."name" AS "category",
     "t"."name" as "tag",
     sum("pr"."rate")/count("pr"."id") as "rating"
     FROM "products" "p" 
@@ -18,10 +15,10 @@ exports.findAll = async (searchKey='', sortBy="id", order='ASC', page, limit, ca
     LEFT JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
     LEFT JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
     LEFT join "tags" "t" on ("t"."id" = "p"."tagId")
-    WHERE "p"."name" ILIKE $1 ${isRecommended ? 'AND "isRecommended" = true' : ''} ${category ? `AND "c"."name" = ${category}` : ''}
+    WHERE "p"."name" ILIKE $1 ${isRecommended ? 'AND "isRecommended" = true' : ''} ${category ? `AND "c"."name" = '${category}'` : ''}
     GROUP BY "p"."id", "c"."name", "t"."name"
     ORDER BY "p"."${sortBy}" ${order}
-    LIMIT ${limitData} OFFSET ${offset}
+    LIMIT ${limit} OFFSET ${offset}
     `
     const values =[`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
@@ -38,7 +35,7 @@ exports.countAll = async (searchKey='', category, isRecommended) => {
         FROM "products" "p"
         LEFT JOIN "productCategories" "pc" on ("pc"."productId" = "p"."id")
         LEFT JOIN "categories" "c" on ("c"."id" = "pc"."categoryId")
-        WHERE "p"."name" ILIKE $1 ${isRecommended ? 'AND "isRecommended" = true' : ''} ${category ? `AND "c"."name" = ${category}` : ''}
+        WHERE "p"."name" ILIKE $1 ${isRecommended ? 'AND "isRecommended" = true' : ''} ${category ? `AND "c"."name" = '${category}'` : ''}
         `
         const values = [`%${searchKey}%`]
         const {rows} = await db.query(sql, values)
@@ -126,5 +123,8 @@ exports.delete = async (id) => {
     const sql = `DELETE FROM "products" WHERE "id" = $1 RETURNING *`
     const values = [id]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`product with id ${id} not found`)
+    }
     return rows[0]
 }

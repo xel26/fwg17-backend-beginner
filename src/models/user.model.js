@@ -1,19 +1,17 @@
 const db = require('../lib/db.lib')
-const { updateColumn } = require('../moduls/handling')
 
 
 exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
     
-    const limitData = limit
-    const offset = (page - 1) * limitData
+    const offset = (page - 1) * limit
 
     const sql = `
     SELECT *
     FROM "users" WHERE "fullName" ILIKE $1
     ORDER BY "${sortBy}" ${order}
-    LIMIT ${limitData} OFFSET ${offset}
+    LIMIT ${limit} OFFSET ${offset}
     `
     const values = [`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
@@ -75,5 +73,8 @@ exports.delete = async (id) => {
     const sql = `DELETE FROM "users" WHERE "id" = $1 RETURNING *`
     const values = [id]
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`user with id ${id} not found`)
+    }
     return rows[0]
 }

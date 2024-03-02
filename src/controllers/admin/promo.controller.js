@@ -1,5 +1,6 @@
 const promoModel = require('../../models/promo.model')
 const { errorHandler } = require('../../moduls/handling')
+const { isExist, isStringExist, updateColumn } = require('../../moduls/handling')
 
 
 exports.getAllPromo = async (req, res) => {       
@@ -34,7 +35,7 @@ exports.getAllPromo = async (req, res) => {
 
 exports.getDetailPromo = async (req, res) => {                                        
     try {
-        const promo = await promoModel.findOne(parseInt(req.params.id))
+        const promo = await promoModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
             message: 'detail promo',
@@ -48,6 +49,8 @@ exports.getDetailPromo = async (req, res) => {
 
 exports.createPromo = async (req, res) => {
     try {
+        await isStringExist("promo", "name", req.body.name)
+        await isStringExist("promo", "code", req.body.code)
         const promo = await promoModel.insert(req.body) 
         return res.json({                                                              
             success: true,
@@ -63,8 +66,10 @@ exports.createPromo = async (req, res) => {
 
 exports.updatePromo = async (req, res) => {
     try {
-        const promo = await promoModel.update(parseInt(req.params.id), req.body)
-
+        await promoModel.findOne(req.params.id)
+        await isStringExist("promo", "name", req.body.name)
+        await isStringExist("promo", "code", req.body.code)
+        const promo = await updateColumn(req.params.id, req.body, "promo")
         return res.json({                                                              
             success: true,
             message: 'update promo successfully',
@@ -78,7 +83,7 @@ exports.updatePromo = async (req, res) => {
 
 exports.deletePromo = async (req, res) => {
     try {
-        const promo = await promoModel.delete(parseInt(req.params.id)) 
+        const promo = await promoModel.delete(req.params.id) 
         return res.json({                                                              
             success: true,
             message: 'delete promo successfully',

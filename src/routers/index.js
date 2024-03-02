@@ -31,8 +31,8 @@ router.get('/data-variant', checkoutController.getDataVariant)
 
 router.post('/order-flow', authMiddleware, roleCheckMiddleware("customer"), orderFlow.orderProducts)
 
-router.get('/testimonial', testiController.getAllTesti )
-router.patch('/testimonial/:id', uploadMiddleware('testimonial').single('image'), multerErrorHandler, testiController.updateTesti)
+router.get('/testimonial', testiController.getAllTestimonial )
+router.patch('/testimonial/:id', uploadMiddleware('testimonial').single('image'), multerErrorHandler, testiController.updateTestimonial)
 
 
 

@@ -1,5 +1,6 @@
 const categoriesModel = require('../../models/categories.model')
 const { errorHandler } = require('../../moduls/handling')
+const { isExist, isStringExist, updateColumn } = require('../../moduls/handling')
 
 
 exports.getAllCategories = async (req, res) => {       
@@ -16,7 +17,7 @@ exports.getAllCategories = async (req, res) => {
 
         return res.json({                                                              
             success: true,
-            messages: `List all categories`,
+            message: `List all categories`,
             pageInfo: {
                 currentPage: parseInt(page),
                 totalPage,
@@ -33,10 +34,10 @@ exports.getAllCategories = async (req, res) => {
 
 exports.getDetailCategory = async (req, res) => {                                        
     try {
-        const category = await categoriesModel.findOne(parseInt(req.params.id))
+        const category = await categoriesModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
-            messages: 'detail category',
+            message: 'detail category',
             result: category                                                  
         })
     } catch (error) {
@@ -47,10 +48,11 @@ exports.getDetailCategory = async (req, res) => {
 
 exports.createCategory = async (req, res) => {
     try {
+        await isStringExist("categories", "name", req.body.name)
         const category = await categoriesModel.insert(req.body) 
         return res.json({                                                              
             success: true,
-            messages: 'create category successfully',
+            message: 'create category successfully',
             result: category                                                   
         })
         
@@ -62,11 +64,13 @@ exports.createCategory = async (req, res) => {
 
 exports.updateCategory = async (req, res) => {
     try {
-        const category = await categoriesModel.update(parseInt(req.params.id), req.body)
+        await categoriesModel.findOne(req.params.id)
+        await isStringExist("categories", "name", req.body.name)
 
+        const category = await updateColumn(req.params.id, req.body, "categories")
         return res.json({                                                              
             success: true,
-            messages: 'update category successfully',
+            message: 'update category successfully',
             result: category                                                   
         })
     } catch (error) {
@@ -77,10 +81,10 @@ exports.updateCategory = async (req, res) => {
 
 exports.deleteCategory = async (req, res) => {
     try {
-        const category = await categoriesModel.delete(parseInt(req.params.id)) 
+        const category = await categoriesModel.delete(req.params.id) 
         return res.json({                                                              
             success: true,
-            messages: 'delete category successfully',
+            message: 'delete category successfully',
             result: category                                                   
         })
     } catch (error) {

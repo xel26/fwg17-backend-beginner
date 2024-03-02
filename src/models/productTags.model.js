@@ -8,8 +8,8 @@ exports.findAll = async (sortBy="id", order="ASC", page, limit) => {
     const orderType = ["ASC", "DESC"]
     order = orderType.includes(order)? order : "ASC"
     
-    const limitData = limit
-    const offset = (page - 1) * limitData
+    
+    const offset = (page - 1) * limit
 
     if(typeof sortBy === "object"){
         const sortByColumn = ['id', 'productId', 'tagId', 'createdAt']
@@ -25,7 +25,7 @@ exports.findAll = async (sortBy="id", order="ASC", page, limit) => {
         SELECT * 
         FROM "productTags"
         ORDER BY ${columnSort.join(', ')}
-        LIMIT ${limitData} OFFSET ${offset}
+        LIMIT ${limit} OFFSET ${offset}
         `
         const values = []
         const {rows} = await db.query(sql, values)
@@ -39,7 +39,7 @@ exports.findAll = async (sortBy="id", order="ASC", page, limit) => {
     SELECT *
     FROM "productTags"
     ORDER BY "${sortBy}" ${order}
-    LIMIT ${limitData} OFFSET ${offset}
+    LIMIT ${limit} OFFSET ${offset}
     `
     console.log(sql)
     const values = []

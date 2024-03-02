@@ -1,8 +1,9 @@
 const tagsModel = require('../../models/tags.model')
 const { errorHandler } = require('../../moduls/handling')
+const { isStringExist, updateColumn } = require('../../moduls/handling')
 
 
-exports.getAllTags = async (req, res) => {       
+exports.getAllTags = async (req, res) => {
     try {
         const {searchKey, sortBy, order, page=1, limit} = req.query
         const limitData = parseInt(limit) || 5
@@ -32,9 +33,9 @@ exports.getAllTags = async (req, res) => {
 }
 
 
-exports.getDetailTag = async (req, res) => {                                        
+exports.getDetailTag = async (req, res) => {
     try {
-        const tag = await tagsModel.findOne(parseInt(req.params.id))
+        const tag = await tagsModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
             message: 'detail tag',
@@ -48,6 +49,7 @@ exports.getDetailTag = async (req, res) => {
 
 exports.createTag = async (req, res) => {
     try {
+        await isStringExist("tags", "name", req.body.name)
         const tag = await tagsModel.insert(req.body) 
         return res.json({                                                              
             success: true,
@@ -63,8 +65,9 @@ exports.createTag = async (req, res) => {
 
 exports.updateTag = async (req, res) => {
     try {
-        const tag = await tagsModel.update(parseInt(req.params.id), req.body) 
-
+        await tagsModel.findOne(req.params.id)
+        await isStringExist("tags", "name", req.body.name)
+        const tag = await updateColumn(req.params.id, req.body, "tags") 
         return res.json({                                                              
             success: true,
             message: 'update tag successfully',
@@ -78,7 +81,7 @@ exports.updateTag = async (req, res) => {
 
 exports.deleteTag = async (req, res) => {
     try {
-        const tag = await tagsModel.delete(parseInt(req.params.id)) 
+        const tag = await tagsModel.delete(req.params.id) 
         return res.json({                                                              
             success: true,
             message: 'delete tag successfully',

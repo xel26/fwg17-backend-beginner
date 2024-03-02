@@ -36,6 +36,33 @@ describe('list all users', () => {
         const response = await userController.getAllUsers(req, res)
         expect(response.message).to.be.eq("data users not found")
     })
+    
+
+
+    it("should return nextPage null", async () => {
+        const req = {
+            query: {
+                page: 12
+            },
+        }
+
+        const response = await userController.getAllUsers(req, res)
+        expect(response.pageInfo.nextPage).to.be.null
+    })
+
+
+
+    it("should return prevPage null", async () => {
+        const req = {
+            query: {
+                page: 1
+            },
+        }
+
+        const response = await userController.getAllUsers(req, res)
+        expect(response.pageInfo.prevPage).to.be.null
+    })
+
 
 
     it('should return message column tidak ada does not exist', async() => {
@@ -161,7 +188,7 @@ describe('update user', () => {
                 id: "466"
             },
             body: {
-                fullName: "shella di ganti",
+                fullName: "shella",
                 password: "123"
             },
             // file: {
@@ -255,7 +282,7 @@ describe('delete user', () => {
     it('should return message delete user successfully', async() => {
         const req = {
             params: {
-                id: "626"
+                id: "629"
             },
         }
 

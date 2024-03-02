@@ -18,14 +18,12 @@ describe("list all products", () => {
         const req = {
             query: {
                 sortBy:"createdAt",
-                page: 1,
-                limit: 5,
-                category: "foods",
+                category: "coffee",
                 isRecommended: true
             },
         }
+
         const response = await productController.getAllProducts(req, res)
-        console.log(response)
         expect(response.message).to.be.eq("List all products")
     })
 
@@ -40,6 +38,45 @@ describe("list all products", () => {
 
         const response = await productController.getAllProducts(req, res)
         expect(response.message).to.be.eq("data products not found")
+    })
+
+
+
+    it("should return nextPage null", async () => {
+        const req = {
+            query: {
+                page: 4
+            },
+        }
+
+        const response = await productController.getAllProducts(req, res)
+        expect(response.pageInfo.nextPage).to.be.null
+    })
+
+
+
+    it("should return prevPage null", async () => {
+        const req = {
+            query: {
+                page: 1
+            },
+        }
+
+        const response = await productController.getAllProducts(req, res)
+        expect(response.pageInfo.prevPage).to.be.null
+    })
+
+
+
+    it('should return message column p.tidak ada does not exist', async() => {
+        const req = {
+            query: {
+                sortBy: 'tidak ada'
+            }
+        }
+
+        const response = await productController.getAllProducts(req, res)
+        expect(response.message).to.be.eq('column p.tidak ada does not exist')
     })
 })
 
@@ -104,7 +141,7 @@ describe("create product", () => {
     })
 
 
-    it("should return message product with name vanilla syrup already exist", async () => {
+    it("should return message name vanilla syrup already exist", async () => {
         const req = {
             body: {
               name: "vanilla syrup",
@@ -113,7 +150,7 @@ describe("create product", () => {
           };
 
         const response = await productController.createProduct(req, res)
-        expect(response.message).to.be.eq("product with name vanilla syrup already exist")
+        expect(response.message).to.be.eq("name vanilla syrup already exist")
     })
 
 
@@ -228,7 +265,7 @@ describe("update product", () => {
     
 
 
-    it("should return message product with name vanilla syrup already exist", async () => {
+    it("should return message name vanilla syrup already exist", async () => {
         const req ={
             params: {
                 id: "55"
@@ -239,7 +276,7 @@ describe("update product", () => {
         }
 
         const response = await productController.updateProduct(req, res)
-        expect(response.message).to.be.eq("product with name vanilla syrup already exist")
+        expect(response.message).to.be.eq("name vanilla syrup already exist")
     })
     
 
@@ -282,7 +319,7 @@ describe('delete product', () => {
     it("should return message delete product successfully", async () => {
         const req ={
             params: {
-                id: "175"
+                id: "181"
             }
         }
 

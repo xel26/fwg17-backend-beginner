@@ -1,14 +1,14 @@
 const sizesModel = require('../../models/sizes.model')
-const { errorHandler } = require('../../moduls/handling')
+const { errorHandler, isStringExist, updateColumn } = require('../../moduls/handling')
 
 
-exports.getAllProductSize = async (req, res) => {       
+exports.getAllSize = async (req, res) => {       
     try {
-        const {sortBy, order, page=1, limit} = req.query
+        const {searchKey, sortBy, order, page=1, limit} = req.query
         const limitData = parseInt(limit) || 5
 
-        const count = await sizesModel.countAll()  
-        const listSizes = await sizesModel.findAll(sortBy, order, page, limitData)
+        const count = await sizesModel.countAll(searchKey)  
+        const listSizes = await sizesModel.findAll(searchKey, sortBy, order, page, limitData)
         
         const totalPage = Math.ceil(count / limitData)
         const nextPage = parseInt(page) + 1
@@ -32,9 +32,9 @@ exports.getAllProductSize = async (req, res) => {
 }
 
 
-exports.getDetailProductSize = async (req, res) => {                                        
+exports.getDetailSize = async (req, res) => {                                        
     try {
-        const size = await sizesModel.findOne(parseInt(req.params.id))
+        const size = await sizesModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
             message: 'detail size',
@@ -46,12 +46,13 @@ exports.getDetailProductSize = async (req, res) => {
 }
 
 
-exports.createProductSize = async (req, res) => {
+exports.createSize = async (req, res) => {
     try {
+        await isStringExist("sizes", "size", req.body.size)
         const size = await sizesModel.insert(req.body) 
         return res.json({                                                              
             success: true,
-            messages: 'create size successfully',
+            message: 'create size successfully',
             results: size                                                   
         })
         
@@ -61,13 +62,14 @@ exports.createProductSize = async (req, res) => {
 }
 
 
-exports.updateProductSize = async (req, res) => {
+exports.updateSize = async (req, res) => {
     try {
-        const size = await sizesModel.update(parseInt(req.params.id), req.body)
-
+        await sizesModel.findOne(req.params.id)
+        await isStringExist("sizes", "size", req.body.size)
+        const size = await updateColumn(req.params.id, req.body, "sizes")
         return res.json({                                                              
             success: true,
-            messages: 'update size successfully',
+            message: 'update size successfully',
             results: size                                                   
         })
     } catch (error) {
@@ -76,12 +78,12 @@ exports.updateProductSize = async (req, res) => {
 }
 
 
-exports.deleteProductSize = async (req, res) => {
+exports.deleteSize = async (req, res) => {
     try {
-        const size = await sizesModel.delete(parseInt(req.params.id)) 
+        const size = await sizesModel.delete(req.params.id) 
         return res.json({                                                              
             success: true,
-            messages: 'delete size successfully',
+            message: 'delete size successfully',
             results: size                                                   
         })
     } catch (error) {

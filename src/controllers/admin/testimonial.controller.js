@@ -1,13 +1,11 @@
 const testiModel = require('../../models/testimonial.model')
-const {errorHandler} = require('../../moduls/handling')
-const path = require('path')
-const fs = require('fs/promises')
+const {errorHandler, updateColumn} = require('../../moduls/handling')
 const  { v2: cloudinary } = require ("cloudinary");
 
-exports.getAllTesti = async (req, res) => {
+exports.getAllTestimonial = async (req, res) => {
     try {
         const {searchKey, sortBy, order, page=1, limit,} = req.query
-        const limitData = parseInt(limit) || 1
+        const limitData = parseInt(limit) || 5
 
         const count = await testiModel.countAll(searchKey)
         const listTestimonial = await testiModel.findAll(searchKey, sortBy, order, page, limitData)
@@ -34,11 +32,39 @@ exports.getAllTesti = async (req, res) => {
 }
 
 
-exports.updateTesti = async (req, res) => {
+exports.getDetailTestimonial = async (req, res) => {
     try {
+        const testi = await testiModel.findOne(req.params.id)
+        return res.json({                                                              
+            success: true,
+            message: 'detail testimonial',
+            result: testi                                                  
+        })
+    } catch (error) {
+        return errorHandler(error, res)
+    }
+}
 
-        const {id} = req.params
-        const data = await testiModel.findOne(id)
+
+
+exports.createTestimonial = async (req, res) => {
+    try {
+        const testi = await testiModel.insert(req.body) 
+        return res.json({                                                              
+            success: true,
+            message: 'create testimonial successfully',
+            result: testi                                                   
+        })
+        
+    } catch (error) {
+        return errorHandler(error, res)
+    }
+}
+
+
+exports.updateTestimonial = async (req, res) => {
+    try {
+        const data = await testiModel.findOne(req.params.id)
 
         if(req.file){
 
@@ -69,12 +95,48 @@ exports.updateTesti = async (req, res) => {
             req.body.image = req.file.path
         }
     
-        const testi = await testiModel.update(parseInt(id), req.body)
+        const testi = await updateColumn(req.params.id, req.body, "testimonial")
 
         return res.json({                                                              
             success: true,
             message: 'update testimonial successfully',
             results: testi                                                   
+        })
+    } catch (error) {
+        return errorHandler(error, res)
+    }
+}
+
+
+
+exports.deleteTestimonial = async (req, res) => {
+    try {
+        const testimonial = await testiModel.delete(req.params.id)
+
+                // if(product.image){
+        //     const imagePath = path.join(global.path, "uploads", "products", product.image)              // mengambil jalur path image
+        //     console.log(imagePath)
+        //     fs.access(imagePath, fs.constants.R_OK).then(() => {
+        //         fs.rm(imagePath)                                                                  // menghapus file berdasarkan jalur path
+        //     }).catch(() => {});                                                                      // menghapus file berdasarkan jalur path
+        // }
+
+        if(testimonial.image){
+            cloudinary.search
+            .expression(`${encodeURIComponent(product.image)}`)
+            .max_results(1)
+            .execute()
+            .then(result => {
+                cloudinary.uploader.destroy(result.resources[0].public_id)
+                .then(result => console.log({...result, message: "delete image success"}))
+                .catch(()=> {})
+            }).catch(()=> {})
+        }
+
+        return res.json({                                                              
+            success: true,
+            message: 'delete testimonial successfully',
+            result: testimonial                                                   
         })
     } catch (error) {
         return errorHandler(error, res)

@@ -2,10 +2,10 @@ const psRouter = require('express').Router()
 
 const psController = require('../../controllers/admin/sizes.controller') 
 
-psRouter.get('/', psController.getAllProductSize)                        
-psRouter.get('/:id', psController.getDetailProductSize)                  
-psRouter.post('/', psController.createProductSize)                       
-psRouter.patch('/:id', psController.updateProductSize)                   
-psRouter.delete('/:id', psController.deleteProductSize)                  
+psRouter.get('/', psController.getAllSize)                        
+psRouter.get('/:id', psController.getDetailSize)                  
+psRouter.post('/', psController.createSize)                       
+psRouter.patch('/:id', psController.updateSize)                   
+psRouter.delete('/:id', psController.deleteSize)                  
 
 module.exports = psRouter                                                     

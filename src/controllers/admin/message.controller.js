@@ -1,8 +1,8 @@
 const messageModel = require('../../models/message.model')
-const { errorHandler } = require('../../moduls/handling')
+const { errorHandler, updateColumn } = require('../../moduls/handling')
 
 
-exports.getAllMessages = async (req, res) => {       
+exports.getAllMessages = async (req, res) => {
     try {
         const {sortBy, order, page=1, limit} = req.query
         const limitData = parseInt(limit) || 5
@@ -32,9 +32,9 @@ exports.getAllMessages = async (req, res) => {
 }
 
 
-exports.getDetailMessage = async (req, res) => {                                        
+exports.getDetailMessage = async (req, res) => {
     try {
-        const message = await messageModel.findOne(parseInt(req.params.id))
+        const message = await messageModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
             message: 'detail message',
@@ -56,14 +56,15 @@ exports.createMessage = async (req, res) => {
         })
         
     } catch (error) {
-        return errorHandler(error, res, '')
+        return errorHandler(error, res)
     }
 }
 
 
 exports.updateMessage = async (req, res) => {
     try {
-        const message = await messageModel.update(parseInt(req.params.id), req.body)
+        await messageModel.findOne(req.params.id)
+        const message = await updateColumn(req.params.id, req.body, "message")
         return res.json({                                                              
             success: true,
             message: 'update message successfully',
@@ -77,7 +78,7 @@ exports.updateMessage = async (req, res) => {
 
 exports.deleteMessage = async (req, res) => {
     try {
-        const message = await messageModel.delete(parseInt(req.params.id)) 
+        const message = await messageModel.delete(req.params.id) 
         return res.json({                                                              
             success: true,
             message: 'delete message successfully',

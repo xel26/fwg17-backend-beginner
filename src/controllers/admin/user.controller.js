@@ -2,7 +2,7 @@ const  { v2: cloudinary } = require ("cloudinary");
 const argon = require('argon2')
 
 const userModel = require('../../models/user.model')
-const { errorHandler, updateColumn } = require('../../moduls/handling')
+const { errorHandler, updateColumn, isStringExist } = require('../../moduls/handling')
 
 
 exports.getAllUsers = async (req, res) => { 
@@ -51,13 +51,15 @@ exports.getDetailUser = async (req, res) => {
 
 exports.createUser = async (req, res) => {
     try {
+        await isStringExist("users", "email", req.body.email)
+        req.body.password = await argon.hash(req.body.password)
+
         if(req.file){
             // console.log(req.file)
             // req.body.picture = req.file.filename
             req.body.picture = req.file.path
         }
 
-        req.body.password = await argon.hash(req.body.password)
 
         const user = await userModel.insert(req.body)
         return res.json({                                                              
@@ -122,10 +124,7 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
     try {
-        const {id} = req.params
-        await userModel.findOne(id)
-
-        const user = await userModel.delete(id) 
+        const user = await userModel.delete(req.params.id) 
 
         // if(user.picture){
         //     const picturePath = path.join(global.path, "uploads", "users", user.picture)                        // mengambil jalur path picture

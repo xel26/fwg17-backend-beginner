@@ -8,8 +8,8 @@ const moment = require('moment')
 //     const orderType = ["ASC", "DESC"]
 //     order = orderType.includes(order)? order : "ASC"
     
-//     const limitData = limit
-//     const offset = (page - 1) * limitData
+//     
+//     const offset = (page - 1) * limit
 
 //     if(typeof sortBy === "object"){
 //         const sortByColumn = ['id', 'userId', 'createdAt','grandTotal', 'fullName']
@@ -25,7 +25,7 @@ const moment = require('moment')
 //         SELECT *
 //         FROM "orders" WHERE "fullName" ILIKE $1
 //         ORDER BY ${columnSort.join(', ')}
-//         LIMIT ${limitData} OFFSET ${offset}
+//         LIMIT ${limit} OFFSET ${offset}
 //         `
 //         const values = [`%${searchKey}%`]
 //         const {rows} = await db.query(sql, values)
@@ -39,7 +39,7 @@ const moment = require('moment')
 //     SELECT *
 //     FROM "orders" WHERE "fullName" ILIKE $1
 //     ORDER BY "${sortBy}" ${order}
-//     LIMIT ${limitData} OFFSET ${offset}
+//     LIMIT ${limit} OFFSET ${offset}
 //     `
 //     const values = [`%${searchKey}%`]
 //     const {rows} = await db.query(sql, values)
@@ -50,14 +50,14 @@ const moment = require('moment')
 // }
 
 exports.findAll = async (id, page, limit, status) => {
-    const limitData = limit
-    const offset = (page - 1) * limitData
+    
+    const offset = (page - 1) * limit
 
     const sql = `
     SELECT *
     FROM "orders" WHERE "userId" = $1 ${status ? 'AND "status" = $2' : ''}
     ORDER BY "createdAt" DESC
-    LIMIT ${limitData} OFFSET ${offset}
+    LIMIT ${limit} OFFSET ${offset}
     `
     const values = status ? [id, status] : [id]
     const {rows} = await db.query(sql, values)
