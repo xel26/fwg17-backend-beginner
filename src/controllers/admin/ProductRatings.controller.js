@@ -1,5 +1,5 @@
 const prModel = require('../../models/productRatings.model')
-const { errorHandler } = require('../../moduls/handling')
+const { errorHandler, updateColumn } = require('../../moduls/handling')
 
 
 exports.getAllProductRatings = async (req, res) => {       
@@ -34,7 +34,7 @@ exports.getAllProductRatings = async (req, res) => {
 
 exports.getDetailProductRating = async (req, res) => {                                        
     try {
-        const productRating = await prModel.findOne(parseInt(req.params.id))
+        const productRating = await prModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
             message: 'detail productRating',
@@ -63,7 +63,8 @@ exports.createProductRating = async (req, res) => {
 
 exports.updateProductRating = async (req, res) => {
     try {
-        const productRating = await prModel.update(parseInt(req.params.id), req.body)
+        await prModel.findOne(req.params.id)
+        const productRating = await updateColumn(req.params.id, req.body, "productRatings")
 
         return res.json({                                                              
             success: true,
@@ -78,7 +79,7 @@ exports.updateProductRating = async (req, res) => {
 
 exports.deleteProductRating = async (req, res) => {
     try {
-        const productRating = await prModel.delete(parseInt(req.params.id)) 
+        const productRating = await prModel.delete(req.params.id) 
         return res.json({                                                              
             success: true,
             message: 'delete productRating successfully',

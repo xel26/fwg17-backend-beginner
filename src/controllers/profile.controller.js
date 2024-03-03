@@ -1,16 +1,13 @@
 const userModel = require('../models/user.model')
-const { errorHandler } = require('../moduls/handling')
-const path = require('path')
-const fs = require('fs/promises')
+const { errorHandler, updateColumn, isStringExist } = require('../moduls/handling')
 const  { v2: cloudinary } = require ("cloudinary");
 
 exports.getProfile = async (req, res) => {
-    const {id} = req.user                                        
-    try {
-        const user = await userModel.findOne(id)
+    try {                                      
+        const user = await userModel.findOne(req.user.id)
         return res.json({                                                              
             success: true,
-            message: 'detail user',
+            message: 'user profile',
             results: user                                                  
         })
     } catch (error) {
@@ -20,15 +17,9 @@ exports.getProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
     try {
-        // if(req.body.role){
-        //     return res.status(403).json({
-        //         success: false,
-        //         message: 'Forbidden access denied cannot change role user'
-        //     })
-        // }
-
-        const {id} = req.user
-        const data = await userModel.findOne(id)
+        await userModel.findOne(req.user.id)
+        await isStringExist("users", "email", req.body.email)
+        const data = await userModel.findOne(req.user.id)
 
         if(req.file){                                                                                           
             // if(data.picture){                                                                                   // jika data sebelumnya mempunyai gambar, maka gambara akan di hapus dan di ganti dengan gambar yg baru di upload
@@ -57,11 +48,11 @@ exports.updateProfile = async (req, res) => {
             req.body.picture = req.file.path
         }
     
-        const user = await userModel.update(id, req.body)
+        const user = await updateColumn(req.user.id, req.body, "users")
 
         return res.json({                                                              
             success: true,
-            message: 'update profile success. . . ',
+            message: 'update profile successfully',
             results: user                                                   
         })
     } catch (error) {

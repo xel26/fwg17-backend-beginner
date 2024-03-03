@@ -1,11 +1,11 @@
-const pcRouter = require('express').Router()
+const pcRouter = require("express").Router();
 
-const pcController = require('../../controllers/admin/productCategories.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const pcController = require("../../controllers/admin/productCategories.controller");
 
-pcRouter.get('/', pcController.getAllProductCategories)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
-pcRouter.get('/:id', pcController.getDetailProductCategories)                         // client mengirim permintaan pengambilan data, ~
-pcRouter.post('/', pcController.createProductCategories)                                 // client mengirim permintaan memasukan data, ~
-pcRouter.patch('/:id', pcController.updateProductCategories)                             // client mengirim permintaan merubah data, ~
-pcRouter.delete('/:id', pcController.deleteProductCategories)                            // client mengirim permintaan menghapus data, ~
+pcRouter.get("/", pcController.getAllProductCategories);
+pcRouter.get("/:id", pcController.getDetailProductCategories);
+pcRouter.post("/", pcController.createProductCategories);
+pcRouter.patch("/:id", pcController.updateProductCategories);
+pcRouter.delete("/:id", pcController.deleteProductCategories);
 
-module.exports = pcRouter                                                     
+module.exports = pcRouter;

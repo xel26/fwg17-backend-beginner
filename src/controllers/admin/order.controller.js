@@ -1,44 +1,14 @@
 const orderModel = require('../../models/order.model')
-const { errorHandler } = require('../../moduls/handling')
-
-
-// exports.getAllOrders = async (req, res) => {       
-//     try {
-//         const {searchKey, sortBy, order, page=1, limit} = req.query
-//         const limitData = parseInt(limit) || 4
-
-//         const count = await orderModel.countAll(searchKey)      
-//         const listOrders = await orderModel.findAll(searchKey, sortBy, order, page, limitData)
-        
-//         const totalPage = Math.ceil(count / limitData)
-//         const nextPage = parseInt(page) + 1
-//         const prevPage = parseInt(page) - 1
-
-//         return res.json({                                                              
-//             success: true,
-//             messages: `List all users`,
-//             pageInfo: {
-//                 currentPage: parseInt(page),
-//                 totalPage,
-//                 nextPage: nextPage <= totalPage ? nextPage : null,
-//                 prevPage: prevPage > 1 ? prevPage : null,
-//                 totalData: parseInt(count)
-//             },
-//             results: listOrders                                                    
-//         })
-//     } catch (error) {
-//         return errorHandler(error, res)
-//     }
-// }
+const { errorHandler, updateColumn, isStringExist } = require('../../moduls/handling')
+const moment = require('moment')
 
 exports.getAllOrders = async (req, res) => {  
-    const {id} = req.user     
-    try {
-        const {page=1, limit, status} = req.query
+    try {   
+        const {sortBy, order, page=1, limit} = req.query
         const limitData = parseInt(limit) || 4
 
-        const count = await orderModel.countAll(id, status)      
-        const listOrders = await orderModel.findAll(parseInt(id), page, limitData, status)
+        const count = await orderModel.countAll(undefined, undefined)      
+        const listOrders = await orderModel.findAll(undefined, sortBy, order, page, limitData)
         
         const totalPage = Math.ceil(count / limitData)
         const nextPage = parseInt(page) + 1
@@ -46,7 +16,7 @@ exports.getAllOrders = async (req, res) => {
 
         return res.json({                                                              
             success: true,
-            messages: `List all orders`,
+            message: `List all orders`,
             pageInfo: {
                 currentPage: parseInt(page),
                 totalPage,
@@ -62,25 +32,12 @@ exports.getAllOrders = async (req, res) => {
 }
 
 
-// exports.getDetailOrder = async (req, res) => {                                        
-//     try {
-//         const order = await orderModel.findOne(parseInt(req.params.id))
-//         return res.json({                                                              
-//             success: true,
-//             messages: 'detail order',
-//             results: order                                                  
-//         })
-//     } catch (error) {
-//         return errorHandler(error, res)
-//     }
-// }
-
 exports.getDetailOrder = async (req, res) => {                                        
     try {
-        const order = await orderModel.findOne(parseInt(req.params.id))
+        const order = await orderModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
-            messages: 'detail order',
+            message: 'detail order',
             results: order                                                  
         })
     } catch (error) {
@@ -90,12 +47,18 @@ exports.getDetailOrder = async (req, res) => {
 
 
 exports.createOrder = async (req, res) => {
-    const {id: userId} = req.user
     try {
-        const order = await orderModel.insert(userId, req.body) 
+        const date = moment(new Date())
+        const orderNumber = `${date.format('YY')}${date.format('M').padStart(2, '0')}${date.format('D').padStart(2, '0')}${Math.floor(Math.random()*1000)}`
+        
+        const status = "On Progress"
+    
+        const {id: userId} = req.user
+
+        const order = await orderModel.insert(userId, orderNumber, status, req.body) 
         return res.json({                                                              
             success: true,
-            messages: 'create order successfully',
+            message: 'create order successfully',
             results: order                                                   
         })
         
@@ -107,11 +70,14 @@ exports.createOrder = async (req, res) => {
 
 exports.updateOrder = async (req, res) => {
     try {
-        const order = await orderModel.update(parseInt(req.params.id), req.body)
-
+        await orderModel.findOne(req.params.id)
+        if(req.body.orderNumber){
+            await isStringExist("orders", "orderNumber", req.body.orderNumber)
+        }
+        const order = await updateColumn(req.params.id, req.body, "orders")
         return res.json({                                                              
             success: true,
-            messages: 'update order successfully',
+            message: 'update order successfully',
             results: order                                                   
         })
     } catch (error) {
@@ -122,10 +88,10 @@ exports.updateOrder = async (req, res) => {
 
 exports.deleteOrder = async (req, res) => {
     try {
-        const order = await orderModel.delete(parseInt(req.params.id)) 
+        const order = await orderModel.delete(req.params.id)
         return res.json({                                                              
             success: true,
-            messages: 'delete order successfully',
+            message: 'delete order successfully',
             results: order                                                   
         })
     } catch (error) {

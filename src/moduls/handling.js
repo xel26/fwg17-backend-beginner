@@ -13,7 +13,7 @@ exports.isExist = async (table, id) => {
 
 
 exports.isStringExist = async (table, uniqueColumn, searchKey) => {
-    const sql = `SELECT * FROM "${table}" WHERE ${uniqueColumn} ILIKE $1`
+    const sql = `SELECT * FROM "${table}" WHERE "${uniqueColumn}" ILIKE $1`
     let values = [searchKey]
     const {rows} = await db.query(sql, values)
 
@@ -87,7 +87,7 @@ exports.errorHandler = (error, res) => {
     }else{
         return res.status(500).json({                                                              
             success: false,
-            messages: `Internal server error`                                                 
+            message: `Internal server error`                                                 
         })
     }
 }

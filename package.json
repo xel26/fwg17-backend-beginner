@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "test": "mocha ./src/tests/*.spec.js -r dotenv/config --exit",
-    "test:cov": "nyc mocha ./src/tests/message.spec.js -r dotenv/config --exit"
+    "test:router": "mocha ./src/tests/router/public/*.spec.js -r dotenv/config --exit",
+    "test:code": "nyc mocha ./src/tests/historyOrder.spec.js -r dotenv/config --exit"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +15,8 @@
     "chai": "^4.4.1",
     "mocha": "^10.3.0",
     "nodemon": "^3.0.1",
-    "nyc": "^15.1.0"
+    "nyc": "^15.1.0",
+    "supertest": "^6.3.4"
   },
   "dependencies": {
     "argon2": "^0.31.2",

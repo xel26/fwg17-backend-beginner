@@ -1,11 +1,11 @@
-const promoRouter = require('express').Router()
+const promoRouter = require("express").Router();
 
-const promoController = require('../../controllers/admin/promo.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const promoController = require("../../controllers/admin/promo.controller");
 
-promoRouter.get('/', promoController.getAllPromo)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
-promoRouter.get('/:id', promoController.getDetailPromo)                         // client mengirim permintaan pengambilan data, ~
-promoRouter.post('/', promoController.createPromo)                                 // client mengirim permintaan memasukan data, ~
-promoRouter.patch('/:id', promoController.updatePromo)                             // client mengirim permintaan merubah data, ~
-promoRouter.delete('/:id', promoController.deletePromo)                            // client mengirim permintaan menghapus data, ~
+promoRouter.get("/", promoController.getAllPromo);
+promoRouter.get("/:id", promoController.getDetailPromo);
+promoRouter.post("/", promoController.createPromo);
+promoRouter.patch("/:id", promoController.updatePromo);
+promoRouter.delete("/:id", promoController.deletePromo);
 
-module.exports = promoRouter                                                     
+module.exports = promoRouter;

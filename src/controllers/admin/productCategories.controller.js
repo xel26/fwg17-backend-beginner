@@ -1,5 +1,5 @@
 const pcModel = require('../../models/ProductCategories.model')
-const { errorHandler } = require('../../moduls/handling')
+const { errorHandler, updateColumn } = require('../../moduls/handling')
 
 
 exports.getAllProductCategories = async (req, res) => {
@@ -34,7 +34,7 @@ exports.getAllProductCategories = async (req, res) => {
 
 exports.getDetailProductCategories = async (req, res) => {                                        
     try {
-        const ProductCategories = await pcModel.findOne(parseInt(req.params.id))
+        const ProductCategories = await pcModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
             message: 'detail ProductCategories',
@@ -48,6 +48,7 @@ exports.getDetailProductCategories = async (req, res) => {
 
 exports.createProductCategories = async (req, res) => {
     try {
+        await pcModel.findData(req.body.productId, req.body.categoryId)
         const listPC = await pcModel.insert(req.body) 
         return res.json({                                                              
             success: true,
@@ -56,18 +57,19 @@ exports.createProductCategories = async (req, res) => {
         })
         
     } catch (error) {
-        return errorHandler(error, res, '')
+        return errorHandler(error, res)
     }
 }
 
 
 exports.updateProductCategories = async (req, res) => {
     try {
-        const ProductCategories = await pcModel.update(parseInt(req.params.id), req.body) 
+        await pcModel.findOne(req.params.id)
+        const ProductCategories = await updateColumn(req.params.id, req.body, "productCategories") 
         return res.json({                                                              
             success: true,
             message: 'update productCategory successfully',
-            result: ProductCategories                                                   
+            result: ProductCategories                                                 
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -77,7 +79,7 @@ exports.updateProductCategories = async (req, res) => {
 
 exports.deleteProductCategories = async (req, res) => {
     try {
-        const ProductCategories = await pcModel.delete(parseInt(req.params.id)) 
+        const ProductCategories = await pcModel.delete(req.params.id)
         return res.json({                                                              
             success: true,
             message: 'delete productCategory successfully',

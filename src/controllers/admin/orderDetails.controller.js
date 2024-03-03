@@ -1,9 +1,8 @@
 const orderDetailsModel = require('../../models/orderDetails.model')
-const { errorHandler } = require('../../moduls/handling')
+const { errorHandler, updateColumn } = require('../../moduls/handling')
 
 
 exports.getAllOrderDetail = async (req, res) => { 
-    
     try {
         const {sortBy, order, page=1, limit} = req.query
         const limitData = parseInt(limit) || 5
@@ -35,7 +34,7 @@ exports.getAllOrderDetail = async (req, res) => {
 
 exports.getDetailOrderDetail = async (req, res) => {                                        
     try {
-        const orderDetails = await orderDetailsModel.findOne(parseInt(req.params.id))
+        const orderDetails = await orderDetailsModel.findOne(req.params.id)
         return res.json({                                                              
             success: true,
             message: 'detail orderDetails',
@@ -64,11 +63,12 @@ exports.createOrderDetail = async (req, res) => {
 
 exports.updateOrderDetail = async (req, res) => {
     try {
-        const orderDetails = await orderDetailsModel.update(parseInt(req.params.id), req.body) 
+        await orderDetailsModel.findOne(req.params.id)
+        const orderDetails = await updateColumn(req.params.id, req.body, "orderDetails")
 
         return res.json({                                                              
             success: true,
-            message: 'update order details successfully',
+            message: 'update orderDetails successfully',
             result: orderDetails                                                   
         })
     } catch (error) {
@@ -79,7 +79,7 @@ exports.updateOrderDetail = async (req, res) => {
 
 exports.deleteOrderDetail = async (req, res) => {
     try {
-        const orderDetails = await orderDetailsModel.delete(parseInt(req.params.id)) 
+        const orderDetails = await orderDetailsModel.delete(req.params.id) 
         return res.json({                                                              
             success: true,
             message: 'delete orderDetails successfully',

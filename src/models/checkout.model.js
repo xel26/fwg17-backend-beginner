@@ -51,7 +51,7 @@ exports.getOrderProducts = async (orderId, userId) => {
         const values = [orderId, userId]
         const {rows} = await db.query(sql, values)
         if(!rows.length){
-            throw new Error(`no data found`)
+            throw new Error(`data history order products not found`)
         }
         return rows
 }

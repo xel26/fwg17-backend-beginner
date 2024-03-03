@@ -1,11 +1,11 @@
-const variantRouter = require('express').Router()
+const variantRouter = require("express").Router();
 
-const variantController = require('../../controllers/admin/variant.controller')                   // import module user.controller yg berbentuk object yg berisi logika program
+const variantController = require("../../controllers/admin/variant.controller");
 
-variantRouter.get('/', variantController.getAllVariant)                                  // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
-variantRouter.get('/:id', variantController.getDetailVariant)                         // client mengirim permintaan pengambilan data, ~
-variantRouter.post('/', variantController.createVariant)                                 // client mengirim permintaan memasukan data, ~
-variantRouter.patch('/:id', variantController.updateVariant)                             // client mengirim permintaan merubah data, ~
-variantRouter.delete('/:id', variantController.deleteVariant)                            // client mengirim permintaan menghapus data, ~
+variantRouter.get("/", variantController.getAllVariant);
+variantRouter.get("/:id", variantController.getDetailVariant);
+variantRouter.post("/", variantController.createVariant);
+variantRouter.patch("/:id", variantController.updateVariant);
+variantRouter.delete("/:id", variantController.deleteVariant);
 
-module.exports = variantRouter                                                     
+module.exports = variantRouter;

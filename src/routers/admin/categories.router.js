@@ -1,11 +1,11 @@
-const categoriesRouter = require('express').Router()
+const categoriesRouter = require("express").Router();
 
-const categoriesController = require('../../controllers/admin/categories.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const categoriesController = require("../../controllers/admin/categories.controller");
 
-categoriesRouter.get('/', categoriesController.getAllCategories)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
-categoriesRouter.get('/:id', categoriesController.getDetailCategory)                         // client mengirim permintaan pengambilan data, ~
-categoriesRouter.post('/', categoriesController.createCategory)                                 // client mengirim permintaan memasukan data, ~
-categoriesRouter.patch('/:id', categoriesController.updateCategory)                             // client mengirim permintaan merubah data, ~
-categoriesRouter.delete('/:id', categoriesController.deleteCategory)                            // client mengirim permintaan menghapus data, ~
+categoriesRouter.get("/", categoriesController.getAllCategories);
+categoriesRouter.get("/:id", categoriesController.getDetailCategory);
+categoriesRouter.post("/", categoriesController.createCategory);
+categoriesRouter.patch("/:id", categoriesController.updateCategory);
+categoriesRouter.delete("/:id", categoriesController.deleteCategory);
 
-module.exports = categoriesRouter
+module.exports = categoriesRouter;

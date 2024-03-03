@@ -1,11 +1,11 @@
-const orderDetail = require('express').Router()
+const orderDetail = require("express").Router();
 
-const orderDetailController = require('../../controllers/admin/orderDetails.controller')                // import module user.controller yg berbentuk object yg berisi logika program
+const orderDetailController = require("../../controllers/admin/orderDetails.controller");
 
-orderDetail.get('/', orderDetailController.getAllOrderDetail)                                 // client mengirim permintaan pengambilan data, lalu server menjalankan logika program
-orderDetail.get('/:id', orderDetailController.getDetailOrderDetail)                         // client mengirim permintaan pengambilan data, ~
-orderDetail.post('/', orderDetailController.createOrderDetail)                                 // client mengirim permintaan memasukan data, ~
-orderDetail.patch('/:id', orderDetailController.updateOrderDetail)                             // client mengirim permintaan merubah data, ~
-orderDetail.delete('/:id', orderDetailController.deleteOrderDetail)                            // client mengirim permintaan menghapus data, ~
+orderDetail.get("/", orderDetailController.getAllOrderDetail);
+orderDetail.get("/:id", orderDetailController.getDetailOrderDetail);
+orderDetail.post("/", orderDetailController.createOrderDetail);
+orderDetail.patch("/:id", orderDetailController.updateOrderDetail);
+orderDetail.delete("/:id", orderDetailController.deleteOrderDetail);
 
-module.exports = orderDetail                                                     
+module.exports = orderDetail;
