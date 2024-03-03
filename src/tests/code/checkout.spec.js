@@ -1,7 +1,7 @@
 const { describe } = require("mocha");
 const { expect } = require("chai");
 
-const checkoutController = require('../controllers/checkout.controller');
+const checkoutController = require('../../controllers/checkout.controller');
 
 const req = {
     user: {},

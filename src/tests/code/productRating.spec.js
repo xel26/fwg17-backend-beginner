@@ -1,7 +1,7 @@
 const { describe } = require("mocha");
 const { expect } = require("chai");
 
-const productRatingController = require('../controllers/admin/ProductRatings.controller');
+const productRatingController = require('../../controllers/admin/ProductRatings.controller');
 
 const res = {
     status: (status) => {

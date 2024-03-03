@@ -1,7 +1,7 @@
 const { describe } = require("mocha");
 const { expect } = require("chai");
 
-const productController = require('../controllers/admin/product.controller');
+const productController = require('../../controllers/admin/product.controller');
 
 const res = {
     status: (status) => {
@@ -45,7 +45,7 @@ describe("list all products", () => {
     it("should return nextPage null", async () => {
         const req = {
             query: {
-                page: 4
+                page: 5
             },
         }
 

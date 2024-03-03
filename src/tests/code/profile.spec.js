@@ -2,7 +2,7 @@ const { describe, it } = require("mocha");
 const { expect } = require("chai");
 
 
-const profileController = require('../controllers/profile.controller');
+const profileController = require('../../controllers/profile.controller');
 
 const res = {
     status: (status) => {
@@ -16,7 +16,7 @@ const res = {
 
 
 describe('get profile', () => {
-    it('should return success true', async() => {
+    it('should return message user profile', async() => {
         const req = {
             user: {
                 id: 466

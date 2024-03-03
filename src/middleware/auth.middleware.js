@@ -8,6 +8,10 @@ const authMiddleware = (req, res, next) => {
         const rawToken = req.headers.authorization || ''                                                // Token otomatis disematkan/disimpan dalam permintaan pengguna (request), di dalam header Authorization sebagai Bearer token
         const prefix = "Bearer "                                                                        // token diawali kata "Bearer "
 
+        if(!rawToken){
+            throw new Error('Unauthorized')
+        }
+
         if(!rawToken.startsWith(prefix)){                                                               // jika tidak diawali kata "Bearer " maka lempar error ke catch
             throw new Error('invalid token')
         }

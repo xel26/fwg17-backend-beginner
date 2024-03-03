@@ -2,7 +2,7 @@ const { describe, it } = require("mocha");
 const { expect } = require("chai");
 
 
-const authController = require('../controllers/auth.controller');
+const authController = require('../../controllers/auth.controller');
 
 const res = {
     status: (status) => {
@@ -22,9 +22,9 @@ describe("register", () => {
         }
     }
 
-    it("should return success true", async () => {
+    it("should return message register success. . . welcome aboard!", async () => {
         const response = await authController.register(req, res)
-        expect(response.success).to.be.eq(true)
+        expect(response.message).to.be.eq("register success. . . welcome aboard!")
     })
 
     
@@ -90,7 +90,7 @@ describe("register", () => {
 
 
 describe('login', () => {
-    it("should return success true", async () => {
+    it("should return message login success. . . embark your coffee journey", async () => {
         const req = {
             body: {
                 email: "alessia.cara@mail.com",
@@ -99,7 +99,7 @@ describe('login', () => {
         }
 
         const response = await authController.login(req, res)
-        expect(response.success).to.be.eq(true)
+        expect(response.message).to.be.eq("login success. . . embark your coffee journey")
     })
 
 

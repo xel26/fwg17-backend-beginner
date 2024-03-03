@@ -1,7 +1,7 @@
 const { describe } = require("mocha");
 const { expect } = require("chai");
 
-const testimonialController = require('../controllers/admin/testimonial.controller');
+const testimonialController = require('../../controllers/admin/testimonial.controller');
 
 const res = {
     status: (status) => {

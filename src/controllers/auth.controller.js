@@ -2,7 +2,7 @@ const userModel = require("../models/user.model");
 const forgotModel = require("../models/ForgotPassword.model");
 const argon = require("argon2");
 const jwt = require("jsonwebtoken");
-const { errorHandler } = require("../moduls/handling");
+const { errorHandler, updateColumn } = require("../moduls/handling");
 const transport = require("../../mail.helper");
 const db = require("../lib/db.lib");
 
@@ -155,7 +155,7 @@ exports.forgotPassword = async (req, res) => {
 
         const user = await userModel.findOneByEmail(found.email);
 
-        await userModel.update(user.id, { password: newPassword });
+        await updateColumn(user.id, { password: newPassword }, "users");
 
         // if(!update){
         //   throw new Error('create new password failed, try again!')

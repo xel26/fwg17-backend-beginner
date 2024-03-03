@@ -1,7 +1,7 @@
 const { describe } = require("mocha");
 const { expect } = require("chai");
 
-const historyOrderController = require('../controllers/historyOrder.controller');
+const historyOrderController = require('../../controllers/historyOrder.controller');
 
 const res = {
     status: (status) => {
@@ -169,7 +169,7 @@ describe("get history order products", () => {
                 id: "466"
             },
             query: {
-                id: "13"
+                orderId: "2026"
             },
         }
         

@@ -2,7 +2,7 @@ const { describe, it } = require("mocha");
 const { expect } = require("chai");
 
 
-const userController = require('../controllers/admin/user.controller');
+const userController = require('../../controllers/admin/user.controller');
 const userModel = require('../models/user.model')
 
 const res = {
