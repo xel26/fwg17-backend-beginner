@@ -38,7 +38,7 @@ exports.getDetailProductRating = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'detail productRating',
-            result: productRating                                                 
+            results: productRating                                                 
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -52,7 +52,7 @@ exports.createProductRating = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'create productRating successfully',
-            result: productRating                                                   
+            results: productRating                                                   
         })
         
     } catch (error) {
@@ -69,7 +69,7 @@ exports.updateProductRating = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'update productRating successfully',
-            result: productRating                                                  
+            results: productRating                                                  
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -83,7 +83,7 @@ exports.deleteProductRating = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'delete productRating successfully',
-            result: productRating                                                  
+            results: productRating                                                  
         })
     } catch (error) {
         return errorHandler(error, res)

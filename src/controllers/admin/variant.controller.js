@@ -39,7 +39,7 @@ exports.getDetailVariant = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'detail variant',
-            result: variant                                                  
+            results: variant                                                  
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -55,7 +55,7 @@ exports.createVariant = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'create variant successfully',
-            result: variant                                                   
+            results: variant                                                   
         })
         
     } catch (error) {
@@ -73,7 +73,7 @@ exports.updateVariant = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'update variant successfully',
-            result: variant                                                   
+            results: variant                                                   
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -87,7 +87,7 @@ exports.deleteVariant = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'delete variant successfully',
-            result: variant                                                   
+            results: variant                                                   
         })
     } catch (error) {
         return errorHandler(error, res)

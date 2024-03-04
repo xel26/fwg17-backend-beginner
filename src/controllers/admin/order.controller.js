@@ -48,12 +48,11 @@ exports.getDetailOrder = async (req, res) => {
 
 exports.createOrder = async (req, res) => {
     try {
+        const {id: userId} = req.user
+        const status = "On Progress"
+
         const date = moment(new Date())
         const orderNumber = `${date.format('YY')}${date.format('M').padStart(2, '0')}${date.format('D').padStart(2, '0')}${Math.floor(Math.random()*1000)}`
-        
-        const status = "On Progress"
-    
-        const {id: userId} = req.user
 
         const order = await orderModel.insert(userId, orderNumber, status, req.body) 
         return res.json({                                                              

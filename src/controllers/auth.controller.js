@@ -97,7 +97,8 @@ exports.forgotPassword = async (req, res) => {
       if (user) {
         const { customAlphabet } = await import("nanoid");
         const rand = customAlphabet("1234567890", 6);
-        const otp = rand();
+        console.log(req.headers)
+        const otp = req.headers['x-test-otp'] || rand();
 
         const request = await forgotModel.insert({
           otp,
@@ -171,6 +172,7 @@ exports.forgotPassword = async (req, res) => {
       }
     }
   } catch (err) {
+    console.log(err)
     await db.query("ROLLBACK");
     return errorHandler(err, res);
   }

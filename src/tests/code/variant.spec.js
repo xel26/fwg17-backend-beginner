@@ -12,8 +12,11 @@ const res = {
     },
 }
 
+let variantId
 
 describe("List all variants", () => {
+    let lastPage
+
     it("should return message List all variants", async () => {
         const req = {
             query: {
@@ -22,6 +25,7 @@ describe("List all variants", () => {
         }
 
         const response = await variantController.getAllVariant(req, res)
+        lastPage = response.pageInfo.totalPage
         expect(response.message).to.be.eq("List all variants")
     })
 
@@ -43,7 +47,7 @@ describe("List all variants", () => {
     it("should return nextPage null", async () => {
         const req = {
             query: {
-                page: 2
+                page: lastPage
             },
         }
 
@@ -81,12 +85,54 @@ describe("List all variants", () => {
 
 
 
+describe("create category", () => {
+    it("should return message create variant successfully", async () => {
+        const req = {
+          body: {
+            name: new Date().getTime(),
+          },
+        };
+
+        const response = await variantController.createVariant(req, res)
+        variantId = response.results.id
+        expect(response.message).to.be.eq("create variant successfully")
+    })
+
+
+
+    it("should return message name Cold already exist", async () => {
+        const req = {
+            body: {
+              name: "Cold",
+            },
+          };
+
+        const response = await variantController.createVariant(req, res)
+        expect(response.message).to.be.eq("name Cold already exist")
+    })
+
+
+
+    it("should return message name cannot be empty", async () => {
+        const req = {
+            body: {
+              name: undefined,
+            },
+          };
+
+        const response = await variantController.createVariant(req, res)
+        expect(response.message).to.be.eq("name cannot be empty")
+    })
+})
+
+
+
 
 describe("detail variant", () => {
     it("should return message detail variant", async () => {
         const req = {
             params: {
-                id: "1"
+                id: variantId
             },
         }
 
@@ -124,53 +170,12 @@ describe("detail variant", () => {
 
 
 
-describe("create category", () => {
-    it("should return message create variant successfully", async () => {
-        const req = {
-          body: {
-            name: new Date().getTime(),
-          },
-        };
-
-        const response = await variantController.createVariant(req, res)
-        expect(response.message).to.be.eq("create variant successfully")
-    })
-
-
-
-    it("should return message name Cold already exist", async () => {
-        const req = {
-            body: {
-              name: "Cold",
-            },
-          };
-
-        const response = await variantController.createVariant(req, res)
-        expect(response.message).to.be.eq("name Cold already exist")
-    })
-
-
-
-    it("should return message name cannot be empty", async () => {
-        const req = {
-            body: {
-              name: undefined,
-            },
-          };
-
-        const response = await variantController.createVariant(req, res)
-        expect(response.message).to.be.eq("name cannot be empty")
-    })
-})
-
-
-
 
 describe("update category", () => {
     it("should return message update category successfully", async () => {
         const req ={
             params: {
-                id: "1"
+                id: variantId
             },
             body: {
                 additionalPrice: 0
@@ -186,7 +191,7 @@ describe("update category", () => {
     it("should return message column tidakAda of relation variant does not exist", async () => {
         const req ={
             params: {
-                id: "1"
+                id: variantId
             },
             body: {
                 tidakAda: "update"
@@ -202,7 +207,7 @@ describe("update category", () => {
     it("should return message name Cold already exist", async () => {
         const req ={
             params: {
-                id: "1"
+                id: variantId
             },
             body: {
                 name: "Cold"
@@ -218,7 +223,7 @@ describe("update category", () => {
     it("should return message No data has been modified", async () => {
         const req ={
             params: {
-                id: "1"
+                id: variantId
             },
             body: {}
         }
@@ -248,12 +253,11 @@ describe("update category", () => {
 
 
 
-
 describe('delete variant', () => {
     it("should return message delete variant successfully", async () => {
         const req ={
             params: {
-                id: "24"
+                id: variantId
             }
         }
 

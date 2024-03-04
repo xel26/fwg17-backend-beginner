@@ -12,8 +12,11 @@ const res = {
     },
 }
 
+let tagId
 
 describe("List all tags", () => {
+    let lastPage
+
     it("should return message List all tags", async () => {
         const req = {
             query: {
@@ -22,6 +25,7 @@ describe("List all tags", () => {
         }
 
         const response = await tagController.getAllTags(req, res)
+        lastPage = response.pageInfo.totalPage
         expect(response.message).to.be.eq("List all tags")
     })
 
@@ -43,7 +47,7 @@ describe("List all tags", () => {
     it("should return nextPage null", async () => {
         const req = {
             query: {
-                page: 1
+                page: lastPage
             },
         }
 
@@ -81,12 +85,54 @@ describe("List all tags", () => {
 
 
 
+describe("create tag", () => {
+    it("should return message create tag successfully", async () => {
+        const req = {
+          body: {
+            name: new Date().getTime(),
+          },
+        };
+
+        const response = await tagController.createTag(req, res)
+        tagId = response.results.id
+        expect(response.message).to.be.eq("create tag successfully")
+    })
+
+
+
+    it("should return message name flashsale! already exist", async () => {
+        const req = {
+            body: {
+              name: "flashsale!",
+            },
+          };
+
+        const response = await tagController.createTag(req, res)
+        expect(response.message).to.be.eq("name flashsale! already exist")
+    })
+
+
+
+    it("should return message name cannot be empty", async () => {
+        const req = {
+            body: {
+              name: undefined,
+            },
+          };
+
+        const response = await tagController.createTag(req, res)
+        expect(response.message).to.be.eq("name cannot be empty")
+    })
+})
+
+
+
 
 describe("detail tag", () => {
     it("should return message detail tag", async () => {
         const req = {
             params: {
-                id: "1"
+                id: tagId
             },
         }
 
@@ -124,53 +170,11 @@ describe("detail tag", () => {
 
 
 
-describe("create tag", () => {
-    it("should return message create tag successfully", async () => {
-        const req = {
-          body: {
-            name: new Date().getTime(),
-          },
-        };
-
-        const response = await tagController.createTag(req, res)
-        expect(response.message).to.be.eq("create tag successfully")
-    })
-
-
-
-    it("should return message name flashsale! already exist", async () => {
-        const req = {
-            body: {
-              name: "flashsale!",
-            },
-          };
-
-        const response = await tagController.createTag(req, res)
-        expect(response.message).to.be.eq("name flashsale! already exist")
-    })
-
-
-
-    it("should return message name cannot be empty", async () => {
-        const req = {
-            body: {
-              name: undefined,
-            },
-          };
-
-        const response = await tagController.createTag(req, res)
-        expect(response.message).to.be.eq("name cannot be empty")
-    })
-})
-
-
-
-
 describe("update tag", () => {
     it("should return message update tag successfully", async () => {
         const req ={
             params: {
-                id: "17"
+                id: tagId
             },
             body: {
                 name: new Date().getTime()
@@ -186,7 +190,7 @@ describe("update tag", () => {
     it("should return message column tidakAda of relation tags does not exist", async () => {
         const req ={
             params: {
-                id: "1"
+                id: tagId
             },
             body: {
                 tidakAda: "update"
@@ -202,7 +206,7 @@ describe("update tag", () => {
     it("should return message name flashsale! already exist", async () => {
         const req ={
             params: {
-                id: "1"
+                id: tagId
             },
             body: {
                 name: "flashsale!"
@@ -218,7 +222,7 @@ describe("update tag", () => {
     it("should return message No data has been modified", async () => {
         const req ={
             params: {
-                id: "1"
+                id: tagId
             },
             body: {}
         }
@@ -248,12 +252,11 @@ describe("update tag", () => {
 
 
 
-
 describe('delete tag', () => {
     it("should return message delete tag successfully", async () => {
         const req ={
             params: {
-                id: "26"
+                id: tagId
             }
         }
 

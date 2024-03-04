@@ -51,8 +51,13 @@ exports.getDetailUser = async (req, res) => {
 
 exports.createUser = async (req, res) => {
     try {
-        await isStringExist("users", "email", req.body.email)
-        req.body.password = await argon.hash(req.body.password)
+        if(req.body.email){
+            await isStringExist("users", "email", req.body.email)
+        }
+
+        if(req.body.password){
+            req.body.password = await argon.hash(req.body.password)
+        }
 
         if(req.file){
             // console.log(req.file)
@@ -78,7 +83,7 @@ exports.updateUser = async (req, res) => {
     try {
         const {id} = req.params
         await userModel.findOne(id)
-
+        await isStringExist("users", "email", req.body.email)
 
         if(req.file){ 
 

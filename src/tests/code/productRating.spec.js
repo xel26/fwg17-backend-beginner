@@ -12,8 +12,11 @@ const res = {
     },
 }
 
+let productRatingId
 
 describe("List all productRatings", () => {
+    let lastPage
+
     it("should return message List all productRatings", async () => {
         const req = {
             user: {},
@@ -23,6 +26,7 @@ describe("List all productRatings", () => {
         }
 
         const response = await productRatingController.getAllProductRatings(req, res)
+        lastPage = response.pageInfo.totalPage
         expect(response.message).to.be.eq("List all productRatings")
     })
 
@@ -31,7 +35,7 @@ describe("List all productRatings", () => {
     it("should return message data productRatings not found", async () => {
         const req = {
             query: {
-                page: 11
+                page: 2026
             },
         }
 
@@ -44,7 +48,7 @@ describe("List all productRatings", () => {
     it("should return nextPage null", async () => {
         const req = {
             query: {
-                page: 10
+                page: lastPage
             },
         }
 
@@ -81,11 +85,60 @@ describe("List all productRatings", () => {
 
 
 
+
+describe("create productRating", () => {
+    it("should return message create productRating successfully", async () => {
+        const req = {
+          body: {
+            productId: 1,
+            userId: 1,
+            rate: 4,
+            reviewMessage: "unit test"
+          },
+        };
+
+        const response = await productRatingController.createProductRating(req, res)
+        productRatingId = response.results.id
+        expect(response.message).to.be.eq("create productRating successfully")
+    })
+
+
+    it("should return message not present", async () => {
+        const req = {
+            body: {
+                productId: 2026,
+                userId: 2026,
+                rate: 5,
+                reviewMessage: "unit test"
+            },
+          };
+
+        const response = await productRatingController.createProductRating(req, res)
+        expect(response.message).to.be.eq("data with productId 2026 is not present in table products")
+    })
+
+
+    it("should return message productId cannot be empty", async () => {
+        const req = {
+            body: {
+                productId: undefined,
+                userId: undefined,
+                rate: undefined
+            },
+          };
+
+        const response = await productRatingController.createProductRating(req, res)
+        expect(response.message).to.be.eq("productId cannot be empty")
+    })
+})
+
+
+
 describe("detail productRating", () => {
     it("should return message detail productRating", async () => {
         const req = {
             params: {
-                id: "1"
+                id: productRatingId
             },
         }
 
@@ -122,58 +175,12 @@ describe("detail productRating", () => {
 
 
 
-describe("create productRating", () => {
-    it("should return message create productRating successfully", async () => {
-        const req = {
-          body: {
-            productId: 1,
-            userId: 1,
-            rate: 5,
-            reviewMessage: "unit test"
-          },
-        };
-
-        const response = await productRatingController.createProductRating(req, res)
-        expect(response.message).to.be.eq("create productRating successfully")
-    })
-
-
-    it("should return message not present", async () => {
-        const req = {
-            body: {
-                productId: 2026,
-                userId: 2026,
-                rate: 5,
-                reviewMessage: "unit test"
-            },
-          };
-
-        const response = await productRatingController.createProductRating(req, res)
-        expect(response.message).to.be.eq("data with productId 2026 is not present in table products")
-    })
-
-
-    it("should return message productId cannot be empty", async () => {
-        const req = {
-            body: {
-                productId: undefined,
-                userId: undefined,
-                rate: undefined
-            },
-          };
-
-        const response = await productRatingController.createProductRating(req, res)
-        expect(response.message).to.be.eq("productId cannot be empty")
-    })
-})
-
-
 
 describe("update productRating", () => {
     it("should return message update productRating successfully", async () => {
         const req ={
             params: {
-                id: 59
+                id: productRatingId
             },
             body: {
                 rate: 5
@@ -189,7 +196,7 @@ describe("update productRating", () => {
     it("should return message column tidakAda of relation productRatings does not exist", async () => {
         const req ={
             params: {
-                id: 59
+                id: productRatingId
             },
             body: {
                 tidakAda: "update"
@@ -205,7 +212,7 @@ describe("update productRating", () => {
     it("should return message data with productId 2026 is not present in table products", async () => {
         const req ={
             params: {
-                id: 59
+                id: productRatingId
             },
             body: {
                 productId: 2026
@@ -221,7 +228,7 @@ describe("update productRating", () => {
     it("should return message No data has been modified", async () => {
         const req ={
             params: {
-                id: 59
+                id: productRatingId
             },
             body: {}
         }
@@ -254,7 +261,7 @@ describe('delete productRating', () => {
     it("should return message delete productRating successfully", async () => {
         const req ={
             params: {
-                id: 71
+                id: productRatingId
             }
         }
 

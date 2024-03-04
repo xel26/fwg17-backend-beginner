@@ -12,8 +12,11 @@ const res = {
     },
 }
 
+let promoId
 
 describe("List all promo", () => {
+    let lastPage
+
     it("should return message List all promo", async () => {
         const req = {
             query: {
@@ -22,6 +25,7 @@ describe("List all promo", () => {
         }
 
         const response = await promoController.getAllPromo(req, res)
+        lastPage = response.pageInfo.totalPage
         expect(response.message).to.be.eq("List all promo")
     })
 
@@ -43,7 +47,7 @@ describe("List all promo", () => {
     it("should return nextPage null", async () => {
         const req = {
             query: {
-                page: 2
+                page: lastPage
             },
         }
 
@@ -81,49 +85,6 @@ describe("List all promo", () => {
 
 
 
-
-describe("detail promo", () => {
-    it("should return message detail promo", async () => {
-        const req = {
-            params: {
-                id: "1"
-            },
-        }
-
-        const response = await promoController.getDetailPromo(req, res)
-        expect(response.message).to.be.eq("detail promo")
-    })
-
-
-
-    it('should return message invalid input syntax for type integer: x', async() => {
-        const req = {
-          params: {
-            id: "x"
-          },
-        }
-
-        const response = await promoController.getDetailPromo(req, res)
-        expect(response.message).to.be.eq("invalid input syntax for type integer: x")
-    })
-
-
-
-    it("should return message promo with id 2026 not found", async () => {
-                const req = {
-          params: {
-            id: "2026"
-          },
-        }
-        
-        const response = await promoController.getDetailPromo(req, res)
-        expect(response.message).to.be.eq("promo with id 2026 not found")
-    })
-})
-
-
-
-
 describe("create promo", () => {
     it("should return message create promo successfully", async () => {
         const req = {
@@ -137,6 +98,7 @@ describe("create promo", () => {
         };
 
         const response = await promoController.createPromo(req, res)
+        promoId = response.results.id
         expect(response.message).to.be.eq("create promo successfully")
     })
 
@@ -145,7 +107,7 @@ describe("create promo", () => {
         const req = {
             body: {
                 name: "super deal",
-                code: new Date().getMilliseconds,
+                code: new Date().getMilliseconds(),
                 percentage: 0.025,
                 maximumPromo: 50000,
                 minimumAmount: 50000
@@ -191,12 +153,53 @@ describe("create promo", () => {
 
 
 
+describe("detail promo", () => {
+    it("should return message detail promo", async () => {
+        const req = {
+            params: {
+                id: promoId
+            },
+        }
+
+        const response = await promoController.getDetailPromo(req, res)
+        expect(response.message).to.be.eq("detail promo")
+    })
+
+
+
+    it('should return message invalid input syntax for type integer: x', async() => {
+        const req = {
+          params: {
+            id: "x"
+          },
+        }
+
+        const response = await promoController.getDetailPromo(req, res)
+        expect(response.message).to.be.eq("invalid input syntax for type integer: x")
+    })
+
+
+
+    it("should return message promo with id 2026 not found", async () => {
+                const req = {
+          params: {
+            id: "2026"
+          },
+        }
+        
+        const response = await promoController.getDetailPromo(req, res)
+        expect(response.message).to.be.eq("promo with id 2026 not found")
+    })
+})
+
+
+
 
 describe("update promo", () => {
     it("should return message update promo successfully", async () => {
         const req ={
             params: {
-                id: "10"
+                id: promoId
             },
             body: {
                 name: new Date().getTime()
@@ -212,7 +215,7 @@ describe("update promo", () => {
     it("should return message column tidakAda of relation promo does not exist", async () => {
         const req ={
             params: {
-                id: "3"
+                id: promoId
             },
             body: {
                 tidakAda: "update"
@@ -228,7 +231,7 @@ describe("update promo", () => {
     it("should return message name super deal already exist", async () => {
         const req ={
             params: {
-                id: "10"
+                id: promoId
             },
             body: {
                 name: "super deal"
@@ -244,7 +247,7 @@ describe("update promo", () => {
     it("should return message code sd123 already exist", async () => {
         const req ={
             params: {
-                id: "10"
+                id: promoId
             },
             body: {
                 code: "sd123"
@@ -260,7 +263,7 @@ describe("update promo", () => {
     it("should return message No data has been modified", async () => {
         const req ={
             params: {
-                id: "10"
+                id: promoId
             },
             body: {}
         }
@@ -290,12 +293,11 @@ describe("update promo", () => {
 
 
 
-
 describe('delete promo', () => {
     it("should return message delete promo successfully", async () => {
         const req ={
             params: {
-                id: "44"
+                id: promoId
             }
         }
 

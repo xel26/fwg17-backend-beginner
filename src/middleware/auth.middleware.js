@@ -26,7 +26,7 @@ const authMiddleware = (req, res, next) => {
         next()                                                                                          // melanjutkan ke middleware atau penanganan selanjutnya
 
     } catch (error) {                                                                                   // jika ada error akan di tangkap catch dan catch akan memanggil fungsi errorHandler
-        console.log(error)
+        // console.log(error)
         return errorHandler(error, res)
     }
 }

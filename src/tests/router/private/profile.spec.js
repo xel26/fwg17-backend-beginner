@@ -6,9 +6,22 @@ const app = require('../../../..');
 const request = supertest(app)
 
 describe('/profile endpoint testing', () => {
+    let userToken = ''
+    before(async ()=>{
+        const form = new URLSearchParams({
+            email: 'alessia.cara@mail.com',
+            password: '123'
+        })
+        const res = await request
+        .post('/login')
+        .send(form.toString())
+        userToken = res.body.results.token
+        
+    })
+
     it('should return message user profile', async () => {
         const res = await request.get('/profile')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
+        .auth(userToken, {
             type: "bearer"
         })
 
@@ -19,7 +32,7 @@ describe('/profile endpoint testing', () => {
 
     it('should return message update profile successfully', async () => {
         const res = await request.patch('/profile')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
+        .auth(userToken, {
             type: "bearer"
         })
         .send('fullName=alessia&password=123')

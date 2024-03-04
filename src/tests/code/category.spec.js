@@ -12,8 +12,11 @@ const res = {
     },
 }
 
+let categoryId
 
 describe("List all categories", () => {
+    let lastPage
+
     it("should return message List all categories", async () => {
         const req = {
             query: {
@@ -22,6 +25,7 @@ describe("List all categories", () => {
         }
 
         const response = await categoryController.getAllCategories(req, res)
+        lastPage= response.pageInfo.totalPage
         expect(response.message).to.be.eq("List all categories")
     })
 
@@ -43,7 +47,7 @@ describe("List all categories", () => {
     it("should return nextPage null", async () => {
         const req = {
             query: {
-                page: 2
+                page: lastPage
             },
         }
 
@@ -133,6 +137,7 @@ describe("create category", () => {
         };
 
         const response = await categoryController.createCategory(req, res)
+        categoryId = response.results.id
         expect(response.message).to.be.eq("create category successfully")
     })
 
@@ -168,7 +173,7 @@ describe("update category", () => {
     it("should return message update category successfully", async () => {
         const req ={
             params: {
-                id: "32"
+                id: categoryId
             },
             body: {
                 name: new Date().getTime()
@@ -184,7 +189,7 @@ describe("update category", () => {
     it("should return message column tidakAda of relation categories does not exist", async () => {
         const req ={
             params: {
-                id: "3"
+                id: categoryId
             },
             body: {
                 tidakAda: "update"
@@ -200,7 +205,7 @@ describe("update category", () => {
     it("should return message name foods already exist", async () => {
         const req ={
             params: {
-                id: "3"
+                id: categoryId
             },
             body: {
                 name: "foods"
@@ -216,7 +221,7 @@ describe("update category", () => {
     it("should return message No data has been modified", async () => {
         const req ={
             params: {
-                id: "3"
+                id: categoryId
             },
             body: {}
         }
@@ -251,7 +256,7 @@ describe('delete category', () => {
     it("should return message delete category successfully", async () => {
         const req ={
             params: {
-                id: "51"
+                id: categoryId
             }
         }
 

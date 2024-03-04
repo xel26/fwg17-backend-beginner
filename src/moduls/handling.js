@@ -2,16 +2,6 @@ const db = require('../lib/db.lib')
 const argon = require('argon2')
 
 
-exports.isExist = async (table, id) => {
-    const query = `SELECT * FROM "${table}" where "id" = ${id}`
-    const {rows} = await db.query(query)
-    if(!rows.length){
-        throw new Error(`${table} with id ${id} not found`)
-    }
-    return rows
-}
-
-
 exports.isStringExist = async (table, uniqueColumn, searchKey) => {
     const sql = `SELECT * FROM "${table}" WHERE "${uniqueColumn}" ILIKE $1`
     let values = [searchKey]

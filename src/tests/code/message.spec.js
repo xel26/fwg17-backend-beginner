@@ -12,8 +12,11 @@ const res = {
     },
 }
 
+let messageId
 
 describe("List all message", () => {
+    let lastPage
+
     it("should return message List all messages", async () => {
         const req = {
             query: {
@@ -22,6 +25,7 @@ describe("List all message", () => {
         }
 
         const response = await messageController.getAllMessages(req, res)
+        lastPage = response.pageInfo.totalPage
         expect(response.message).to.be.eq("List all messages")
     })
 
@@ -30,7 +34,7 @@ describe("List all message", () => {
     it("should return nextPage null", async () => {
         const req = {
             query: {
-                page: 3
+                page: lastPage
             },
         }
 
@@ -121,6 +125,7 @@ describe("create message", () => {
         };
 
         const response = await messageController.createMessage(req, res)
+        messageId = response.results.id
         expect(response.message).to.be.eq("create message successfully")
     })
 
@@ -175,7 +180,7 @@ describe("update message", () => {
     it("should return message update message successfully", async () => {
         const req ={
             params: {
-                id: "28"
+                id: messageId
             },
             body: {
                 recipientId: 4,
@@ -193,7 +198,7 @@ describe("update message", () => {
     it("should return message column tidakAda of relation message does not exist", async () => {
         const req ={
             params: {
-                id: "3"
+                id: messageId
             },
             body: {
                 tidakAda: "update"
@@ -209,7 +214,7 @@ describe("update message", () => {
     it("should return message not present", async () => {
         const req ={
             params: {
-                id: "28"
+                id: messageId
             },
             body: {
                 recipientId: 2024,
@@ -226,7 +231,7 @@ describe("update message", () => {
     it("should return message No data has been modified", async () => {
         const req ={
             params: {
-                id: "28"
+                id: messageId
             },
             body: {}
         }
@@ -263,7 +268,7 @@ describe('delete promo', () => {
     it("should return message delete message successfully", async () => {
         const req ={
             params: {
-                id: "34"
+                id: messageId
             }
         }
 

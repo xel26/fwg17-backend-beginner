@@ -38,7 +38,7 @@ exports.getDetailMessage = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'detail message',
-            result: message                                                  
+            results: message                                                  
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -52,7 +52,7 @@ exports.createMessage = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'create message successfully',
-            result: message                                                   
+            results: message                                                   
         })
         
     } catch (error) {
@@ -68,7 +68,7 @@ exports.updateMessage = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'update message successfully',
-            result: message                                                   
+            results: message                                                   
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -82,7 +82,7 @@ exports.deleteMessage = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'delete message successfully',
-            result: message                                                   
+            results: message                                                   
         })
     } catch (error) {
         return errorHandler(error, res)

@@ -12,8 +12,11 @@ const res = {
     },
 }
 
+let productId
 
 describe("list all products", () => {
+    let lastPage
+
     it("should return message List all products", async () => {
         const req = {
             query: {
@@ -24,6 +27,7 @@ describe("list all products", () => {
         }
 
         const response = await productController.getAllProducts(req, res)
+        lastPage = response.pageInfo.totalPage
         expect(response.message).to.be.eq("List all products")
     })
 
@@ -45,7 +49,10 @@ describe("list all products", () => {
     it("should return nextPage null", async () => {
         const req = {
             query: {
-                page: 5
+                page: lastPage,
+                sortBy:"createdAt",
+                category: "coffee",
+                isRecommended: true
             },
         }
 
@@ -137,6 +144,7 @@ describe("create product", () => {
         };
 
         const response = await productController.createProduct(req, res)
+        productId = response.results.id
         expect(response.message).to.be.eq("create product successfully")
     })
 
@@ -220,7 +228,7 @@ describe("update product", () => {
     it("should return message update product successfully", async () => {
         const req ={
             params: {
-                id: "55"
+                id: productId
             },
             body: {
                 basePrice: 70000
@@ -236,7 +244,7 @@ describe("update product", () => {
     it("should return message invalid input syntax for type integer: x", async () => {
         const req ={
             params: {
-                id: "55"
+                id: productId
             },
             body: {
                 basePrice: "x"
@@ -252,7 +260,7 @@ describe("update product", () => {
     it("should return message column tidakAda of relation products does not exist", async () => {
         const req ={
             params: {
-                id: "55"
+                id: productId
             },
             body: {
                 tidakAda: "update"
@@ -268,7 +276,7 @@ describe("update product", () => {
     it("should return message name vanilla syrup already exist", async () => {
         const req ={
             params: {
-                id: "55"
+                id: productId
             },
             body: {
                 name: "vanilla syrup"
@@ -284,7 +292,7 @@ describe("update product", () => {
     it("should return message No data has been modified", async () => {
         const req ={
             params: {
-                id: "55"
+                id: productId
             },
             body: {}
         }
@@ -319,7 +327,7 @@ describe('delete product', () => {
     it("should return message delete product successfully", async () => {
         const req ={
             params: {
-                id: "181"
+                id: productId
             }
         }
 

@@ -1,6 +1,6 @@
 const promoModel = require('../../models/promo.model')
 const { errorHandler } = require('../../moduls/handling')
-const { isExist, isStringExist, updateColumn } = require('../../moduls/handling')
+const { isStringExist, updateColumn } = require('../../moduls/handling')
 
 
 exports.getAllPromo = async (req, res) => {       
@@ -39,7 +39,7 @@ exports.getDetailPromo = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'detail promo',
-            result: promo                                                  
+            results: promo                                                  
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -55,7 +55,7 @@ exports.createPromo = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'create promo successfully',
-            result: promo                                                   
+            results: promo                                                   
         })
         
     } catch (error) {
@@ -73,7 +73,7 @@ exports.updatePromo = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'update promo successfully',
-            result: promo                                                   
+            results: promo                                                   
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -87,7 +87,7 @@ exports.deletePromo = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'delete promo successfully',
-            result: promo                                                   
+            results: promo                                                   
         })
     } catch (error) {
         return errorHandler(error, res)

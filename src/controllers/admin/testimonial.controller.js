@@ -38,7 +38,7 @@ exports.getDetailTestimonial = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'detail testimonial',
-            result: testi                                                  
+            results: testi                                                  
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -53,7 +53,7 @@ exports.createTestimonial = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'create testimonial successfully',
-            result: testi                                                   
+            results: testi                                                   
         })
         
     } catch (error) {
@@ -136,7 +136,7 @@ exports.deleteTestimonial = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'delete testimonial successfully',
-            result: testimonial                                                   
+            results: testimonial                                                   
         })
     } catch (error) {
         return errorHandler(error, res)

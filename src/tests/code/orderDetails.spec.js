@@ -12,8 +12,12 @@ const res = {
     },
 }
 
+let orderDetailsId
+
 
 describe("List all orderDetails", () => {
+    let lastPage
+
     it("should return message List all orders", async () => {
         const req = {
             user: {},
@@ -23,6 +27,7 @@ describe("List all orderDetails", () => {
         }
 
         const response = await orderDetailsController.getAllOrderDetail(req, res)
+        lastPage = response.pageInfo.totalPage
         expect(response.message).to.be.eq("List all orderDetails")
     })
 
@@ -31,7 +36,7 @@ describe("List all orderDetails", () => {
     it("should return message data orderDetails not found", async () => {
         const req = {
             query: {
-                page: 24
+                page: 2026
             },
         }
 
@@ -44,7 +49,7 @@ describe("List all orderDetails", () => {
     it("should return nextPage null", async () => {
         const req = {
             query: {
-                page: 23
+                page: lastPage
             },
         }
 
@@ -81,11 +86,63 @@ describe("List all orderDetails", () => {
 
 
 
+describe("create orderDetails", () => {
+    it("should return message create order successfully", async () => {
+        const req = {
+          body: {
+            productId: 1,
+            sizeId: 1,
+            variantId: 1,
+            quantity: 3,
+            orderId: 609
+          },
+        };
+
+        const response = await orderDetailsController.createOrderDetail(req, res)
+        orderDetailsId = response.results.id
+        expect(response.message).to.be.eq("create orderDetails successfully")
+    })
+
+
+    it("should return message not present", async () => {
+        const req = {
+            body: {
+              productId: 2026,
+              sizeId: 2026,
+              variantId: 2026,
+              quantity: 1,
+              orderId: 2026
+            },
+          };
+
+        const response = await orderDetailsController.createOrderDetail(req, res)
+        expect(response.message).to.be.eq("data with orderId 2026 is not present in table orders")
+    })
+
+
+    it("should return message productId cannot be empty", async () => {
+        const req = {
+            body: {
+              productId: undefined,
+              sizeId: undefined,
+              variantId: undefined,
+              quantity: undefined,
+              orderId: undefined
+            },
+          };
+
+        const response = await orderDetailsController.createOrderDetail(req, res)
+        expect(response.message).to.be.eq("productId cannot be empty")
+    })
+})
+
+
+
 describe("detail orderDetails", () => {
     it("should return message detail orderDetails", async () => {
         const req = {
             params: {
-                id: "866"
+                id: orderDetailsId
             },
         }
 
@@ -122,62 +179,12 @@ describe("detail orderDetails", () => {
 
 
 
-describe("create orderDetails", () => {
-    it("should return message create order successfully", async () => {
-        const req = {
-          body: {
-            productId: 1,
-            sizeId: 1,
-            variantId: 1,
-            quantity: 3,
-            orderId: 609
-          },
-        };
-
-        const response = await orderDetailsController.createOrderDetail(req, res)
-        expect(response.message).to.be.eq("create orderDetails successfully")
-    })
-
-
-    it("should return message not present", async () => {
-        const req = {
-            body: {
-              productId: 2026,
-              sizeId: 2026,
-              variantId: 2026,
-              quantity: 2026,
-              orderId: 2026
-            },
-          };
-
-        const response = await orderDetailsController.createOrderDetail(req, res)
-        expect(response.message).to.be.eq("data with orderId 2026 is not present in table orders")
-    })
-
-
-    it("should return message productId cannot be empty", async () => {
-        const req = {
-            body: {
-              productId: undefined,
-              sizeId: undefined,
-              variantId: undefined,
-              quantity: undefined,
-              orderId: undefined
-            },
-          };
-
-        const response = await orderDetailsController.createOrderDetail(req, res)
-        expect(response.message).to.be.eq("productId cannot be empty")
-    })
-})
-
-
 
 describe("update orderDetails", () => {
     it("should return message update orderDetails successfully", async () => {
         const req ={
             params: {
-                id: "866"
+                id: orderDetailsId
             },
             body: {
                 quantity: 1
@@ -193,7 +200,7 @@ describe("update orderDetails", () => {
     it("should return message not exist", async () => {
         const req ={
             params: {
-                id: "866"
+                id: orderDetailsId
             },
             body: {
                 tidakAda: "update"
@@ -209,7 +216,7 @@ describe("update orderDetails", () => {
     it("should return message data with productId 2026 is not present in table products", async () => {
         const req ={
             params: {
-                id: "866"
+                id: orderDetailsId
             },
             body: {
                 productId: 2026
@@ -225,7 +232,7 @@ describe("update orderDetails", () => {
     it("should return message No data has been modified", async () => {
         const req ={
             params: {
-                id: "866"
+                id: orderDetailsId
             },
             body: {}
         }
@@ -258,7 +265,7 @@ describe('delete orderDetails', () => {
     it("should return message delete orderDetails successfully", async () => {
         const req ={
             params: {
-                id: "883"
+                id: orderDetailsId
             }
         }
 

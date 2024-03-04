@@ -12,8 +12,11 @@ const res = {
     },
 }
 
+let sizeId
 
 describe("List all sizes", () => {
+    let lastPage
+
     it("should return message List all sizes", async () => {
         const req = {
             query: {
@@ -22,6 +25,7 @@ describe("List all sizes", () => {
         }
 
         const response = await sizeController.getAllSize(req, res)
+        lastPage = response.pageInfo.totalPage
         expect(response.message).to.be.eq("List all sizes")
     })
 
@@ -43,7 +47,7 @@ describe("List all sizes", () => {
     it("should return nextPage null", async () => {
         const req = {
             query: {
-                page: 1
+                page: lastPage
             },
         }
 
@@ -80,13 +84,53 @@ describe("List all sizes", () => {
 
 
 
+describe("create size", () => {
+    it("should return message create size successfully", async () => {
+        const req = {
+          body: {
+            size: new Date().getTime(),
+          },
+        };
+
+        const response = await sizeController.createSize(req, res)
+        sizeId = response.results.id
+        expect(response.message).to.be.eq("create size successfully")
+    })
+
+
+
+    it("should return message size regular already exist", async () => {
+        const req = {
+            body: {
+              size: "regular",
+            },
+          };
+
+        const response = await sizeController.createSize(req, res)
+        expect(response.message).to.be.eq("size regular already exist")
+    })
+
+
+
+    it("should return message size cannot be empty", async () => {
+        const req = {
+            body: {
+              size: undefined,
+            },
+          };
+
+        const response = await sizeController.createSize(req, res)
+        expect(response.message).to.be.eq("size cannot be empty")
+    })
+})
+
 
 
 describe("detail size", () => {
     it("should return message detail size", async () => {
         const req = {
             params: {
-                id: "1"
+                id: sizeId
             },
         }
 
@@ -123,57 +167,14 @@ describe("detail size", () => {
 
 
 
-
-describe("create size", () => {
-    it("should return message create size successfully", async () => {
-        const req = {
-          body: {
-            size: new Date().getTime(),
-          },
-        };
-
-        const response = await sizeController.createSize(req, res)
-        expect(response.message).to.be.eq("create size successfully")
-    })
-
-
-
-    it("should return message size regular already exist", async () => {
-        const req = {
-            body: {
-              size: "regular",
-            },
-          };
-
-        const response = await sizeController.createSize(req, res)
-        expect(response.message).to.be.eq("size regular already exist")
-    })
-
-
-
-    it("should return message size cannot be empty", async () => {
-        const req = {
-            body: {
-              size: undefined,
-            },
-          };
-
-        const response = await sizeController.createSize(req, res)
-        expect(response.message).to.be.eq("size cannot be empty")
-    })
-})
-
-
-
-
 describe("update size", () => {
     it("should return message update size successfully", async () => {
         const req ={
             params: {
-                id: "1"
+                id: sizeId
             },
             body: {
-                additionalPrice: 0
+                additionalPrice: 1000
             }
         }
 
@@ -186,7 +187,7 @@ describe("update size", () => {
     it("should return message column tidakAda of relation sizes does not exist", async () => {
         const req ={
             params: {
-                id: "1"
+                id: sizeId
             },
             body: {
                 tidakAda: "update"
@@ -202,7 +203,7 @@ describe("update size", () => {
     it("should return message size regular already exist", async () => {
         const req ={
             params: {
-                id: "1"
+                id: sizeId
             },
             body: {
                 size: "regular"
@@ -218,7 +219,7 @@ describe("update size", () => {
     it("should return message No data has been modified", async () => {
         const req ={
             params: {
-                id: "1"
+                id: sizeId
             },
             body: {}
         }
@@ -248,12 +249,11 @@ describe("update size", () => {
 
 
 
-
 describe('delete size', () => {
     it("should return message delete size successfully", async () => {
         const req ={
             params: {
-                id: "18"
+                id: sizeId
             }
         }
 
@@ -289,7 +289,7 @@ describe('delete size', () => {
     
 
 
-    it("should return message tag with id 2026 not found", async () => {
+    it("should return message size with id 2026 not found", async () => {
         const req = {
           params: {
             id: "2026",
@@ -298,6 +298,6 @@ describe('delete size', () => {
           
 
         const response = await sizeController.deleteSize(req, res)
-        expect(response.message).to.be.eq("tag with id 2026 not found")
+        expect(response.message).to.be.eq("size with id 2026 not found")
     })
 })

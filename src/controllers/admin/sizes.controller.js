@@ -38,7 +38,7 @@ exports.getDetailSize = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'detail size',
-            result: size                                                  
+            results: size                                                  
         })
     } catch (error) {
         return errorHandler(error, res)

@@ -12,8 +12,9 @@ const res = {
     },
 }
 
-
 describe("List all history order", () => {
+    let lastPage
+
     it("should return message List all history order", async () => {
         const req = {
             user: {
@@ -26,6 +27,7 @@ describe("List all history order", () => {
         }
 
         const response = await historyOrderController.getAllHistoryOrder(req, res)
+        lastPage= response.pageInfo.totalPage
         expect(response.message).to.be.eq("List all history order")
     })
 
@@ -53,7 +55,7 @@ describe("List all history order", () => {
                 id: "466"
             },
             query: {
-                page: 4
+                page: lastPage
             },
         }
 

@@ -204,7 +204,7 @@ describe('forgotPassword', () => {
     it('should return message create new password success', async () => {
         const req = {
             body: {
-                otp: "717729",
+                otp: "317256",
                 newPassword: "123"
             }
         }

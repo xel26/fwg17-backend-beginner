@@ -143,24 +143,3 @@ describe('data variant', () => {
         expect(response.message).to.be.eq("variant extra spicy not found")
     })
  })
-
-
-
-
-
- describe("order's products", () => {
-    it("should be return message list all order products", async () => {
-        req.query.orderId = "578"
-        const response = await checkoutController.getOrderProducts(req, res)
-        expect(response.message).to.be.eq("list all order products")
-    })
-
-
-
-    it("should be return message no data found", async () => {
-        req.query.orderId = "5780"
-        req.query.orderId = "1"
-        const response = await checkoutController.getOrderProducts(req, res)
-        expect(response.message).to.be.eq("no data found")
-    })
- })

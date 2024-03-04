@@ -39,7 +39,7 @@ exports.getDetailTag = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'detail tag',
-            result: tag                                                  
+            results: tag                                                  
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -54,7 +54,7 @@ exports.createTag = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'create tag successfully',
-            result: tag                                                   
+            results: tag                                                   
         })
         
     } catch (error) {
@@ -71,7 +71,7 @@ exports.updateTag = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'update tag successfully',
-            result: tag                                                   
+            results: tag                                                   
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -85,7 +85,7 @@ exports.deleteTag = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'delete tag successfully',
-            result: tag                                                   
+            results: tag                                                   
         })
     } catch (error) {
         return errorHandler(error, res)

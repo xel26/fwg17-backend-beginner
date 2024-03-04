@@ -38,7 +38,7 @@ exports.getDetailOrderDetail = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'detail orderDetails',
-            result: orderDetails                                                  
+            results: orderDetails                                                  
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -52,11 +52,11 @@ exports.createOrderDetail = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'create orderDetails successfully',
-            result: orderDetails                                                   
+            results: orderDetails                                                   
         })
         
     } catch (error) {
-        return errorHandler(error, res, '')
+        return errorHandler(error, res)
     }
 }
 
@@ -69,7 +69,7 @@ exports.updateOrderDetail = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'update orderDetails successfully',
-            result: orderDetails                                                   
+            results: orderDetails                                                   
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -83,7 +83,7 @@ exports.deleteOrderDetail = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'delete orderDetails successfully',
-            result: orderDetails                                                   
+            results: orderDetails                                                   
         })
     } catch (error) {
         return errorHandler(error, res)

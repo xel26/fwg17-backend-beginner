@@ -1,6 +1,6 @@
 const categoriesModel = require('../../models/categories.model')
 const { errorHandler } = require('../../moduls/handling')
-const { isExist, isStringExist, updateColumn } = require('../../moduls/handling')
+const {isStringExist, updateColumn } = require('../../moduls/handling')
 
 
 exports.getAllCategories = async (req, res) => {       
@@ -38,7 +38,7 @@ exports.getDetailCategory = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'detail category',
-            result: category                                                  
+            results: category                                                  
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -53,7 +53,7 @@ exports.createCategory = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'create category successfully',
-            result: category                                                   
+            results: category                                                   
         })
         
     } catch (error) {
@@ -71,7 +71,7 @@ exports.updateCategory = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'update category successfully',
-            result: category                                                   
+            results: category                                                   
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -85,7 +85,7 @@ exports.deleteCategory = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'delete category successfully',
-            result: category                                                   
+            results: category                                                   
         })
     } catch (error) {
         return errorHandler(error, res)

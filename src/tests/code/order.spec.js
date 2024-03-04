@@ -12,8 +12,11 @@ const res = {
     },
 }
 
+let orderId
 
 describe("List all orders", () => {
+    let lastPage
+    
     it("should return message List all orders", async () => {
         const req = {
             user: {},
@@ -23,6 +26,7 @@ describe("List all orders", () => {
         }
 
         const response = await orderController.getAllOrders(req, res)
+        lastPage = response.pageInfo.totalPage
         expect(response.message).to.be.eq("List all orders")
     })
 
@@ -31,7 +35,7 @@ describe("List all orders", () => {
     it("should return message data orders not found", async () => {
         const req = {
             query: {
-                page: 16
+                page: 2026
             },
         }
 
@@ -44,7 +48,7 @@ describe("List all orders", () => {
     it("should return nextPage null", async () => {
         const req = {
             query: {
-                page: 15
+                page: lastPage
             },
         }
 
@@ -81,47 +85,6 @@ describe("List all orders", () => {
 
 
 
-describe("detail order", () => {
-    it("should return message detail category", async () => {
-        const req = {
-            params: {
-                id: "582"
-            },
-        }
-
-        const response = await orderController.getDetailOrder(req, res)
-        expect(response.message).to.be.eq("detail order")
-    })
-
-
-
-    it('should return message invalid input syntax for type integer: x', async() => {
-        const req = {
-          params: {
-            id: "x"
-          },
-        }
-
-        const response = await orderController.getDetailOrder(req, res)
-        expect(response.message).to.be.eq("invalid input syntax for type integer: x")
-    })
-
-
-
-    it("should return message order with id 2026 not found", async () => {
-        const req = {
-          params: {
-            id: "2026",
-          },
-        };
-        
-        const response = await orderController.getDetailOrder(req, res)
-        expect(response.message).to.be.eq("order with id 2026 not found")
-    })
-})
-
-
-
 
 describe("create order", () => {
     it("should return message create order successfully", async () => {
@@ -142,6 +105,7 @@ describe("create order", () => {
         };
 
         const response = await orderController.createOrder(req, res)
+        orderId = response.results.id
         expect(response.message).to.be.eq("create order successfully")
     })
 
@@ -193,11 +157,53 @@ describe("create order", () => {
 
 
 
+describe("detail order", () => {
+    it("should return message detail category", async () => {
+        const req = {
+            params: {
+                id: orderId
+            },
+        }
+
+        const response = await orderController.getDetailOrder(req, res)
+        expect(response.message).to.be.eq("detail order")
+    })
+
+
+
+    it('should return message invalid input syntax for type integer: x', async() => {
+        const req = {
+          params: {
+            id: "x"
+          },
+        }
+
+        const response = await orderController.getDetailOrder(req, res)
+        expect(response.message).to.be.eq("invalid input syntax for type integer: x")
+    })
+
+
+
+    it("should return message order with id 2026 not found", async () => {
+        const req = {
+          params: {
+            id: "2026",
+          },
+        };
+        
+        const response = await orderController.getDetailOrder(req, res)
+        expect(response.message).to.be.eq("order with id 2026 not found")
+    })
+})
+
+
+
+
 describe("update order", () => {
     it("should return message update order successfully", async () => {
         const req ={
             params: {
-                id: "616"
+                id: orderId
             },
             body: {
                 total: 5000
@@ -213,7 +219,7 @@ describe("update order", () => {
     it("should return message not exist", async () => {
         const req ={
             params: {
-                id: "616"
+                id: orderId
             },
             body: {
                 tidakAda: "update"
@@ -229,7 +235,7 @@ describe("update order", () => {
     it("should return message already exist", async () => {
         const req ={
             params: {
-                id: "616"
+                id: orderId
             },
             body: {
                 orderNumber: "240301943"
@@ -245,7 +251,7 @@ describe("update order", () => {
     it("should return message No data has been modified", async () => {
         const req ={
             params: {
-                id: "616"
+                id: orderId
             },
             body: {}
         }
@@ -280,7 +286,7 @@ describe('delete order', () => {
     it("should return message delete order successfully", async () => {
         const req ={
             params: {
-                id: "624"
+                id: orderId
             }
         }
 

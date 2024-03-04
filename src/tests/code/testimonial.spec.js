@@ -12,8 +12,11 @@ const res = {
     },
 }
 
+let testimonialId
 
 describe("List all testimonial", () => {
+    let lastPage
+
     it("should return message List all testimonial", async () => {
         const req = {
             query: {
@@ -22,6 +25,7 @@ describe("List all testimonial", () => {
         }
 
         const response = await testimonialController.getAllTestimonial(req, res)
+        lastPage = response.pageInfo.totalPage
         expect(response.message).to.be.eq("List all testimonial")
     })
 
@@ -43,7 +47,7 @@ describe("List all testimonial", () => {
     it("should return nextPage null", async () => {
         const req = {
             query: {
-                page: 2
+                page: lastPage
             },
         }
 
@@ -81,12 +85,47 @@ describe("List all testimonial", () => {
 
 
 
+describe("create testimonial", () => {
+    it("should return message create testimonial successfully", async () => {
+        const req = {
+          body: {
+            fullName: "unit test",
+            role: "test",
+            feedback: "example",
+            rate: "5"
+          },
+        };
+
+        const response = await testimonialController.createTestimonial(req, res)
+        testimonialId = response.results.id
+        expect(response.message).to.be.eq("create testimonial successfully")
+    })
+
+
+
+    it("should return message fullName cannot be empty", async () => {
+        const req = {
+            body: {
+                fullName: undefined,
+                role: undefined,
+                feedback: undefined,
+                rate: undefined
+            },
+          };
+
+        const response = await testimonialController.createTestimonial(req, res)
+        expect(response.message).to.be.eq("fullName cannot be empty")
+    })
+})
+
+
+
 
 describe("detail testimonial", () => {
     it("should return message detail size", async () => {
         const req = {
             params: {
-                id: "1"
+                id: testimonialId
             },
         }
 
@@ -124,46 +163,11 @@ describe("detail testimonial", () => {
 
 
 
-describe("create testimonial", () => {
-    it("should return message create testimonial successfully", async () => {
-        const req = {
-          body: {
-            fullName: "unit test",
-            role: "test",
-            feedback: "example",
-            rate: "5"
-          },
-        };
-
-        const response = await testimonialController.createTestimonial(req, res)
-        expect(response.message).to.be.eq("create testimonial successfully")
-    })
-
-
-
-    it("should return message fullName cannot be empty", async () => {
-        const req = {
-            body: {
-                fullName: undefined,
-                role: undefined,
-                feedback: undefined,
-                rate: undefined
-            },
-          };
-
-        const response = await testimonialController.createTestimonial(req, res)
-        expect(response.message).to.be.eq("fullName cannot be empty")
-    })
-})
-
-
-
-
 describe("update testimonial", () => {
     it("should return message update testimonial successfully", async () => {
         const req ={
             params: {
-                id: "18"
+                id: testimonialId
             },
             body: {
                 fullName: "unit test",
@@ -182,7 +186,7 @@ describe("update testimonial", () => {
     it("should return message column tidakAda of relation testimonial does not exist", async () => {
         const req ={
             params: {
-                id: "1"
+                id: testimonialId
             },
             body: {
                 tidakAda: "update"
@@ -198,7 +202,7 @@ describe("update testimonial", () => {
     it("should return message No data has been modified", async () => {
         const req ={
             params: {
-                id: "18"
+                id: testimonialId
             },
             body: {}
         }
@@ -232,7 +236,7 @@ describe('delete testimonial', () => {
     it("should return message delete testimonial successfully", async () => {
         const req ={
             params: {
-                id: "19"
+                id: testimonialId
             }
         }
 

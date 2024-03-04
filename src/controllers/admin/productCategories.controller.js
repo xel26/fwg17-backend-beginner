@@ -24,7 +24,7 @@ exports.getAllProductCategories = async (req, res) => {
                 prevPage: prevPage >= 1 ? prevPage : null,
                 totalData: parseInt(count)
             },
-            result: listPC                                                    
+            results: listPC                                                    
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -38,7 +38,7 @@ exports.getDetailProductCategories = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'detail ProductCategories',
-            result: ProductCategories                                                  
+            results: ProductCategories                                                  
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -53,7 +53,7 @@ exports.createProductCategories = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'create productCategory successfully',
-            result: listPC                                                   
+            results: listPC                                                   
         })
         
     } catch (error) {
@@ -69,7 +69,7 @@ exports.updateProductCategories = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'update productCategory successfully',
-            result: ProductCategories                                                 
+            results: ProductCategories                                                 
         })
     } catch (error) {
         return errorHandler(error, res)
@@ -83,7 +83,7 @@ exports.deleteProductCategories = async (req, res) => {
         return res.json({                                                              
             success: true,
             message: 'delete productCategory successfully',
-            result: ProductCategories                                                   
+            results: ProductCategories                                                   
         })
     } catch (error) {
         return errorHandler(error, res)

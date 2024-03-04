@@ -6,9 +6,22 @@ const app = require('../../../..');
 const request = supertest(app)
 
 describe('/history-order endpoint testing', () => {
+    let userToken = ''
+    before(async ()=>{
+        const form = new URLSearchParams({
+            email: 'alessia.cara@mail.com',
+            password: '123'
+        })
+        const res = await request
+        .post('/login')
+        .send(form.toString())
+        userToken = res.body.results.token
+        
+    })
+
     it('should return message List all history order', async () => {
         const res = await request.get('/history-order')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
+        .auth(userToken, {
             type: "bearer"
         })
 
@@ -19,7 +32,7 @@ describe('/history-order endpoint testing', () => {
 
     it('should return message data history order not found', async () => {
         const res = await request.get('/history-order?status=tidak ada')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
+        .auth(userToken, {
             type: "bearer"
         })
 
@@ -31,7 +44,7 @@ describe('/history-order endpoint testing', () => {
 
     it('should return nextPage null', async () => {
         const res = await request.get('/history-order?page=8')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
+        .auth(userToken, {
             type: "bearer"
         })
 
@@ -43,7 +56,7 @@ describe('/history-order endpoint testing', () => {
 
     it('should return prevPage null', async () => {
         const res = await request.get('/history-order?page=1')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
+        .auth(userToken, {
             type: "bearer"
         })
 
@@ -55,9 +68,22 @@ describe('/history-order endpoint testing', () => {
 
 
 describe('/history-order/:id endpoint testing', () => {
+    let userToken = ''
+    before(async ()=>{
+        const form = new URLSearchParams({
+            email: 'alessia.cara@mail.com',
+            password: '123'
+        })
+        const res = await request
+        .post('/login')
+        .send(form.toString())
+        userToken = res.body.results.token
+        
+    })
+
     it('should return message detail history order', async () => {
         const res = await request.get('/history-order/481')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
+        .auth(userToken, {
             type: "bearer"
         })
 
@@ -68,7 +94,7 @@ describe('/history-order/:id endpoint testing', () => {
 
     it('should return message invalid input syntax for type integer: x', async () => {
         const res = await request.get('/history-order/x')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
+        .auth(userToken, {
             type: "bearer"
         })
 
@@ -79,18 +105,7 @@ describe('/history-order/:id endpoint testing', () => {
 
     it('should return message user with id 237 does not have an order with id 2026', async () => {
         const res = await request.get('/history-order/2026')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
-            type: "bearer"
-        })
-
-        expect(res.body.message).to.be.eq("user with id 237 does not have an order with id 2026")
-    })
-
-
-
-    it('should return message user with id 237 does not have an order with id 2026', async () => {
-        const res = await request.get('/history-order/2026')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
+        .auth(userToken, {
             type: "bearer"
         })
 
@@ -101,9 +116,22 @@ describe('/history-order/:id endpoint testing', () => {
 
 
 describe('/history-order/products endpoint testing', () => {
+    let userToken = ''
+    before(async ()=>{
+        const form = new URLSearchParams({
+            email: 'alessia.cara@mail.com',
+            password: '123'
+        })
+        const res = await request
+        .post('/login')
+        .send(form.toString())
+        userToken = res.body.results.token
+        
+    })
+    
     it('should return message list all history order products', async () =>{
         const res = await request.get('/history-order/products?orderId=481')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
+        .auth(userToken, {
             type: "bearer"
         })
 
@@ -114,7 +142,7 @@ describe('/history-order/products endpoint testing', () => {
 
     it('should return message invalid input syntax for type integer: x', async () =>{
         const res = await request.get('/history-order/products?orderId=x')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
+        .auth(userToken, {
             type: "bearer"
         })
 
@@ -125,7 +153,7 @@ describe('/history-order/products endpoint testing', () => {
 
     it('should return message data history order products not found', async () =>{
         const res = await request.get('/history-order/products?orderId=2026')
-        .auth('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjM3LCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MDk0ODA4MTl9.SpIDBY6_ZmnAfO9X3o6PPahQKglQ_H2mQC7ye12fDj0', {
+        .auth(userToken, {
             type: "bearer"
         })
 
