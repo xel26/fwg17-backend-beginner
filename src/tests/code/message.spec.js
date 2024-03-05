@@ -72,48 +72,6 @@ describe("List all message", () => {
 
 
 
-describe("detail message", () => {
-    it("should return message detail message", async () => {
-        const req = {
-            params: {
-                id: "1"
-            },
-        }
-
-        const response = await messageController.getDetailMessage(req, res)
-        expect(response.message).to.be.eq("detail message")
-    })
-
-
-
-    it('should return message invalid input syntax for type integer: x', async() => {
-        const req = {
-          params: {
-            id: "x"
-          },
-        }
-
-        const response = await messageController.getDetailMessage(req, res)
-        expect(response.message).to.be.eq("invalid input syntax for type integer: x")
-    })
-
-
-
-    it("should return message with id 2026 not found", async () => {
-                const req = {
-          params: {
-            id: "2026"
-          },
-        }
-        
-        const response = await messageController.getDetailMessage(req, res)
-        expect(response.message).to.be.eq("message with id 2026 not found")
-    })
-})
-
-
-
-
 describe("create message", () => {
     it("should return message create message successfully", async () => {
         const req = {
@@ -170,6 +128,48 @@ describe("create message", () => {
 
         const response = await messageController.createMessage(req, res)
         expect(response.message).to.be.eq("recipientId cannot be empty")
+    })
+})
+
+
+
+
+describe("detail message", () => {
+    it("should return message detail message", async () => {
+        const req = {
+            params: {
+                id: messageId
+            },
+        }
+
+        const response = await messageController.getDetailMessage(req, res)
+        expect(response.message).to.be.eq("detail message")
+    })
+
+
+
+    it('should return message invalid input syntax for type integer: x', async() => {
+        const req = {
+          params: {
+            id: "x"
+          },
+        }
+
+        const response = await messageController.getDetailMessage(req, res)
+        expect(response.message).to.be.eq("invalid input syntax for type integer: x")
+    })
+
+
+
+    it("should return message with id 2026 not found", async () => {
+                const req = {
+          params: {
+            id: "2026"
+          },
+        }
+        
+        const response = await messageController.getDetailMessage(req, res)
+        expect(response.message).to.be.eq("message with id 2026 not found")
     })
 })
 
@@ -264,7 +264,7 @@ describe("update message", () => {
 
 
 
-describe('delete promo', () => {
+describe('delete message', () => {
     it("should return message delete message successfully", async () => {
         const req ={
             params: {

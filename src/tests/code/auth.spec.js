@@ -3,6 +3,7 @@ const { expect } = require("chai");
 
 
 const authController = require('../../controllers/auth.controller');
+const userModel = require('../../models/user.model')
 
 const res = {
     status: (status) => {
@@ -14,16 +15,23 @@ const res = {
 }
 
 describe("register", () => {
-    const req = {
-        body: {
-            fullName: "unit test",
-            email: `unit.test${new Date().getTime()}@example.com`,
-            password: "123"
-        }
-    }
+    let userId
+
+    after(async () =>{
+        await userModel.delete(userId)
+    })
 
     it("should return message register success. . . welcome aboard!", async () => {
+        const req = {
+            body: {
+                fullName: "unit test",
+                email: `unit.test${new Date().getTime()}@example.com`,
+                password: "123"
+            }
+        }
+
         const response = await authController.register(req, res)
+        userId = response.results.id
         expect(response.message).to.be.eq("register success. . . welcome aboard!")
     })
 
@@ -161,6 +169,9 @@ describe('login', () => {
 describe('forgotPassword', () => {
     it('should return message OTP has been sent to your email', async () => {
         const req = {
+            headers: {
+                'x-test-otp': '111111',
+            },
             body: {
                 email: "shellaananda2636@gmail.com"
             }
@@ -204,7 +215,7 @@ describe('forgotPassword', () => {
     it('should return message create new password success', async () => {
         const req = {
             body: {
-                otp: "317256",
+                otp: "111111",
                 newPassword: "123"
             }
         }

@@ -41,6 +41,17 @@ exports.findOne = async (id) => {                                               
 }
 
 
+exports.deleteByOrderId = async (orderId) => {                                                                             // mencari data berdasarkan column dengan constraint unique
+    const sql = `DELETE FROM "orderDetails" WHERE "orderId" = $1 RETURNING *`
+    const  values = [orderId]
+    const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`orderDetails with orderId ${id} not found`)
+    }
+    return rows[0]
+}
+
+
 exports.insert = async (body) => {
     const sql = `
     INSERT INTO "orderDetails"

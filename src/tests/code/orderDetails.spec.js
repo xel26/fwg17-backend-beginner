@@ -18,7 +18,7 @@ let orderDetailsId
 describe("List all orderDetails", () => {
     let lastPage
 
-    it("should return message List all orders", async () => {
+    it("should return message List all order details", async () => {
         const req = {
             user: {},
             query: {

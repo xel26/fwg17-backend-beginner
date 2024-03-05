@@ -97,7 +97,7 @@ describe("create order", () => {
             subtotal: 2000,
             tax: 100,
             deliveryFee: 5000,
-            deliveryShipping: "Dine Int",
+            deliveryShipping: "Dine In",
             deliveryAddress: "unit test",
             fullName: "unit test",
             email: "test@example.com"

@@ -16,7 +16,7 @@ exports.findAll = async (searchKey='', sortBy="id", order="ASC", page, limit) =>
     const values = [`%${searchKey}%`]
     const {rows} = await db.query(sql, values)
     if(!rows.length){
-        throw new Error(`data tags not foud`)
+        throw new Error(`data tags not found`)
     }
     return rows
 }

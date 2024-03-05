@@ -85,7 +85,7 @@ describe("List all variants", () => {
 
 
 
-describe("create category", () => {
+describe("create variant", () => {
     it("should return message create variant successfully", async () => {
         const req = {
           body: {
@@ -171,8 +171,8 @@ describe("detail variant", () => {
 
 
 
-describe("update category", () => {
-    it("should return message update category successfully", async () => {
+describe("update variant", () => {
+    it("should return message update variant successfully", async () => {
         const req ={
             params: {
                 id: variantId

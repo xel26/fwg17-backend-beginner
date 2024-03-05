@@ -2,6 +2,8 @@ const { describe } = require("mocha");
 const { expect } = require("chai");
 
 const checkoutController = require('../../controllers/checkout.controller');
+const orderModel = require('../../models/order.model')
+const orderDetailsModels = require('../../models/orderDetails.model')
 
 const req = {
     user: {},
@@ -22,6 +24,13 @@ const res = {
 
 
 describe("checkout", () => {
+    let orderId
+
+    after(async () => {
+        await orderDetailsModels.deleteByOrderId(orderId)
+        await orderModel.delete(orderId)
+    })
+
     it("should return message create order successfully", async () => {
         req.user.id = "466"
 
@@ -34,6 +43,7 @@ describe("checkout", () => {
         }
 
         const response = await checkoutController.createOrder(req, res)
+        orderId = response.results.id
         expect(response.message).to.be.eq("create order successfully")
     })
 

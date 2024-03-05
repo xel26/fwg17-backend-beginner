@@ -15,6 +15,9 @@ exports.findAll = async (sortBy="id", order="ASC", page, limit) => {
     `
     const values = []
     const {rows} = await db.query(sql, values)
+    if(!rows.length){
+        throw new Error(`data messages not found`)
+    }
     return rows
 }
 

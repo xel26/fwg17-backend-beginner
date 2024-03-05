@@ -9,6 +9,7 @@ describe('/admin/product endpoint testing', () => {
     let productId = ''
     let adminToken = ''
     let userToken = ''
+    let lastPage
 
     before(async ()=>{
         const form = new URLSearchParams({
@@ -31,6 +32,13 @@ describe('/admin/product endpoint testing', () => {
         
     })
 
+
+    const form = new URLSearchParams({
+        name: '',
+        basePrice: 0
+    })
+
+
     describe('list all products', () => {
         it('should return message List all products', async () => {
             const res = await request.get('/admin/products?sortBy=createdAt&category=coffee&isRecommended=true')
@@ -38,6 +46,7 @@ describe('/admin/product endpoint testing', () => {
                 type: "bearer"
             })
     
+            lastPage = res.body.pageInfo.totalPage
             expect(res.body.message).to.be.eq("List all products")
         })
 
@@ -50,6 +59,16 @@ describe('/admin/product endpoint testing', () => {
             })
     
             expect(res.body.message).to.be.eq("Forbidden access")
+    
+        })
+
+
+
+        it('should return message invalid token', async () => {
+            const res = await request.get('/admin/products?sortBy=createdAt&category=coffee&isRecommended=true')
+            .auth(userToken)
+    
+            expect(res.body.message).to.be.eq("invalid token")
     
         })
 
@@ -73,8 +92,8 @@ describe('/admin/product endpoint testing', () => {
 
 
 
-        it('should return message nextPage null', async () => {
-            const res = await request.get('/admin/products?page=5')
+        it('should return nextPage null', async () => {
+            const res = await request.get(`/admin/products?page=${lastPage}&sortBy=createdAt&category=coffee&isRecommended=true`)
             .auth(adminToken, {
                 type: "bearer"
             })
@@ -84,7 +103,7 @@ describe('/admin/product endpoint testing', () => {
 
 
 
-        it('should return message prevPage null', async () => {
+        it('should return prevPage null', async () => {
             const res = await request.get('/admin/products?page=1')
             .auth(adminToken, {
                 type: "bearer"
@@ -107,10 +126,55 @@ describe('/admin/product endpoint testing', () => {
 
 
 
+    describe('create product', () => {
+        it('should return message create product successfully', async () => {
+            form.set('name', `${new Date().getTime()}`)
+            form.set('basePrice', 1000)
+
+            const res = await request.post('/admin/products')
+            .auth(adminToken, {
+                type: "bearer"
+            })
+            .send(form.toString())
+            
+            productId = res.body.results.id
+            expect(res.body.message).to.be.eq("create product successfully")
+        })
+
+
+
+        it('should return message name vanilla syrup already exist', async () => {
+            form.set('name', 'vanilla syrup')
+
+            const res = await request.post('/admin/products')
+            .auth(adminToken, {
+                type: "bearer"
+            })
+            .send(form.toString())
+
+            expect(res.body.message).to.be.eq("name vanilla syrup already exist")
+        })
+
+
+
+        it('should return message name cannot be empty', async () => {
+            form.delete('name')
+
+            const res = await request.post('/admin/products')
+            .auth(adminToken, {
+                type: "bearer"
+            })
+            .send()
+
+            expect(res.body.message).to.be.eq("name cannot be empty")
+        })
+    })
+
+
+
     describe('detail product', () => {
-        
         it('should return message detail product', async () => {
-            const res = await request.get('/admin/products/1')
+            const res = await request.get(`/admin/products/${productId}`)
             .auth(adminToken, {
                 type: "bearer"
             })
@@ -143,94 +207,19 @@ describe('/admin/product endpoint testing', () => {
 
 
 
-    describe('create product', () => {
-       
-        it('should return message create product successfully', async () => {
-            const res = await request.post('/admin/products')
-            .auth(adminToken, {
-                type: "bearer"
-            })
-            .send(`name=${new Date().getTime()}&basePrice=1000`)
-            productId = res.body.results.id
-
-            expect(res.body.message).to.be.eq("create product successfully")
-        })
-
-
-
-        it('should return message name vanilla syrup already exist', async () => {
-            const res = await request.post('/admin/products')
-            .auth(adminToken, {
-                type: "bearer"
-            })
-            .send(`name=vanilla syrup&basePrice=1000`)
-
-            expect(res.body.message).to.be.eq("name vanilla syrup already exist")
-        })
-
-
-
-        it('should return message name cannot be empty', async () => {
-            const res = await request.post('/admin/products')
-            .auth(adminToken, {
-                type: "bearer"
-            })
-            .send()
-
-            expect(res.body.message).to.be.eq("name cannot be empty")
-        })
-    })
-
-
-
     describe('update product', () => {
-       
         it('should return message update product successfully', async () => {
+            form.set('basePrice', 7000)
+
             const res = await request.patch(`/admin/products/${productId}`)
             .auth(adminToken, {
                 type: "bearer"
             })
-            .send('basePrice=7000')
+            .send(form.toString())
 
             expect(res.body.message).to.be.eq("update product successfully")
         })
-
-
-
-        it('should return message invalid input syntax for type integer: x', async () => {
-            const res = await request.patch(`/admin/products/${productId}`)
-            .auth(adminToken, {
-                type: "bearer"
-            })
-            .send('basePrice=x')
-
-            expect(res.body.message).to.be.eq("invalid input syntax for type integer: x")
-        })
-
-
-
-        it('should return message column tidakAda of relation products does not exist', async () => {
-            const res = await request.patch(`/admin/products/${productId}`)
-            .auth(adminToken, {
-                type: "bearer"
-            })
-            .send('tidakAda=update')
-
-            expect(res.body.message).to.be.eq("column tidakAda of relation products does not exist")
-        })
-
-
-
-        it('should return message name vanilla syrup already exist', async () => {
-            const res = await request.patch(`/admin/products/${productId}`)
-            .auth(adminToken, {
-                type: "bearer"
-            })
-            .send('name=vanilla syrup')
-
-            expect(res.body.message).to.be.eq("name vanilla syrup already exist")
-        })
-
+                
 
 
         it('should return message product with id 2026 not found', async () => {
@@ -238,16 +227,75 @@ describe('/admin/product endpoint testing', () => {
             .auth(adminToken, {
                 type: "bearer"
             })
-            .send('basePrice=7000')
+            .send(form.toString())
 
             expect(res.body.message).to.be.eq("product with id 2026 not found")
+        })
+
+
+
+        it('should return message invalid input syntax for type integer: x', async () => {
+            form.set('basePrice', 'x')
+
+            const res = await request.patch(`/admin/products/${productId}`)
+            .auth(adminToken, {
+                type: "bearer"
+            })
+            .send(form.toString())
+
+            expect(res.body.message).to.be.eq("invalid input syntax for type integer: x")
+        })
+        
+
+
+        it('should return message name vanilla syrup already exist', async () => {
+            form.set('basePrice', 7000)
+            form.append('name', 'vanilla syrup')
+
+            const res = await request.patch(`/admin/products/${productId}`)
+            .auth(adminToken, {
+                type: "bearer"
+            })
+            .send(form.toString())
+
+            expect(res.body.message).to.be.eq("name vanilla syrup already exist")
+        })
+
+
+
+        it('should return message column tidakAda of relation products does not exist', async () => {
+            form.delete('basePrice')
+            form.delete('name')
+            form.append('tidakAda', 'update')
+
+            const res = await request.patch(`/admin/products/${productId}`)
+            .auth(adminToken, {
+                type: "bearer"
+            })
+            .send(form.toString())
+
+            expect(res.body.message).to.be.eq("column tidakAda of relation products does not exist")
+        })
+
+
+
+        it('should return message No data has been modified', async () => {
+            form.delete('basePrice')
+            form.delete('name')
+            form.delete('tidakAda')
+
+            const res = await request.patch(`/admin/products/${productId}`)
+            .auth(adminToken, {
+                type: "bearer"
+            })
+            .send(form.toString())
+
+            expect(res.body.message).to.be.eq("No data has been modified")
         })
     })
 
 
-
     describe('delete product', () => {
-        
         it('should return message delete product successfully', async () => {
             const res = await request.delete(`/admin/products/${productId}`)
             .auth(adminToken, {

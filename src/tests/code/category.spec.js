@@ -114,11 +114,11 @@ describe("detail category", () => {
 
 
     it("should return message category with id 2026 not found", async () => {
-                const req = {
+        const req = {
           params: {
-            id: "2026"
+            id: "2026",
           },
-        }
+        };
         
         const response = await categoryController.getDetailCategory(req, res)
         expect(response.message).to.be.eq("category with id 2026 not found")

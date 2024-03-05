@@ -29,19 +29,26 @@ describe('/profile endpoint testing', () => {
     })
 
 
+    it('should return message invalid token', async () => {
+        const res = await request.get('/profile')
+        .auth(userToken)
+
+        expect(res.body.message).to.be.eq("invalid token")
+    })
+
+
 
     it('should return message update profile successfully', async () => {
+        const form = new URLSearchParams({
+            fullName: 'alessia',
+            password: '123'
+        })
+
         const res = await request.patch('/profile')
         .auth(userToken, {
             type: "bearer"
         })
-        .send('fullName=alessia&password=123')
-
-        // tidak bisa seperti ini!
-        // .send({
-        //     fullName: 'alessia',
-        //     Password: '123'
-        // })
+        .send(form.toString())
 
 
         expect(res.body.message).to.be.eq("update profile successfully")

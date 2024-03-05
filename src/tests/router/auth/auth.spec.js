@@ -12,6 +12,7 @@ describe('/register endpoint testing', () => {
         email: '',
         password: ''
     })
+    
     it('should return message register success. . . welcome aboard!', async () => {
         form.set('email', `unit.test${new Date().getTime()}@example.com`)
         form.set('password', '123')

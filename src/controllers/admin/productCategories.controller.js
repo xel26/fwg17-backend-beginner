@@ -65,6 +65,7 @@ exports.createProductCategories = async (req, res) => {
 exports.updateProductCategories = async (req, res) => {
     try {
         await pcModel.findOne(req.params.id)
+        await pcModel.findData(req.body.productId, req.body.categoryId)
         const ProductCategories = await updateColumn(req.params.id, req.body, "productCategories") 
         return res.json({                                                              
             success: true,

@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "test:router": "mocha ./src/tests/router/admin/product.spec.js -r dotenv/config --exit",
-    "test:code": "nyc mocha ./src/tests/code/profile.spec.js -r dotenv/config --exit"
+    "test:router": "mocha ./src/tests/router/*/*.spec.js -r dotenv/config --exit",
+    "test:code": "nyc mocha ./src/tests/code/*.spec.js -r dotenv/config --exit"
   },
   "keywords": [],
   "author": "",

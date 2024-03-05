@@ -7,17 +7,11 @@ const request = supertest(app)
 
 
 describe('/products endpoint testing', () => {
-    // kode ini tidak bekerja
-    // it("should return message List all products", () => {
-    //      request.get('/testimonial').end((err, res) => {
-    //       console.log(res.body)
-    //       expect(typeof res.body).to.be.eq('number')
-    //     });
-    // })
-
+    let lastPage
 
     it("should return message List all products", async () => {
         const res = await request.get('/products?sortBy=createdAt&category=non coffee&isRecommended=true')
+        lastPage = res.body.pageInfo.totalPage
         expect(res.body.message).to.be.eq('List all products')
     })
 
@@ -29,7 +23,7 @@ describe('/products endpoint testing', () => {
 
 
     it("should return nextPage null", async () => {
-        const res = await request.get('/products?page=5')
+        const res = await request.get(`/products?sortBy=createdAt&category=non coffee&isRecommended=true&page=${lastPage}`)
         expect(res.body.pageInfo.nextPage).to.be.null
     })
 

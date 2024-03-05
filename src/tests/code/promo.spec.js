@@ -93,7 +93,7 @@ describe("create promo", () => {
             code: Math.random() * 1000,
             percentage: 0.025,
             maximumPromo: 50000,
-            minimumAmount: 50000
+            minimumAmount: 70000
           },
         };
 
@@ -320,15 +320,15 @@ describe('delete promo', () => {
 
 
 
-    it("should return message data with id 1 is still referenced from table orders", async () => {
+    it("should return message data with id 2 is still referenced from table orders", async () => {
         const req = {
           params: {
-            id: "1",
+            id: "2",
           },
         };
 
         const response = await promoController.deletePromo(req, res)
-        expect(response.message).to.be.eq("data with id 1 is still referenced from table orders")
+        expect(response.message).to.be.eq("data with id 2 is still referenced from table orders")
     })
     
 

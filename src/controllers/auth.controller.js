@@ -70,7 +70,7 @@ exports.register = async (req, res) => {
       throw new Error(`password cannot be empty`);
     }
 
-    await userModel.insert({
+    const dataUser = await userModel.insert({
       fullName,
       email,
       password,
@@ -80,6 +80,7 @@ exports.register = async (req, res) => {
     return res.json({
       success: true,
       message: "register success. . . welcome aboard!",
+      results: dataUser
     });
   } catch (error) {
     return errorHandler(error, res);
@@ -97,7 +98,7 @@ exports.forgotPassword = async (req, res) => {
       if (user) {
         const { customAlphabet } = await import("nanoid");
         const rand = customAlphabet("1234567890", 6);
-        console.log(req.headers)
+        // console.log(req.headers)
         const otp = req.headers['x-test-otp'] || rand();
 
         const request = await forgotModel.insert({
@@ -172,7 +173,6 @@ exports.forgotPassword = async (req, res) => {
       }
     }
   } catch (err) {
-    console.log(err)
     await db.query("ROLLBACK");
     return errorHandler(err, res);
   }
