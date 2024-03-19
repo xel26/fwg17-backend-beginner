@@ -64,7 +64,6 @@ cloudinary.config({
 const storage = (dest) => new CloudinaryStorage({
     cloudinary,
     params: async (req, file) =>  {
-        console.log("storage", file)
 
         const extension = {
           "image/jpeg": "jpg",

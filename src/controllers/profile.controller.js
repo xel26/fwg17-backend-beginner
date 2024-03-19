@@ -17,9 +17,31 @@ exports.getProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
     try {
-        await userModel.findOne(req.user.id)
-        await isStringExist("users", "email", req.body.email)
         const data = await userModel.findOne(req.user.id)
+
+        if (req.body.email){
+            await isStringExist("users", "email", req.body.email)
+        }
+
+
+        if (req.body.picture == 'null'){
+            req.body.picture = null
+
+            cloudinary.search
+            .expression(`${encodeURIComponent(data.picture)}`)
+            .max_results(1)
+            .execute()
+            .then(result => {
+                cloudinary.uploader.destroy(result.resources[0].public_id)
+                .then(result => console.log({...result, message: "delete picture success"}))
+                .catch(err => {
+                    return errorHandler(err, res)
+                })
+            }).catch(err => {
+                return errorHandler(err, res)
+            })
+        }
+
 
         if(req.file){                                                                                           
             // if(data.picture){                                                                                   // jika data sebelumnya mempunyai gambar, maka gambara akan di hapus dan di ganti dengan gambar yg baru di upload
@@ -38,8 +60,12 @@ exports.updateProfile = async (req, res) => {
                 .then(result => {
                     cloudinary.uploader.destroy(result.resources[0].public_id)
                     .then(result => console.log({...result, message: "delete picture success"}))
-                    .catch(err => console.log(err))
-                }).catch(err => console.log(err))
+                    .catch(err => {
+                        return errorHandler(err, res)
+                    })
+                }).catch(err => {
+                    return errorHandler(err, res)
+                })
             }
             
 
