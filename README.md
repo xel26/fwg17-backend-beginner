@@ -45,13 +45,163 @@ npm run dev
 - ExpressJS: This project harnesses the power of ExpressJS, a fast and minimalist web framework for Node.js, to create robust and scalable server-side applications.
 - Node.js: This project is built on Node.js, leveraging its non-blocking, event-driven architecture for scalable and high-performance server-side applications
   
-## project Structure
-The project structure is organized as follows:
+## Customer Router
+### Public Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/products` | `GET` | List All Products |
+| `/product/:id` | `GET` | Detail Product |
+| `/testimonial` | `GET` | List All Testimonial |
 
--src/: contains the source code of the project
-  -asset/: image and icon media
-  -components/: Reusable component used throughout the project
-  -pages/: Individual pages of the application
+
+### Auth Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/login` | `POST` | Access Existing Account |
+| `/register` | `POST` | Create New Account |
+| `/forgot-password` | `POST` | Create New Password |
+
+
+### Private Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/profile` | `GET` | Profile Information |
+| `/profile` | `PATCH` | Update Profile Information |
+| `/history-order` | `GET` | List All History Order |
+| `/history-order/:id` | `GET` | Detail History Order |
+| `/history-order/products?orderId=int` | `GET` | List Of Products Purchased In One Order |
+| `/checkout` | `POST` | create An Order |
+
+
+## Admin Router
+### users Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/users` | `GET` | List All Users |
+| `/users/:id` | `GET` | Detail User |
+| `/users` | `POST` | Create New Users |
+| `/users/:id` | `PATCH` | Update One User |
+| `/users/:id` | `DELETE` | Delete One User |
+
+
+### Products Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/products` | `GET` | List All Products |
+| `/products/:id` | `GET` | Detail Product |
+| `/products` | `POST` | Create New Product |
+| `/products/:id` | `PATCH` | Update One product |
+| `/products/:id` | `DELETE` | Delete One product |
+
+
+### Orders Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/orders` | `GET` | List All Orders |
+| `/orders/:id` | `GET` | Detail Order |
+| `/orders` | `POST` | Create New Order |
+| `/orders/:id` | `PATCH` | Update One Order |
+| `/orders/:id` | `DELETE` | Delete One Order |
+
+
+### Categories Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/categories` | `GET` | List All Categories |
+| `/categories/:id` | `GET` | Detail Category |
+| `/categories` | `POST` | Create New Category |
+| `/categories/:id` | `PATCH` | Update One Category |
+| `/categories/:id` | `DELETE` | Delete One Category |
+
+
+### Messages Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/messages` | `GET` | List All Messages |
+| `/messages/:id` | `GET` | Detail Messag |
+| `/messages` | `POST` | Create New Messag |
+| `/messages/:id` | `PATCH` | Update One Messag |
+| `/messages/:id` | `DELETE` | Delete One Messag |
+
+
+### Order-Details Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/order-details` | `GET` | List All Order-Details |
+| `/order-details/:id` | `GET` | Detail Of Order-Details |
+| `/order-details` | `POST` | Create New Order-Details |
+| `/order-details/:id` | `PATCH` | Update One Order-Details |
+| `/order-details/:id` | `DELETE` | Delete One Order-Details |
+
+
+### Product-Categories Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/product-categories` | `GET` | List All Product-Categories |
+| `/product-categories/:id` | `GET` | Detail Product-Categories |
+| `/product-categories` | `POST` | Create New Product-Categories |
+| `/product-categories/:id` | `PATCH` | Update One Product-Categories |
+| `/product-categories/:id` | `DELETE` | Delete One Product-Categories |
+
+
+### Product-Ratings Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/product-ratings` | `GET` | List All Product-Ratings |
+| `/product-ratings/:id` | `GET` | Detail Product-Ratings |
+| `/product-ratings` | `POST` | Create New Product-Ratings |
+| `/product-ratings/:id` | `PATCH` | Update One Product-Ratings |
+| `/product-ratings/:id` | `DELETE` | Delete One Product-Ratings |
+
+
+### Size Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/size` | `GET` | List All Size |
+| `/size/:id` | `GET` | Detail Size |
+| `/size` | `POST` | Create New Size |
+| `/size/:id` | `PATCH` | Update One Size |
+| `/size/:id` | `DELETE` | Delete One Size |
+
+
+### Variant Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/variant` | `GET` | List All Variant |
+| `/variant/:id` | `GET` | Detail Variant |
+| `/variant` | `POST` | Create New Variant |
+| `/variant/:id` | `PATCH` | Update One Variant |
+| `/variant/:id` | `DELETE` | Delete One Variant |
+
+
+### Promo Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/promo` | `GET` | List All Promo |
+| `/promo/:id` | `GET` | Detail Promo |
+| `/promo` | `POST` | Create New Promo |
+| `/promo/:id` | `PATCH` | Update One Promo |
+| `/promo/:id` | `DELETE` | Delete One Promo |
+
+
+### Tags Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/tags` | `GET` | List All Tags |
+| `/tags/:id` | `GET` | Detail Tags |
+| `/tags` | `POST` | Create New Tags |
+| `/tags/:id` | `PATCH` | Update One Tags |
+| `/tags/:id` | `DELETE` | Delete One Tags |
+
+
+### Testimonial Router
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `/testimonial` | `GET` | List All Testimonial |
+| `/testimonial/:id` | `GET` | Detail Testimonial |
+| `/testimonial` | `POST` | Create New Testimonial |
+| `/testimonial/:id` | `PATCH` | Update One Testimonial |
+| `/testimonial/:id` | `DELETE` | Delete One Testimonial |
 
 
 ## Contributing
