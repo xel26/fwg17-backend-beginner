@@ -3,7 +3,7 @@ const forgotModel = require("../models/ForgotPassword.model");
 const argon = require("argon2");
 const jwt = require("jsonwebtoken");
 const { errorHandler, updateColumn } = require("../moduls/handling");
-const transport = require("../../mail.helper");
+const transport = require("../lib/mail.lib");
 const db = require("../lib/db.lib");
 
 exports.login = async (req, res) => {
@@ -128,7 +128,7 @@ exports.forgotPassword = async (req, res) => {
             console.log("Email terkirim!");
           } catch (err) {
             await db.query("ROLLBACK");
-            // console.log(err);
+            console.log(err);
             console.log("Gagal!");
           }
         };
