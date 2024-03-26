@@ -9,10 +9,14 @@ exports.findAll = async (userId, sortBy="id", order, page, limit, status='') => 
     const offset = (page - 1) * limit
 
     const sql = `
-    SELECT *
-    FROM "orders"
-    ${userId ? 'WHERE "userId" = $1 AND "status" ILIKE $2' : ''}
-    ORDER BY ${userId ? '"createdAt" DESC' : `"${sortBy}" ${order}`}
+    SELECT "o".*,
+    array_agg(DISTINCT "p"."image") "productsImage"
+    FROM "orders" "o"
+    JOIN "orderDetails" "od" ON ("od"."orderId" = "o"."id")
+    JOIN "products" "p" ON ("p"."id" = "od"."productId")
+    ${userId ? 'WHERE "o"."userId" = $1 AND "o"."status" ILIKE $2' : ''}
+    GROUP BY "o"."id"
+    ORDER BY ${userId ? '"o"."createdAt" DESC' : `"o"."${sortBy}" ${order}`}
     LIMIT ${limit} OFFSET ${offset}
     `
     const values = userId ? [userId, `%${status}%`] : []
