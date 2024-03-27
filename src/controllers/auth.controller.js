@@ -70,10 +70,12 @@ exports.register = async (req, res) => {
       throw new Error(`password cannot be empty`);
     }
 
+    const hashedPassword = await argon.hash(password)
+
     const dataUser = await userModel.insert({
       fullName,
       email,
-      password,
+      password: hashedPassword,
       role: "customer",
     });
 
