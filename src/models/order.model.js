@@ -40,7 +40,15 @@ exports.countAll = async (userId, status='') => {
 
 
 exports.findOne = async (id, userId) => {
-    const sql = `SELECT * FROM "orders" WHERE "id" = $1 ${userId ? ` AND "userId" = $2`: ''}`
+    const sql = `
+    SELECT
+    "o".*,
+    COUNT("od"."id") AS "counts"
+    FROM "orders" "o"
+    JOIN "orderDetails" "od" ON ("od"."orderId" = "o"."id")
+    WHERE "o"."id" = $1 ${userId ? ` AND "o"."userId" = $2`: ''}
+    GROUP BY "o"."id"
+    `
     const  values = userId ? [id, userId] : [id]
     const {rows} = await db.query(sql, values)
     if(!rows.length){

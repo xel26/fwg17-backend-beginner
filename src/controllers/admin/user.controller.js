@@ -64,6 +64,7 @@ exports.createUser = async (req, res) => {
             // req.body.picture = req.file.filename
             req.body.picture = req.file.path
         }
+        req.body.picture = ''
 
 
         const user = await userModel.insert(req.body)
