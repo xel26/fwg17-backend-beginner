@@ -8,25 +8,11 @@
 //      - properti "destination" yg berisi fungsi untuk menentukan dimana gambar akan di simpan
 //      - properti "filename" yg berisi fungsi untuk menentukan bagaimana penamaan file  (jika tidak diatur multer akan membuat nama acak yang tidak menyertakan ekstensi file apa pun)
 
-
-
-
-
-
-
-
-
-
-
-const multer = require('multer')                                                        // import module multer
-const path = require('path')                                                            // import path = module bawaan node js. digunakna untuk membuat jalur path yg menyesuaikan karakter pemisah direktori diberbagai sistem operasi (lintas-platform). misal windows menggunakan "backslash"(\) dan macOS/Linux menggunakan "forward slash"(/)
+const multer = require('multer') // import module multer
+const path = require('path') // import path = module bawaan node js. digunakna untuk membuat jalur path yg menyesuaikan karakter pemisah direktori diberbagai sistem operasi (lintas-platform). misal windows menggunakan "backslash"(\) dan macOS/Linux menggunakan "forward slash"(/)
 const { CloudinaryStorage } = require('multer-storage-cloudinary')
-const  { v2: cloudinary } = require ("cloudinary");
-const { v4: uuidv4 } = require('uuid');
-
-
-
-
+const { v2: cloudinary } = require('cloudinary')
+const { v4: uuidv4 } = require('uuid')
 
 // // tanpa cloudinary :
 // const storage = (dest) => multer.diskStorage({
@@ -40,7 +26,6 @@ const { v4: uuidv4 } = require('uuid');
 //             'image/png': '.png'
 //         }
 
-        
 //         // filename = req.params.id
 //         // const filename = new Date().getTime()
 //         // const filename = uuidv4()
@@ -49,66 +34,53 @@ const { v4: uuidv4 } = require('uuid');
 //     }
 // })
 
-
-
-
-
 // // dengan cloudinary :
 cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME, 
-    api_key: process.env.API_KEY, 
-    api_secret: process.env.API_SECRET
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET
 })
-
 
 const storage = (dest) => new CloudinaryStorage({
-    cloudinary,
-    params: async (req, file) =>  {
-
-        const extension = {
-          "image/jpeg": "jpg",
-          "image/png": "png",
-        }
-
-        return {
-            folder: `coffee-shop-be/${dest}`,
-            format: extension[file.mimetype],
-            public_id: uuidv4()
-        }
+  cloudinary,
+  params: async (req, file) => {
+    const extension = {
+      'image/jpeg': 'jpg',
+      'image/png': 'png'
     }
+
+    return {
+      folder: `coffee-shop-be/${dest}`,
+      format: extension[file.mimetype],
+      public_id: uuidv4()
+    }
+  }
 })
 
-
-
-
-
-
 const fileFilter = (req, file, cb) => {
-    const allowedFileTypes =['.jpeg','.jpg', '.png']                                                                            // file yg diperbolehkan di upload
+  const allowedFileTypes = ['.jpeg', '.jpg', '.png'] // file yg diperbolehkan di upload
 
-    const isExtnameAllowed = allowedFileTypes.includes(path.extname(file.originalname))                                         //  mengambil path(path.extname) dari file(file.originalname) untuk di cek apakah termasuk(includes) allowedFileTypes. variable "isExtnameAllowed" akan berisi nilai true atau false
-    if(isExtnameAllowed){                                                                                                       // jika true file dapat di upload
-        cb(null, true)
-    }else{
-        const errorMessage = `only jpeg, jpg, and png files allowed`                        // jika false maka akan error dan file tidak dapat di upload
-        cb(new Error(errorMessage), false)
-    }
+  const isExtnameAllowed = allowedFileTypes.includes(path.extname(file.originalname)) //  mengambil path(path.extname) dari file(file.originalname) untuk di cek apakah termasuk(includes) allowedFileTypes. variable "isExtnameAllowed" akan berisi nilai true atau false
+  if (isExtnameAllowed) { // jika true file dapat di upload
+    cb(null, true)
+  } else {
+    const errorMessage = 'only jpeg, jpg, and png files allowed' // jika false maka akan error dan file tidak dapat di upload
+    cb(new Error(errorMessage), false)
+  }
 }
-
 
 const limits = {
-    fileSize: 2 * 1024 * 1024
+  fileSize: 2 * 1024 * 1024
 }
 
-
 const uploadMiddleware = (dest, filename) => {
-    const processUpload = multer({
-        storage: storage(dest, filename),                           // untuk mengatur kemana menyimpan file
-        fileFilter: fileFilter,                                     // untuk mengatur file seperti apa yg bisa di upload
-        limits: limits                                              // untuk mengatur batasan terhadap file yg di upload
-    })
-    
-    return processUpload
+  const processUpload = multer({
+    storage: storage(dest, filename), // untuk mengatur kemana menyimpan file
+    fileFilter, // untuk mengatur file seperti apa yg bisa di upload
+    limits // untuk mengatur batasan terhadap file yg di upload
+  })
+
+  return processUpload
 }
 
 module.exports = uploadMiddleware
